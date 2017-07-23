@@ -2,24 +2,28 @@
     BitzOS (BOS) V0.0.0 - Copyright (C) 2016 Hexabitz
     All rights reserved
 		
-    File Name     : H01R0.c
-    Description   : Header file for module H01R0.
-										RGB LED (Cree CLVBA-FKA-CC1F1L1BB7R3R3)
+    File Name     : H12R0.c
+    Description   : Header file for module H12R0.
+									Indoors sensor hub: Temp and humidity (HDC1080DMBT), 
+																			Proximity, RGB and ambient light Sensor (APDS-9950),
+																			MEMS microphone (SPM1423HM4H-B)
+																			PIR motion detector (EKMC1601111)														
+																			
 */
 	
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef H01R0_H
-#define H01R0_H
+#ifndef H12R0_H
+#define H12R0_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
-#include "H01R0_uart.h"	
-#include "H01R0_gpio.h"	
-#include "H01R0_dma.h"		
+#include "H12R0_uart.h"	
+#include "H12R0_gpio.h"	
+#include "H12R0_dma.h"		
 	
 /* Exported definitions -------------------------------------------------------*/
 
-#define	modulePN		_H01R0
+#define	modulePN		_H12R0
 
 /* Port-related definitions */
 #define	NumOfPorts		6
@@ -101,32 +105,22 @@
 	#define _RGB_BLUE_TIM_CH					TIM_CHANNEL_4
 	#define _RGB_BLUE_GPIO_CLK()			__GPIOB_CLK_ENABLE();
 	
-	#define PWM_TIMER_CLOCK			16000000
-	#define RGB_PWM_FREQ				24000
-	#define RGB_PWM_PERIOD			((float) (1/RGB_PWM_FREQ) )
+
 #endif
 
 /* Module_Status Type Definition */  
 typedef enum 
 {
-  H01R0_OK = 0,
-	H01R0_ERR_UnknownMessage,
-  H01R0_ERR_WrongColor,
-	H01R0_ERR_WrongIntensity,
-	H01R0_ERROR = 255
+  H12R0_OK = 0,
+	H12R0_ERR_UnknownMessage,
+  H12R0_ERR_WrongColor,
+	H12R0_ERR_WrongIntensity,
+	H12R0_ERROR = 255
 } Module_Status;
 
 /* Indicator LED */
 #define _IND_LED_PORT		GPIOA
-#define _IND_LED_PIN		GPIO_PIN_11
-
-/* Color Enumerations */
-enum BasicColors{BLACK=1, WHITE, RED, BLUE, YELLOW, CYAN, MAGENTA, GREEN};
-
-
-/* RGB LED Mode Enumerations */
-enum RGBLedMode{RGB_PULSE_RGB=1, RGB_PULSE_COLOR, RGB_SWEEP_BASIC, RGB_SWEEP_FINE, RGB_DIM_UP, RGB_DIM_UP_WAIT, RGB_DIM_DOWN, RGB_DIM_DOWN_WAIT,\
-	RGB_DIM_UP_DOWN, RGB_DIM_DOWN_UP, RGB_DIM_UP_DOWN_WAIT, RGB_DIM_DOWN_UP_WAIT};
+#define _IND_LED_PIN		GPIO_PIN_7
 
 
 /* Export UART variables */
@@ -145,25 +139,15 @@ extern void MX_USART4_UART_Init(void);
 extern void MX_USART5_UART_Init(void);
 extern void MX_USART6_UART_Init(void);
 
-extern TIM_HandleTypeDef htim3;
-	
-extern uint8_t RGB_LED_State, RGB_LED_Intensity_Old;
-extern uint8_t rgbLedMode, rgbRed, rgbGreen, rgbBlue, rgbColor; 
-extern uint32_t rgbPeriod, rgbDC; 
-extern int16_t rgbCount;
+
 
 /* -----------------------------------------------------------------------
 	|														Message Codes	 														 	|
    ----------------------------------------------------------------------- 
 */
 
-#define	CODE_H01R0_on							100
-#define	CODE_H01R0_off						101
-#define	CODE_H01R0_toggle					102
-#define	CODE_H01R0_color					103
-#define	CODE_H01R0_pulse					104
-#define	CODE_H01R0_sweep					105
-#define	CODE_H01R0_dim						106
+//#define	CODE_H01R0_on							100
+
 
 	
 /* -----------------------------------------------------------------------
@@ -171,31 +155,14 @@ extern int16_t rgbCount;
    ----------------------------------------------------------------------- 
 */
 
-extern Module_Status RGB_LED_on(uint8_t intensity);
-extern Module_Status RGB_LED_off(void);
-extern Module_Status RGB_LED_toggle(uint8_t intensity);
-extern Module_Status RGB_LED_setColor(uint8_t color, uint8_t intensity);
-extern Module_Status RGB_LED_setRGB(uint8_t red, uint8_t green, uint8_t blue, uint8_t intensity);
-extern Module_Status RGB_LED_pulseRGB(uint8_t red, uint8_t green, uint8_t blue, uint32_t period, uint32_t dc, int32_t repeat);
-extern Module_Status RGB_LED_pulseColor(uint8_t color, uint32_t period, uint32_t dc, int32_t repeat);
-extern Module_Status RGB_LED_sweep(uint8_t mode, uint32_t period, int32_t repeat);
-extern Module_Status RGB_LED_dim(uint8_t color, uint8_t mode, uint32_t period, uint32_t wait, int32_t repeat);
 
 /* -----------------------------------------------------------------------
 	|															Commands																 	|
    ----------------------------------------------------------------------- 
 */
-extern const CLI_Command_Definition_t onCommandDefinition;
-extern const CLI_Command_Definition_t offCommandDefinition;
-extern const CLI_Command_Definition_t colorCommandDefinition;
-extern const CLI_Command_Definition_t RGBCommandDefinition;
-extern const CLI_Command_Definition_t toggleCommandDefinition;
-extern const CLI_Command_Definition_t pulseColorCommandDefinition;
-extern const CLI_Command_Definition_t pulseRGBCommandDefinition;
-extern const CLI_Command_Definition_t sweepCommandDefinition;
-extern const CLI_Command_Definition_t dimCommandDefinition;
 
 
-#endif /* H01R0_H */
+
+#endif /* H12R0_H */
 
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/

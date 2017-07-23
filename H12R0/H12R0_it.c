@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    H04R0_it.c
+  * @file    H12R0_it.c
   * @brief   Interrupt Service Routines.
   ******************************************************************************
   *
@@ -276,14 +276,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	}
 	
 	UartRxReady = SET;
-}
-
-/*-----------------------------------------------------------*/
-/* This function handles TIM3 global interrupt.
-*/
-void TIM3_IRQHandler(void)
-{	
-		HAL_TIM_IRQHandler(&htim3);
 }
 
 /*-----------------------------------------------------------*/
