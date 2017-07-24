@@ -20,6 +20,7 @@
 #include "H12R0_uart.h"	
 #include "H12R0_gpio.h"	
 #include "H12R0_dma.h"		
+#include "H12R0_i2c.h"	
 	
 /* Exported definitions -------------------------------------------------------*/
 
@@ -91,21 +92,11 @@
 #define	USART6_AF				GPIO_AF5_USART6
 
 /* Module-specific Definitions */
-#ifdef H01R0
-	#define _RGB_RED_PORT							GPIOA
-	#define _RGB_RED_PIN							GPIO_PIN_7
-	#define _RGB_RED_TIM_CH						TIM_CHANNEL_2
-	#define _RGB_RED_GPIO_CLK()				__GPIOA_CLK_ENABLE();
-	#define _RGB_GREEN_PORT						GPIOB
-	#define _RGB_GREEN_PIN						GPIO_PIN_0
-	#define _RGB_GREEN_TIM_CH					TIM_CHANNEL_3
-	#define _RGB_GREEN_GPIO_CLK()			__GPIOB_CLK_ENABLE();
-	#define _RGB_BLUE_PORT						GPIOB
-	#define _RGB_BLUE_PIN							GPIO_PIN_1
-	#define _RGB_BLUE_TIM_CH					TIM_CHANNEL_4
-	#define _RGB_BLUE_GPIO_CLK()			__GPIOB_CLK_ENABLE();
-	
-
+#ifdef H12R0
+	#define _I2C2_GPIO_PORT						GPIOA
+	#define _I2C2_SDA_PIN							GPIO_PIN_12
+	#define _I2C2_SCL_PIN							GPIO_PIN_11
+	#define _I2C2_GPIO_AF							GPIO_AF5_I2C2
 #endif
 
 /* Module_Status Type Definition */  

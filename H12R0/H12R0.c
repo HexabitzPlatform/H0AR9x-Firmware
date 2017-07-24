@@ -5,15 +5,15 @@
     File Name     : H12R0.c
     Description   : Source code for module H12R0.
 									Indoors sensor hub: Temp and humidity (HDC1080DMBT), 
-																			Proximity, RGB and ambient light Sensor (APDS-9950),
+																			Proximity, RGB and ambient light (APDS-9950),
 																			MEMS microphone (SPM1423HM4H-B)
 																			PIR motion detector (EKMC1601111)		
 		
 		Required MCU resources : 
 		
 			>> USARTs 1,2,3,4,5,6 for module ports.
-			>> Timer 3 (Ch2-Ch4) for RGB PWM.
-			>> GPIOB 0, GPIOB 1, GPIOA 7 for RGB LED.
+			>> I2C2 for for HDC1080DMBT and APDS-9950.
+			>> I2S2 for SPM1423HM4H-B.
 			
 */
 	
@@ -36,8 +36,10 @@ UART_HandleTypeDef huart6;
 
 
 /* Private function prototypes -----------------------------------------------*/	
-
-
+Module_Status HDC_Init(void);
+Module_Status EKMC_Init(void);
+Module_Status SPM_Init(void);
+Module_Status APDS_Init(void);
 
 
 /* Create CLI commands --------------------------------------------------------*/
@@ -52,9 +54,7 @@ UART_HandleTypeDef huart6;
 */
 void Module_Init(void)
 {
-	/* Peripheral clock enable */
 
-	
 	/* Array ports */
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
@@ -63,7 +63,21 @@ void Module_Init(void)
   MX_USART5_UART_Init();
   MX_USART6_UART_Init();
 	
-
+	/* I2C 2 initialization */
+	MX_I2C2_Init();
+	
+	/* Humidity and temperature sensor */
+	HDC_Init();
+	
+	/* PIR motion detector */
+	EKMC_Init();
+	
+	/* MEMS microphone */
+	SPM_Init();
+	
+	/* Proximity, RGB and ambient light sensor */
+	APDS_Init();
+	
 }
 
 /*-----------------------------------------------------------*/
@@ -110,7 +124,53 @@ uint8_t GetPort(UART_HandleTypeDef *huart)
 
 /*-----------------------------------------------------------*/
 
+/* --- HDC1080DMBT humidity and temperature sensor initialization. 
+*/
+Module_Status HDC_Init(void)
+{
+	Module_Status result = H12R0_OK;
 
+	
+	return result;
+}
+
+/*-----------------------------------------------------------*/
+
+/* --- EKMC1601111 PIR motion detector initialization. 
+*/
+Module_Status EKMC_Init(void)
+{
+	Module_Status result = H12R0_OK;
+
+	
+	return result;
+}
+
+/*-----------------------------------------------------------*/
+
+/* --- SPM1423HM4H-B MEMS microphone initialization. 
+*/
+Module_Status SPM_Init(void)
+{
+	Module_Status result = H12R0_OK;
+
+	
+	return result;
+}
+
+/*-----------------------------------------------------------*/
+
+/* --- APDS-9950 Proximity, RGB and ambient light sensor initialization. 
+*/
+Module_Status APDS_Init(void)
+{
+	Module_Status result = H12R0_OK;
+
+	
+	return result;
+}
+
+/*-----------------------------------------------------------*/
 
 
 /* -----------------------------------------------------------------------
