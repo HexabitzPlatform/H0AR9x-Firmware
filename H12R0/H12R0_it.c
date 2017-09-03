@@ -43,7 +43,7 @@
 
 
 /* External function prototypes ----------------------------------------------*/
-extern xTaskHandle xCommandConsoleTask;
+extern TaskHandle_t xCommandConsoleTaskHandle;
 extern void NotifyMessagingTaskFromISR(uint8_t port);
 
 
@@ -223,7 +223,10 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
 	/* Loop here */
-	for(;;) {}; 
+	//for(;;) {};
+	
+	/* Start receiving again */
+	HAL_UART_Receive_IT(huart, (uint8_t *)&cRxedChar, 1);	
 }
 
 /*-----------------------------------------------------------*/
@@ -246,7 +249,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			portStatus[port] = CLI;
 			
 			/* Activate the CLI task */
-			vTaskNotifyGiveFromISR(xCommandConsoleTask, &( xHigherPriorityTaskWoken ) );		
+			vTaskNotifyGiveFromISR(xCommandConsoleTaskHandle, &( xHigherPriorityTaskWoken ) );		
 		}
 		/* Received messaging request? (any value between 1 and 50 other than \r = 0x0D) */
 		else if( (cRxedChar != '\0') && (cRxedChar <= 50) )
