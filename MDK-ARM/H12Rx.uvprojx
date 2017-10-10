@@ -479,6 +479,16 @@
               <FileType>1</FileType>
               <FilePath>..\Thirdparty\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_i2c_ex.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f0xx_hal_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_hal_rtc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_rtc_ex.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -539,6 +549,11 @@
               <FileType>1</FileType>
               <FilePath>..\H12R0\H12R0_i2c.c</FilePath>
             </File>
+            <File>
+              <FileName>startup_stm32f091xc.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\H12R0\startup_stm32f091xc.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -593,16 +608,6 @@
               <FileName>cmsis_os.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\thirdparty\Middleware\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>MDK-ARM</GroupName>
-          <Files>
-            <File>
-              <FileName>startup_stm32f091xc.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\User\startup_stm32f091xc.s</FilePath>
             </File>
           </Files>
         </Group>
