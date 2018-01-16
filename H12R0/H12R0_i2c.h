@@ -43,8 +43,8 @@
 */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __H12R0_i2c_H
-#define __H12R0_i2c_H
+#ifndef __H0AR9_i2c_H
+#define __H0AR9_i2c_H
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -64,7 +64,7 @@ void MX_I2C2_Init(void);
 #ifdef __cplusplus
 }
 #endif
-#endif /*__H12R0_i2c_H */
+#endif /*__H0AR9_i2c_H */
 
 /**
   * @}

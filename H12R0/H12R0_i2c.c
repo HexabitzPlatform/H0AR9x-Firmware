@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * File Name          : H12R0_I2C.c
+  * File Name          : H0AR9_I2C.c
   * Description        : This file provides code for the configuration
   *                      of the I2C instances.
   ******************************************************************************

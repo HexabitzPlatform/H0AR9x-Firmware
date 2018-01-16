@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F091xB,H12R0,_module=1</Define>
+              <Define>USE_HAL_DRIVER,STM32F091xB,H0AR9,_module=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\User;..\H12R0;..\BOS;..\Thirdparty\Middleware\FreeRTOS\Source\CMSIS_RTOS;..\Thirdparty\Middleware\FreeRTOS\Source\include;..\Thirdparty\Middleware\FreeRTOS\Source\portable\RVDS\ARM_CM0;..\Thirdparty\STM32F0xx_HAL_Driver\Inc\Legacy;..\Thirdparty\STM32F0xx_HAL_Driver\Inc;..\Thirdparty\CMSIS\Device\ST\STM32F0xx\Include;..\Thirdparty\CMSIS\Include</IncludePath>
+              <IncludePath>..\User;..\H0AR9;..\BOS;..\Thirdparty\Middleware\FreeRTOS\Source\CMSIS_RTOS;..\Thirdparty\Middleware\FreeRTOS\Source\include;..\Thirdparty\Middleware\FreeRTOS\Source\portable\RVDS\ARM_CM0;..\Thirdparty\STM32F0xx_HAL_Driver\Inc\Legacy;..\Thirdparty\STM32F0xx_HAL_Driver\Inc;..\Thirdparty\CMSIS\Device\ST\STM32F0xx\Include;..\Thirdparty\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -517,42 +517,42 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>BITZ/H12R0</GroupName>
+          <GroupName>BITZ/H0AR9</GroupName>
           <Files>
             <File>
-              <FileName>H12R0.c</FileName>
+              <FileName>H0AR9.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\H12R0\H12R0.c</FilePath>
+              <FilePath>..\H0AR9\H0AR9.c</FilePath>
             </File>
             <File>
-              <FileName>H12R0_dma.c</FileName>
+              <FileName>H0AR9_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\H12R0\H12R0_dma.c</FilePath>
+              <FilePath>..\H0AR9\H0AR9_dma.c</FilePath>
             </File>
             <File>
-              <FileName>H12R0_gpio.c</FileName>
+              <FileName>H0AR9_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\H12R0\H12R0_gpio.c</FilePath>
+              <FilePath>..\H0AR9\H0AR9_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>H12R0_it.c</FileName>
+              <FileName>H0AR9_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\H12R0\H12R0_it.c</FilePath>
+              <FilePath>..\H0AR9\H0AR9_it.c</FilePath>
             </File>
             <File>
-              <FileName>H12R0_uart.c</FileName>
+              <FileName>H0AR9_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\H12R0\H12R0_uart.c</FilePath>
+              <FilePath>..\H0AR9\H0AR9_uart.c</FilePath>
             </File>
             <File>
-              <FileName>H12R0_i2c.c</FileName>
+              <FileName>H0AR9_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\H12R0\H12R0_i2c.c</FilePath>
+              <FilePath>..\H0AR9\H0AR9_i2c.c</FilePath>
             </File>
             <File>
               <FileName>startup_stm32f091xc.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\H12R0\startup_stm32f091xc.s</FilePath>
+              <FilePath>..\H0AR9\startup_stm32f091xc.s</FilePath>
             </File>
           </Files>
         </Group>
