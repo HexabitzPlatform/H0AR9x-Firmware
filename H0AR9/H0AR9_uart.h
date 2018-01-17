@@ -1,16 +1,11 @@
 /**
   ******************************************************************************
-  * File Name          : H12R)_I2C.h
+  * File Name          : H0AR9_uart.h
   * Description        : This file provides code for the configuration
-  *                      of the I2C instances.
+  *                      of the USART instances.
   ******************************************************************************
-  ** This notice applies to any and all portions of this file
-  * that are not between comment pairs USER CODE BEGIN and
-  * USER CODE END. Other portions of this file, whether 
-  * inserted by the user or by software development tools
-  * are owned by their respective copyright owners.
   *
-  * COPYRIGHT(c) 2017 STMicroelectronics
+  * COPYRIGHT(c) 2015 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -43,8 +38,8 @@
 */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __H12R0_i2c_H
-#define __H12R0_i2c_H
+#ifndef __usart_H
+#define __usart_H
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -52,19 +47,34 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f0xx_hal.h"
 
+/* External variables -----------------------------------------------*/
+extern FlagStatus UartRxReady;
+extern FlagStatus UartTxReady;
+extern uint8_t PcPort;
 
-extern I2C_HandleTypeDef hi2c2;
+	 
+// Blocking (polling-based) read
+#define readPx(port, buffer, n, timeout) while(HAL_UART_Receive(GetUart(port), (uint8_t *)buffer, n, timeout) != HAL_OK) {}
+	
+// Blocking (polling-based) write
+#define writePx(port, buffer, timeout) while(HAL_UART_Transmit(GetUart(port), (uint8_t *)buffer, strlen(buffer), timeout) != HAL_OK) {}
 
+/* Check which UART interrupt occured */	 
+#define HAL_UART_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)  ((((__HANDLE__)->Instance->ISR & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
 
+/* External function prototypes -----------------------------------------------*/
 
-void MX_I2C2_Init(void);
+extern HAL_StatusTypeDef readPxMutex(uint8_t port, char *buffer, uint16_t n, uint32_t mutexTimeout, uint32_t portTimeout);
+extern HAL_StatusTypeDef writePxMutex(uint8_t port, char *buffer, uint16_t n, uint32_t mutexTimeout, uint32_t portTimeout);
+extern HAL_StatusTypeDef readPxITMutex(uint8_t port, char *buffer, uint16_t n, uint32_t mutexTimeout);
+extern HAL_StatusTypeDef writePxITMutex(uint8_t port, char *buffer, uint16_t n, uint32_t mutexTimeout);
 
 
 
 #ifdef __cplusplus
 }
 #endif
-#endif /*__H12R0_i2c_H */
+#endif /*__ usart_H */
 
 /**
   * @}

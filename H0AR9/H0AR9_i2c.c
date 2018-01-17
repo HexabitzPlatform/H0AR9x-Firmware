@@ -1,11 +1,16 @@
 /**
   ******************************************************************************
-  * File Name          : H12R0_gpio.c
+  * File Name          : H0AR9_I2C.c
   * Description        : This file provides code for the configuration
-  *                      of all used GPIO pins.
+  *                      of the I2C instances.
   ******************************************************************************
+  ** This notice applies to any and all portions of this file
+  * that are not between comment pairs USER CODE BEGIN and
+  * USER CODE END. Other portions of this file, whether 
+  * inserted by the user or by software development tools
+  * are owned by their respective copyright owners.
   *
-  * COPYRIGHT(c) 2015 STMicroelectronics
+  * COPYRIGHT(c) 2017 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -40,34 +45,82 @@
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
 
-/*----------------------------------------------------------------------------*/
-/* Configure GPIO                                                             */
-/*----------------------------------------------------------------------------*/
 
-/** Pinout Configuration
-*/
-void MX_GPIO_Init(void)
+I2C_HandleTypeDef hi2c2;
+
+/* I2C2 init function */
+void MX_I2C2_Init(void)
 {
-  /* GPIO Ports Clock Enable */
-  __GPIOC_CLK_ENABLE();
-  __GPIOA_CLK_ENABLE();
-  __GPIOD_CLK_ENABLE();
-	__GPIOB_CLK_ENABLE();
-	__GPIOF_CLK_ENABLE();		// for HSE and Boot0
-	
-	IND_LED_Init();
+
+  hi2c2.Instance = I2C2;
+  hi2c2.Init.Timing = 0x2000090E;
+  hi2c2.Init.OwnAddress1 = 0;
+  hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c2.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c2.Init.OwnAddress2 = 0;
+  hi2c2.Init.OwnAddress2Masks = I2C_OA2_NOMASK;
+  hi2c2.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c2.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  HAL_I2C_Init(&hi2c2);
+
+	/**Configure Analogue filter 
+	*/
+  HAL_I2CEx_ConfigAnalogFilter(&hi2c2, I2C_ANALOGFILTER_ENABLE);
+
+	/**Configure Digital filter 
+	*/
+  HAL_I2CEx_ConfigDigitalFilter(&hi2c2, 0);
+
 }
 
-//-- Configure indicator LED
-void IND_LED_Init(void)
+void HAL_I2C_MspInit(I2C_HandleTypeDef* i2cHandle)
 {
-	GPIO_InitTypeDef GPIO_InitStruct;
-	
-	GPIO_InitStruct.Pin = _IND_LED_PIN;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-	HAL_GPIO_Init(_IND_LED_PORT, &GPIO_InitStruct);
+
+  GPIO_InitTypeDef GPIO_InitStruct;
+  if(i2cHandle->Instance==I2C2)
+  {
+  
+    /**I2C2 GPIO Configuration    
+    PA11     ------> I2C2_SCL
+    PA12     ------> I2C2_SDA 
+    */
+    GPIO_InitStruct.Pin = _I2C2_SDA_PIN|_I2C2_SCL_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Alternate = _I2C2_GPIO_AF;
+    HAL_GPIO_Init(_I2C2_GPIO_PORT, &GPIO_InitStruct);
+
+    /* Peripheral clock enable */
+    __HAL_RCC_I2C2_CLK_ENABLE();
+
+  }
 }
+
+void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
+{
+
+  if(i2cHandle->Instance==I2C2)
+  {
+    /* Peripheral clock disable */
+    __HAL_RCC_I2C2_CLK_DISABLE();
+  
+    /**I2C2 GPIO Configuration    
+    PA11     ------> I2C2_SCL
+    PA12     ------> I2C2_SDA 
+    */
+    HAL_GPIO_DeInit(_I2C2_GPIO_PORT, _I2C2_SDA_PIN|_I2C2_SCL_PIN);
+
+  }
+} 
+
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

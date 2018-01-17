@@ -2,8 +2,8 @@
     BitzOS (BOS) V0.0.0 - Copyright (C) 2016 Hexabitz
     All rights reserved
 
-    File Name     : H12R0.c
-    Description   : Source code for module H12R0.
+    File Name     : H0AR9.c
+    Description   : Source code for module H0AR9.
 									Indoors sensor hub: Temp and humidity (HDC1080DMBT), 
 																			Proximity, RGB and ambient light (APDS-9950),
 																			MEMS microphone (SPM1423HM4H-B)
@@ -83,18 +83,18 @@ void Module_Init(void)
 
 /*-----------------------------------------------------------*/
 
-/* --- H12R0 message processing task. 
+/* --- H0AR9 message processing task. 
 */
 Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uint8_t dst)
 {
-	Module_Status result = H12R0_OK;
+	Module_Status result = H0AR9_OK;
 	
 	switch (code)
 	{
 
 		
 		default:
-			result = H12R0_ERR_UnknownMessage;
+			result = H0AR9_ERR_UnknownMessage;
 			break;
 	}			
 
@@ -153,17 +153,17 @@ Module_Status HDC_Init(void)
 	
 	/* Check Manufacturer ID */
 	if (manID != 0x5449)	
-		return H12R0_ERR_HDC1080_MID;
+		return H0AR9_ERR_HDC1080_MID;
 	
 	/* Configure for sequence acquisition, 14-bit temperature and 14-bit humidity */
-	if (HDC_Config() != H12R0_OK)
-		return H12R0_ERR_HDC1080_CONFIG;
+	if (HDC_Config() != H0AR9_OK)
+		return H0AR9_ERR_HDC1080_CONFIG;
 	
 	/* Read the sensors */
-	if (HDC_Read(HDC_BOTH) != H12R0_OK)
-		return H12R0_ERR_HDC1080_READ;
+	if (HDC_Read(HDC_BOTH) != H0AR9_OK)
+		return H0AR9_ERR_HDC1080_READ;
 	
-	return H12R0_OK;
+	return H0AR9_OK;
 }
 
 /*-----------------------------------------------------------*/
@@ -172,7 +172,7 @@ Module_Status HDC_Init(void)
 */
 Module_Status EKMC_Init(void)
 {
-	Module_Status result = H12R0_OK;
+	Module_Status result = H0AR9_OK;
 
 	
 	return result;
@@ -184,7 +184,7 @@ Module_Status EKMC_Init(void)
 */
 Module_Status SPM_Init(void)
 {
-	Module_Status result = H12R0_OK;
+	Module_Status result = H0AR9_OK;
 
 	
 	return result;
@@ -196,7 +196,7 @@ Module_Status SPM_Init(void)
 */
 Module_Status APDS_Init(void)
 {
-	Module_Status result = H12R0_OK;
+	Module_Status result = H0AR9_OK;
 
 	
 	return result;
@@ -246,9 +246,9 @@ Module_Status HDC_Config(void)
 	
 	/* Write the CONFIG register */
 	if (HAL_I2C_Mem_Write(&hi2c2, HDC_ADD, HDC_CONFIG_REG_ADD, HDC_REG_ADD_SIZE, (uint8_t *)&reg, HDC_REG_SIZE, 10) == HAL_OK)
-		return H12R0_OK;
+		return H0AR9_OK;
 	else
-		return H12R0_ERR_HDC1080_WRITE;
+		return H0AR9_ERR_HDC1080_WRITE;
 }
 
 /*-----------------------------------------------------------*/
@@ -257,26 +257,26 @@ Module_Status HDC_Config(void)
 */
 Module_Status HDC_Read(uint8_t sensor)
 {
-	Module_Status result = H12R0_OK;
+	Module_Status result = H0AR9_OK;
 	uint16_t reg[2] = {0};
 	
 	/* Trigger measurements */
 	if (HDC.config.mode == HDC_MODE_TEMP_AND_HUMID && sensor == HDC_BOTH)
 	{
 		if (HAL_I2C_Mem_Write(&hi2c2, HDC_ADD, HDC_TEMP_REG_ADD, HDC_REG_ADD_SIZE, (uint8_t *)&reg, 2*HDC_REG_SIZE, 10) != HAL_OK)
-			return H12R0_ERR_HDC1080_WRITE;		
+			return H0AR9_ERR_HDC1080_WRITE;		
 	}
 	else if (HDC.config.mode == HDC_MODE_TEMP_OR_HUMID)
 	{
 		if (sensor == HDC_TEMPERATURE)
 		{
 			if (HAL_I2C_Mem_Write(&hi2c2, HDC_ADD, HDC_TEMP_REG_ADD, HDC_REG_ADD_SIZE, (uint8_t *)&reg, HDC_REG_SIZE, 10) != HAL_OK)
-				return H12R0_ERR_HDC1080_WRITE;		
+				return H0AR9_ERR_HDC1080_WRITE;		
 		}
 		else if (sensor == HDC_HUMIDITY)
 		{
 			if (HAL_I2C_Mem_Write(&hi2c2, HDC_ADD, HDC_HUMID_REG_ADD, HDC_REG_ADD_SIZE, (uint8_t *)&reg, HDC_REG_SIZE, 10) != HAL_OK)
-				return H12R0_ERR_HDC1080_WRITE;		
+				return H0AR9_ERR_HDC1080_WRITE;		
 		}
 	}
 	
@@ -287,7 +287,7 @@ Module_Status HDC_Read(uint8_t sensor)
 	if (HDC.config.mode == HDC_MODE_TEMP_AND_HUMID && sensor == HDC_BOTH)
 	{
 		if (HAL_I2C_Mem_Read(&hi2c2, HDC_ADD, HDC_TEMP_REG_ADD, HDC_REG_ADD_SIZE, (uint8_t *)&reg, 2*HDC_REG_SIZE, 10) != HAL_OK)
-			return H12R0_ERR_HDC1080_READ;		
+			return H0AR9_ERR_HDC1080_READ;		
 		
 		HDC.temperature = ((float)reg[0]/65536.0f) * 165.0f - 40.0f;
 		HDC.humidity = ((float)reg[1]/65536.0f) * 100.0f;
@@ -297,14 +297,14 @@ Module_Status HDC_Read(uint8_t sensor)
 		if (sensor == HDC_TEMPERATURE)
 		{
 			if (HAL_I2C_Mem_Read(&hi2c2, HDC_ADD, HDC_TEMP_REG_ADD, HDC_REG_ADD_SIZE, (uint8_t *)&reg, HDC_REG_SIZE, 10) != HAL_OK)
-				return H12R0_ERR_HDC1080_READ;	
+				return H0AR9_ERR_HDC1080_READ;	
 
 			HDC.temperature = ((float)reg[0]/65536.0f) * 165.0f - 40.0f;			
 		}
 		else if (sensor == HDC_HUMIDITY)
 		{
 			if (HAL_I2C_Mem_Read(&hi2c2, HDC_ADD, HDC_HUMID_REG_ADD, HDC_REG_ADD_SIZE, (uint8_t *)&reg, HDC_REG_SIZE, 10) != HAL_OK)
-				return H12R0_ERR_HDC1080_READ;
+				return H0AR9_ERR_HDC1080_READ;
 
 			HDC.humidity = ((float)reg[1]/65536.0f) * 100.0f;
 		}

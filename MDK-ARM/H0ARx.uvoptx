@@ -582,7 +582,7 @@
   </Group>
 
   <Group>
-    <GroupName>BITZ/H12R0</GroupName>
+    <GroupName>BITZ/H0AR9</GroupName>
     <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
@@ -594,8 +594,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\H12R0\H12R0.c</PathWithFileName>
-      <FilenameWithoutPath>H12R0.c</FilenameWithoutPath>
+      <PathWithFileName>..\H0AR9\H0AR9.c</PathWithFileName>
+      <FilenameWithoutPath>H0AR9.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -606,8 +606,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\H12R0\H12R0_dma.c</PathWithFileName>
-      <FilenameWithoutPath>H12R0_dma.c</FilenameWithoutPath>
+      <PathWithFileName>..\H0AR9\H0AR9_dma.c</PathWithFileName>
+      <FilenameWithoutPath>H0AR9_dma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -618,8 +618,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\H12R0\H12R0_gpio.c</PathWithFileName>
-      <FilenameWithoutPath>H12R0_gpio.c</FilenameWithoutPath>
+      <PathWithFileName>..\H0AR9\H0AR9_gpio.c</PathWithFileName>
+      <FilenameWithoutPath>H0AR9_gpio.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -630,8 +630,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\H12R0\H12R0_it.c</PathWithFileName>
-      <FilenameWithoutPath>H12R0_it.c</FilenameWithoutPath>
+      <PathWithFileName>..\H0AR9\H0AR9_it.c</PathWithFileName>
+      <FilenameWithoutPath>H0AR9_it.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -642,8 +642,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\H12R0\H12R0_uart.c</PathWithFileName>
-      <FilenameWithoutPath>H12R0_uart.c</FilenameWithoutPath>
+      <PathWithFileName>..\H0AR9\H0AR9_uart.c</PathWithFileName>
+      <FilenameWithoutPath>H0AR9_uart.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -654,8 +654,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\H12R0\H12R0_i2c.c</PathWithFileName>
-      <FilenameWithoutPath>H12R0_i2c.c</FilenameWithoutPath>
+      <PathWithFileName>..\H0AR9\H0AR9_i2c.c</PathWithFileName>
+      <FilenameWithoutPath>H0AR9_i2c.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -666,7 +666,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\H12R0\startup_stm32f091xc.s</PathWithFileName>
+      <PathWithFileName>..\H0AR9\startup_stm32f091xc.s</PathWithFileName>
       <FilenameWithoutPath>startup_stm32f091xc.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>

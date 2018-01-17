@@ -2,8 +2,8 @@
     BitzOS (BOS) V0.0.0 - Copyright (C) 2016 Hexabitz
     All rights reserved
 		
-    File Name     : H12R0.c
-    Description   : Header file for module H12R0.
+    File Name     : H0AR9.c
+    Description   : Header file for module H0AR9.
 									Indoors sensor hub: Temp and humidity (HDC1080DMBT), 
 																			Proximity, RGB and ambient light Sensor (APDS-9950),
 																			MEMS microphone (SPM1423HM4H-B)
@@ -12,19 +12,19 @@
 */
 	
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef H12R0_H
-#define H12R0_H
+#ifndef H0AR9_H
+#define H0AR9_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
-#include "H12R0_uart.h"	
-#include "H12R0_gpio.h"	
-#include "H12R0_dma.h"		
-#include "H12R0_i2c.h"	
+#include "H0AR9_uart.h"	
+#include "H0AR9_gpio.h"	
+#include "H0AR9_dma.h"		
+#include "H0AR9_i2c.h"	
 	
 /* Exported definitions -------------------------------------------------------*/
 
-#define	modulePN		_H12R0
+#define	modulePN		_H0AR9
 
 /* Port-related definitions */
 #define	NumOfPorts		6
@@ -92,7 +92,7 @@
 #define	USART6_AF				GPIO_AF5_USART6
 
 /* Module-specific Definitions */
-#ifdef H12R0
+#ifdef H0AR9
 	#define _I2C2_GPIO_PORT				GPIOA
 	#define _I2C2_SDA_PIN					GPIO_PIN_12
 	#define _I2C2_SCL_PIN					GPIO_PIN_11
@@ -129,13 +129,13 @@
 /* Module_Status Type Definition */  
 typedef enum 
 {
-  H12R0_OK = 0,
-	H12R0_ERR_UnknownMessage,
-  H12R0_ERR_HDC1080_MID,
-	H12R0_ERR_HDC1080_CONFIG,
-	H12R0_ERR_HDC1080_READ,
-	H12R0_ERR_HDC1080_WRITE,
-	H12R0_ERROR = 255
+  H0AR9_OK = 0,
+	H0AR9_ERR_UnknownMessage,
+  H0AR9_ERR_HDC1080_MID,
+	H0AR9_ERR_HDC1080_CONFIG,
+	H0AR9_ERR_HDC1080_READ,
+	H0AR9_ERR_HDC1080_WRITE,
+	H0AR9_ERROR = 255
 } Module_Status;
 
 /* Indicator LED */
@@ -209,6 +209,6 @@ extern Module_Status HDC_Read(uint8_t sensor);
 
 
 
-#endif /* H12R0_H */
+#endif /* H0AR9_H */
 
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/

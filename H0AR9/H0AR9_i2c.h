@@ -1,11 +1,16 @@
 /**
   ******************************************************************************
-  * File Name          : H12R0_dma.h
-  * Description        : This file contains all the functions prototypes for 
-  *                      the DMA  
+  * File Name          : H12R)_I2C.h
+  * Description        : This file provides code for the configuration
+  *                      of the I2C instances.
   ******************************************************************************
+  ** This notice applies to any and all portions of this file
+  * that are not between comment pairs USER CODE BEGIN and
+  * USER CODE END. Other portions of this file, whether 
+  * inserted by the user or by software development tools
+  * are owned by their respective copyright owners.
   *
-  * COPYRIGHT(c) 2015 STMicroelectronics
+  * COPYRIGHT(c) 2017 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -38,56 +43,35 @@
 */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __dma_H
-#define __dma_H
-
+#ifndef __H0AR9_i2c_H
+#define __H0AR9_i2c_H
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f0xx_hal.h"
-	 
-	 
-/* Check which DMA interrupt occured */	 
-#define HAL_DMA_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)  ((((__HANDLE__)->ISR & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
 
 
-/* External variables --------------------------------------------------------*/
-extern DMA_HandleTypeDef portMemDMA1;
-extern DMA_HandleTypeDef portMemDMA2;
-extern DMA_HandleTypeDef portMemDMA3;
-extern DMA_HandleTypeDef portPortDMA1;
-extern DMA_HandleTypeDef portPortDMA2;
-extern DMA_HandleTypeDef portPortDMA3;	 
+extern I2C_HandleTypeDef hi2c2;
 
-extern uint32_t DMAStream1count;
-extern uint32_t DMAStream2count;
-extern uint32_t DMAStream3count;
-extern uint32_t DMAStream1total;
-extern uint32_t DMAStream2total;
-extern uint32_t DMAStream3total;
 
-extern UART_HandleTypeDef* dmaStreamDst[3];
-	 
-/* External function prototypes ----------------------------------------------*/
-extern void MX_DMA_Init(void);
-extern void PortMemDMA1_Setup(UART_HandleTypeDef* huart, uint8_t num);
-extern void PortMemDMA2_Setup(UART_HandleTypeDef* huart, uint8_t num);
-extern void PortMemDMA3_Setup(UART_HandleTypeDef* huart, uint8_t num);
-extern void PortPortDMA1_Setup(UART_HandleTypeDef* huartSrc, UART_HandleTypeDef* huartDst, uint8_t num);
-extern void PortPortDMA2_Setup(UART_HandleTypeDef* huartSrc, UART_HandleTypeDef* huartDst, uint8_t num);
-extern void PortPortDMA3_Setup(UART_HandleTypeDef* huartSrc, UART_HandleTypeDef* huartDst, uint8_t num);
-extern void StopPortPortDMA1(void);
-extern void StopPortPortDMA2(void);
-extern void StopPortPortDMA3(void);
+
+void MX_I2C2_Init(void);
+
 
 
 #ifdef __cplusplus
 }
 #endif
+#endif /*__H0AR9_i2c_H */
 
-#endif /* __dma_H */
+/**
+  * @}
+  */
 
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
