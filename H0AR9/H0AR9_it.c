@@ -284,6 +284,25 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	UartRxReady = SET;
 }
 
+void EXTI2_3_IRQHandler(void)
+{
+	// Call IRQ Handler for EKMC1601111
+  HAL_GPIO_EXTI_IRQHandler(_EKMC_PIR_PIN);
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	static unsigned long lastTick = 0;
+    if (GPIO_Pin == _EKMC_PIR_PIN) {
+			if (HAL_GPIO_ReadPin(_EKMC_PIR_PORT, _EKMC_PIR_PIN) == GPIO_PIN_SET) {
+				lastTick = HAL_GetTick();
+				return;
+			}
+			EKMC.lengthOfLastDectMs = HAL_GetTick() - lastTick;
+			EKMC.numOfDetections++;
+    }
+}
+
 /*-----------------------------------------------------------*/
 
 void vApplicationStackOverflowHook( xTaskHandle pxTask, signed char *pcTaskName )
