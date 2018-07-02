@@ -68,18 +68,6 @@ void IND_LED_Init(void)
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
 	HAL_GPIO_Init(_IND_LED_PORT, &GPIO_InitStruct);
-	
-	// EKMC Initialization.
-	GPIO_InitTypeDef pirPinInitStruct;
-	memset(&pirPinInitStruct, 0, sizeof(pirPinInitStruct));
-	
-	pirPinInitStruct.Pin = _EKMC_PIR_PIN;
-	pirPinInitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
-	pirPinInitStruct.Pull = GPIO_NOPULL;
-	pirPinInitStruct.Speed = GPIO_SPEED_HIGH;
-	
-	HAL_GPIO_Init(_EKMC_PIR_PORT, &pirPinInitStruct);
-	HAL_NVIC_SetPriority(EXTI2_3_IRQn, 2, 0);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
