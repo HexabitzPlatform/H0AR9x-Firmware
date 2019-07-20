@@ -31,6 +31,11 @@ UART_HandleTypeDef huart6;
 
 HDC_t HDC;
 
+
+/* Module exported parameters ------------------------------------------------*/
+module_param_t modParam[NUM_MODULE_PARAMS] = {{.paramPtr=NULL, .paramFormat=FMT_FLOAT, .paramName=""}};
+
+
 /* Private variables ---------------------------------------------------------*/
 
 

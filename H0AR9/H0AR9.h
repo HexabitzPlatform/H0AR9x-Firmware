@@ -126,6 +126,8 @@
 	
 #endif
 
+#define NUM_MODULE_PARAMS		1
+									
 /* Module_Status Type Definition */  
 typedef enum 
 {
