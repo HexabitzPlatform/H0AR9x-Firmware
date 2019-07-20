@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * File Name          : H0AR9_uart.h
+  * File Name          : H0AR0_uart.h
   * Description        : This file provides code for the configuration
   *                      of the USART instances.
   ******************************************************************************
@@ -33,13 +33,13 @@
   */
 	
 /*
-		MODIFIED by Hexabitz for BitzOS (BOS) V0.0.0 - Copyright (C) 2016 Hexabitz
+		MODIFIED by Hexabitz for BitzOS (BOS) V0.1.6 - Copyright (C) 2017-2019 Hexabitz
     All rights reserved
 */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __usart_H
-#define __usart_H
+#ifndef H0AR0_UART_H
+#define H0AR0_UART_H
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -47,11 +47,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f0xx_hal.h"
 
+	 
 /* External variables -----------------------------------------------*/
-extern FlagStatus UartRxReady;
-extern FlagStatus UartTxReady;
-extern uint8_t PcPort;
-
+	 
 	 
 // Blocking (polling-based) read
 #define readPx(port, buffer, n, timeout) while(HAL_UART_Receive(GetUart(port), (uint8_t *)buffer, n, timeout) != HAL_OK) {}
@@ -68,13 +66,12 @@ extern HAL_StatusTypeDef readPxMutex(uint8_t port, char *buffer, uint16_t n, uin
 extern HAL_StatusTypeDef writePxMutex(uint8_t port, char *buffer, uint16_t n, uint32_t mutexTimeout, uint32_t portTimeout);
 extern HAL_StatusTypeDef readPxITMutex(uint8_t port, char *buffer, uint16_t n, uint32_t mutexTimeout);
 extern HAL_StatusTypeDef writePxITMutex(uint8_t port, char *buffer, uint16_t n, uint32_t mutexTimeout);
-
-
+extern HAL_StatusTypeDef writePxDMAMutex(uint8_t port, char *buffer, uint16_t n, uint32_t mutexTimeout);
 
 #ifdef __cplusplus
 }
 #endif
-#endif /*__ usart_H */
+#endif /*__H0AR0_UART_H */
 
 /**
   * @}
