@@ -17,6 +17,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
+#include "H0AR9_MemoryMap.h"	
 #include "H0AR9_uart.h"	
 #include "H0AR9_gpio.h"	
 #include "H0AR9_dma.h"		
