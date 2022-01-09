@@ -1,14 +1,15 @@
 /*
-    BitzOS (BOS) V0.1.6 - Copyright (C) 2017-2019 Hexabitz
-    All rights reserved
-		
-    File Name     : H0AR9_dma.h
-    Description   : Peripheral DMA setup header file.
-*/
+ BitzOS (BOS) V0.2.6 - Copyright (C) 2017-2022 Hexabitz
+ All rights reserved
+
+ File Name     : H0AR9_dma.h
+ Description   : Header file contains Peripheral DMA setup.
+
+ */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef H0AR9_dma_H
-#define H0AR9_dma_H
+#ifndef H0AR9_DMA_H
+#define H0AR9_DMA_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -47,7 +48,7 @@ extern void CRC_Init(void);
 }
 #endif
 
-#endif /* H0AR9_dma_H */
+#endif /* H26R0_dma_H */
 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

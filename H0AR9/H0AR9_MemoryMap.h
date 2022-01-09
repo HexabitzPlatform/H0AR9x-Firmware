@@ -1,10 +1,11 @@
 /*
-    BitzOS (BOS) V0.1.6 - Copyright (C) 2017-2019 Hexabitz
-    All rights reserved
-		
-    File Name     : H0AR9_MemoryMap.h
-    Description   : Module MCU memory map header file.
-*/
+ BitzOS (BOS) V0.2.6 - Copyright (C) 2017-2022 Hexabitz
+ All rights reserved
+
+ File Name     : H0AR9_MemoryMap.h
+ Description   : Module MCU memory map header file.
+
+ */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef H0AR9_MEMORYMAP_H

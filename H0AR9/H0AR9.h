@@ -1,14 +1,10 @@
 /*
-    BitzOS (BOS) V0.0.0 - Copyright (C) 2016 Hexabitz
+    BitzOS (BOS)V0.2.6 - Copyright (C) 2017-2022 Hexabitz
     All rights reserved
 		
-    File Name     : H0AR9.c
+    File Name     : H0AR9.h
     Description   : Header file for module H0AR9.
-									Indoors sensor hub: Temp and humidity (HDC1080DMBT), 
-																			Proximity, RGB and ambient light Sensor (APDS-9950),
-																			MEMS microphone (SPM1423HM4H-B)
-																			PIR motion detector (EKMC1601111)														
-																			
+
 */
 	
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -17,11 +13,11 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
-#include "H0AR9_MemoryMap.h"	
-#include "H0AR9_uart.h"	
-#include "H0AR9_gpio.h"	
-#include "H0AR9_dma.h"		
-#include "H0AR9_i2c.h"	
+#include "H0AR9_MemoryMap.h"
+#include "H0AR9_uart.h"
+#include "H0AR9_gpio.h"
+#include "H0AR9_dma.h"
+#include "H0AR9_i2c.h"
 	
 /* Exported definitions -------------------------------------------------------*/
 
@@ -34,11 +30,10 @@
 /* Define available ports */
 #define _P1 
 #define _P2 
-#define _P3 
+#define _P3
 #define _P4 
-#define _P5 
+#define _P5  
 #define _P6
-
 /* Define available USARTs */
 #define _Usart1 1
 #define _Usart2 1
@@ -48,122 +43,73 @@
 #define _Usart6	1
 
 /* Port-UART mapping */
-#define P1uart &huart4	
-#define P2uart &huart2
-#define P3uart &huart6
-#define P4uart &huart3
-#define P5uart &huart1
-#define P6uart &huart5
-	
+#define P1uart 			&huart4
+#define P2uart 			&huart2	
+#define P3uart 			&huart6
+#define P4uart 			&huart3
+#define P5uart 			&huart1
+#define P6uart 			&huart5
 /* Port Definitions */
 #define	USART1_TX_PIN		GPIO_PIN_9
 #define	USART1_RX_PIN		GPIO_PIN_10
-#define	USART1_TX_PORT	GPIOA
-#define	USART1_RX_PORT	GPIOA
-#define	USART1_AF				GPIO_AF1_USART1
+#define	USART1_TX_PORT	    GPIOA
+#define	USART1_RX_PORT	    GPIOA
+#define	USART1_AF		    GPIO_AF1_USART1
 
 #define	USART2_TX_PIN		GPIO_PIN_2
 #define	USART2_RX_PIN		GPIO_PIN_3
-#define	USART2_TX_PORT	GPIOA
-#define	USART2_RX_PORT	GPIOA
-#define	USART2_AF				GPIO_AF1_USART2
+#define	USART2_TX_PORT	    GPIOA
+#define	USART2_RX_PORT	    GPIOA
+#define	USART2_AF			GPIO_AF1_USART2
 
 #define	USART3_TX_PIN		GPIO_PIN_10
 #define	USART3_RX_PIN		GPIO_PIN_11
-#define	USART3_TX_PORT	GPIOB
-#define	USART3_RX_PORT	GPIOB
-#define	USART3_AF				GPIO_AF4_USART3
+#define	USART3_TX_PORT	    GPIOB
+#define	USART3_RX_PORT	    GPIOB
+#define	USART3_AF		    GPIO_AF4_USART3
 
 #define	USART4_TX_PIN		GPIO_PIN_0
 #define	USART4_RX_PIN		GPIO_PIN_1
-#define	USART4_TX_PORT	GPIOA
-#define	USART4_RX_PORT	GPIOA
-#define	USART4_AF				GPIO_AF4_USART4
+#define	USART4_TX_PORT	    GPIOA
+#define	USART4_RX_PORT	    GPIOA
+#define	USART4_AF			GPIO_AF4_USART4
 
 #define	USART5_TX_PIN		GPIO_PIN_3
 #define	USART5_RX_PIN		GPIO_PIN_4
-#define	USART5_TX_PORT	GPIOB
-#define	USART5_RX_PORT	GPIOB
-#define	USART5_AF				GPIO_AF4_USART5
+#define	USART5_TX_PORT	    GPIOB
+#define	USART5_RX_PORT	    GPIOB
+#define	USART5_AF			GPIO_AF4_USART5
 
 #define	USART6_TX_PIN		GPIO_PIN_4
 #define	USART6_RX_PIN		GPIO_PIN_5
-#define	USART6_TX_PORT	GPIOA
-#define	USART6_RX_PORT	GPIOA
-#define	USART6_AF				GPIO_AF5_USART6
+#define	USART6_TX_PORT	    GPIOA
+#define	USART6_RX_PORT	    GPIOA
+#define	USART6_AF		    GPIO_AF5_USART6
+
+#define STOP_MEASUREMENT_RANGING      0
+#define START_MEASUREMENT_RANGING     1
+
+/* Module_Status Type Definition */
+#define NUM_MODULE_PARAMS		7
 
 /* Module-specific Definitions */
-#ifdef H0AR9
-	#define _I2C2_GPIO_PORT				GPIOA
-	#define _I2C2_SDA_PIN					GPIO_PIN_12
-	#define _I2C2_SCL_PIN					GPIO_PIN_11
-	#define _I2C2_GPIO_AF					GPIO_AF5_I2C2
-	
-	/* HDC1080 section */
-	#define HDC_ADD												0x40		/* 7-bit address */
-	#define HDC_TEMP_REG_ADD							0x00
-	#define HDC_HUMID_REG_ADD							0x01
-	#define HDC_CONFIG_REG_ADD						0x02
-	#define HDC_SERIAL_ID_3								0xFB
-	#define HDC_SERIAL_ID_2								0xFC
-	#define HDC_SERIAL_ID_1								0xFD
-	#define HDC_MANUFACTURER_ID						0xFE
-	#define HDC_DEVICE_ID									0xFF
-	#define HDC_REG_SIZE									2
-	#define HDC_REG_ADD_SIZE							1
-	#define HDC_CONFIG_RESET(regval)						(regval |= 0x8000)		
-	#define HDC_CONFIG_HEAT_ENABLE(regval)			(regval |= 0x2000)
-	#define HDC_CONFIG_HEAT_DISABLE(regval)			(regval &= 0xDFFF)
-	#define HDC_CONFIG_TEMP_AND_HUMID(regval)		(regval |= 0x1000)
-	#define HDC_CONFIG_TEMP_OR_HUMID(regval)		(regval &= 0xEFFF)
-	#define HDC_CONFIG_BAT_BELOW_2_8(regval)		(regval >> 11)		
-	#define HDC_CONFIG_TEMP_14_BITS(regval)			(regval &= 0xFBFF)
-	#define HDC_CONFIG_TEMP_11_BITS(regval)			(regval |= 0x0400)
-	#define HDC_CONFIG_HUMID_14_BITS(regval)		(regval &= 0xFCFF)
-	#define HDC_CONFIG_HUMID_11_BITS(regval)		(regval &= 0xFDFF)
-	#define HDC_CONFIG_HUMID_8_BITS(regval)			(regval &= 0xFEFF)
-	enum HDC_e{HDC_RESET, HDC_HEAT_ENABLE, HDC_HEAT_DISABLE, HDC_MODE_TEMP_AND_HUMID, HDC_MODE_TEMP_OR_HUMID,
-									HDC_RES_14_BITS, HDC_RES_11_BITS, HDC_RES_8_BITS, HDC_TEMPERATURE, HDC_HUMIDITY, HDC_BOTH};
-	
-#endif
+#define RATE_pin             GPIO_PIN_6
+#define DOUT                 GPIO_PIN_10
+#define PD_SCK               GPIO_PIN_9
+#define TIMERID_TIMEOUT_MEASUREMENT   0xFF
 
-#define NUM_MODULE_PARAMS		1
-									
-/* Module_Status Type Definition */  
-typedef enum 
-{
-  H0AR9_OK = 0,
-	H0AR9_ERR_UnknownMessage,
-  H0AR9_ERR_HDC1080_MID,
-	H0AR9_ERR_HDC1080_CONFIG,
-	H0AR9_ERR_HDC1080_READ,
-	H0AR9_ERR_HDC1080_WRITE,
-	H0AR9_ERROR = 255
-} Module_Status;
+// Module EEPROM variables addresses - Module Addressing Space 500 - 599
+#define _EE_cell_full_scale		500
+#define _EE_cell_drift_LSB		501
+#define _EE_cell_drift_MSB		502
+#define _EE_cell_output_LSB		503
+#define _EE_cell_output_MSB		504
+#define _EE_zero_drift_LSB		505
+#define _EE_zero_drift_MSB		506
 
 /* Indicator LED */
 #define _IND_LED_PORT		GPIOA
 #define _IND_LED_PIN		GPIO_PIN_7
-
-
-/* HDC1080 configuration struct */
-typedef struct
-{
-	uint8_t reset;				// Software Reset: HDC_RESET
-	uint8_t heat;					// Heater element: HDC_HEAT_ENABLE, HDC_HEAT_DISABLE
-	uint8_t mode;					// Mode of acquisition: HDC_MODE_TEMP_AND_HUMID, HDC_MODE_TEMP_OR_HUMID
-	uint8_t temp_res;			// Temperature Measurement Resolution: HDC_RES_14_BITS, HDC_RES_11_BITS
-	uint8_t humid_res;		// Humidity Measurement Resolution: HDC_RES_14_BITS, HDC_RES_11_BITS, HDC_RES_8_BITS
-} HDC_config_t;
-
-/* HDC1080 struct */
-typedef struct
-{
-	HDC_config_t config;
-	float temperature;
-	float humidity;
-} HDC_t;
-extern HDC_t HDC;
 
 
 /* Export UART variables */
@@ -183,34 +129,67 @@ extern void MX_USART5_UART_Init(void);
 extern void MX_USART6_UART_Init(void);
 
 
-
-/* -----------------------------------------------------------------------
-	|														Message Codes	 														 	|
-   ----------------------------------------------------------------------- 
-*/
-
-
-
-
-	
+typedef enum
+{
+  H0AR9_OK = 0,
+  H0AR9_ERR_UnknownMessage,
+  H0AR9_ERR_RGB,
+  H0AR9_ERR_PROXIMITY,
+  H0AR9_ERR_TEMPRATURE,
+  H0AR9_ERR_HUMIDITY,
+  H0AR9_ERR_PIR,
+  H0AR9_ERR_BUSY,
+  H0AR9_ERR_TIMEOUT,
+  H0AR9_ERR_IO,
+  H0AR9_ERR_TERMINATED,
+  H0AR9_ERR_WrongParams,
+  H0AR9_ERROR = 25
+} Module_Status;
 /* -----------------------------------------------------------------------
 	|																APIs	 																 	|
    ----------------------------------------------------------------------- 
 */
-
-#define HDC_Sample_Temperature()		HDC_Read(HDC_TEMPERATURE)
-#define HDC_Sample_Humidity()				HDC_Read(HDC_HUMIDITY)
-#define HDC_Sample_Sensors()				HDC_Read(HDC_BOTH)
-
-extern Module_Status HDC_Config(void);
-extern Module_Status HDC_Read(uint8_t sensor);
-
-/* -----------------------------------------------------------------------
-	|															Commands																 	|
-   ----------------------------------------------------------------------- 
-*/
-
-
+uint16_t Read_Word(uint8_t reg);
+void Error_Handler(void);
+void initialValue(void);
+void APDS9950_init(void);
+void WriteRegData(uint8_t reg, uint8_t data);
+void stopStreamMems(void);
+void SamplePIR(bool *pir);
+void SampleColor(uint16_t *Red, uint16_t *Green, uint16_t *Blue);
+void SampleDistance(uint16_t *Proximity);
+void SampleTemperature(float *temperature);
+void SampleHumidity(float *humidity);
+void SampleColorBuf(float *buffer);
+void SampleDistanceBuff(float *buffer);
+void SampleTemperatureBuf(float *buffer);
+void SampleHumidityBuf(float *buffer);
+void SamplePIRBuf(float *buffer);
+void SampleColorToPort(uint8_t port,uint8_t module);
+void SampleDistanceToPort(uint8_t port,uint8_t module);
+void SampleTemperatureToPort(uint8_t port,uint8_t module);
+void SampleHumidityToPort(uint8_t port,uint8_t module);
+void SamplePIRToPort(uint8_t port,uint8_t module);
+void SampleColorToString(char *cstring, size_t maxLen);
+void SampleDistanceToString(char *cstring, size_t maxLen);
+void SampleTemperatureToString(char *cstring, size_t maxLen);
+void SampleHumidityToString(char *cstring, size_t maxLen);
+void SamplePIRToString(char *cstring, size_t maxLen);
+Module_Status StreamColorToBuffer(float *buffer, uint32_t period, uint32_t timeout);
+Module_Status StreamDistanceToBuffer(float *buffer, uint32_t period, uint32_t timeout);
+Module_Status StreamTemperatureToBuffer(float *buffer, uint32_t period, uint32_t timeout);
+Module_Status StreamHumidityToBuffer(float *buffer, uint32_t period, uint32_t timeout);
+Module_Status StreamPIRToBuffer(float *buffer, uint32_t period, uint32_t timeout);
+Module_Status StreamColorToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
+Module_Status StreamDistanceToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
+Module_Status StreamTemperatureToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
+Module_Status StreamHumidityToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
+Module_Status StreamPIRToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
+Module_Status StreamColorToCLI(uint32_t period, uint32_t timeout);
+Module_Status StreamDistanceToCLI(uint32_t period, uint32_t timeout);
+Module_Status StreamTemperatureToCLI(uint32_t period, uint32_t timeout);
+Module_Status StreamHumidityToCLI(uint32_t period, uint32_t timeout);
+Module_Status StreamPIRToCLI(uint32_t period, uint32_t timeout);
 
 #endif /* H0AR9_H */
 

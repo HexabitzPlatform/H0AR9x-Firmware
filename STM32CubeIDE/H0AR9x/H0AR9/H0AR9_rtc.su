@@ -1,0 +1,4 @@
+H0AR9_rtc.c:83:12:RTC_CalendarConfig	80	static
+H0AR9_rtc.c:31:12:RTC_Init	8	static
+H0AR9_rtc.c:138:12:BOS_CalendarConfig	48	static
+H0AR9_rtc.c:193:6:GetTimeDate	48	static

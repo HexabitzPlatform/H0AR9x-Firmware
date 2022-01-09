@@ -1,11 +1,11 @@
 /*
-    BitzOS (BOS) V0.1.6 - Copyright (C) 2017-2019 Hexabitz
-    All rights reserved
-		
-    File Name     : H0AR9_DMA.c
-    Description   : Peripheral DMA setup source file.
-*/
+ BitzOS (BOS) V0.2.6 - Copyright (C) 2017-2022 Hexabitz
+ All rights reserved
 
+ File Name     : H0AR9_dma.c
+ Description   : source file Contains Peripheral DMA setup .
+
+ */
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
 
@@ -185,7 +185,7 @@ void SetupMessagingRxDMAs(void)
 #ifdef _P6		
 	if (portStatus[P6] == FREE)
 		DMA_MSG_RX_Setup(P6uart, &msgRxDMA[5]);
-#endif			
+#endif				
 }
 
 /*-----------------------------------------------------------*/
@@ -581,8 +581,8 @@ void CRC_Init(void)
 	hcrc.Init.CRCLength = CRC_POLYLENGTH_8B;		// Do not change this since it is used for message CRC8
 	hcrc.Init.DefaultInitValueUse = DEFAULT_INIT_VALUE_ENABLE;    
   hcrc.Init.DefaultPolynomialUse = DEFAULT_POLYNOMIAL_ENABLE;
-	hcrc.Init.InputDataInversionMode = CRC_INPUTDATA_INVERSION_NONE;    
-	hcrc.Init.OutputDataInversionMode = CRC_OUTPUTDATA_INVERSION_DISABLE;    
+	hcrc.Init.InputDataInversionMode = CRC_INPUTDATA_INVERSION_NONE;    //CRC_INPUTDATA_INVERSION_NONE
+	hcrc.Init.OutputDataInversionMode = CRC_OUTPUTDATA_INVERSION_DISABLE;    //CRC_OUTPUTDATA_INVERSION_DISABLE;
 	hcrc.InputDataFormat = CRC_INPUTDATA_FORMAT_WORDS;
 	HAL_CRC_Init(&hcrc);
 }
@@ -599,6 +599,25 @@ void HAL_CRC_MspDeInit(CRC_HandleTypeDef* hcrc)
 	__HAL_RCC_CRC_CLK_DISABLE();
 }
 
+/*
+ * calculate CRC8 byte for a data buffer
+ */
+uint8_t  CalculateCRC8(uint8_t pBuffer[], uint16_t size)
+{
+  uint8_t pTemp;
+  /* check if the passed variables are null */
+  if (NULL!=pBuffer && 0!=size)
+  {
+    pTemp=HAL_CRC_Calculate(&hcrc, (uint32_t*)pBuffer, size/4);
+    if ((size%4)!=0)
+    {
+      pTemp=HAL_CRC_Accumulate(&hcrc, (uint32_t*)&pBuffer[(size/4)*4], 1);
+    }
+    return pTemp;
+  }
+  else
+  return 0;
+}
 /*-----------------------------------------------------------*/
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
