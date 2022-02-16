@@ -1,7 +1,3 @@
-BOS_dma.c:37:6:StopMsgDMA	16	static
-BOS_dma.c:51:6:StopStreamDMA	16	static
-BOS_dma.c:68:6:SwitchMsgDMAToStream	8	static
-BOS_dma.c:82:6:SwitchStreamDMAToMsg	32	static
-BOS_dma.c:103:12:StartDMAstream	24	static
-BOS_dma.c:138:6:DMA_IRQHandler	16	static
-BOS_dma.c:156:6:ResetUartORE	0	static
+BOS_dma.c:40:12:StartDMAstream	24	static
+BOS_dma.c:75:6:DMA_IRQHandler	16	static
+BOS_dma.c:93:6:ResetUartORE	0	static

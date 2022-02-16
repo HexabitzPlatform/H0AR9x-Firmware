@@ -13,3 +13,6 @@ H0AR9_uart.c:381:19:writePxITMutex	32	static
 H0AR9_uart.c:397:19:writePxDMAMutex	32	static
 H0AR9_uart.c:417:12:UpdateBaudrate	8	static
 H0AR9_uart.c:483:6:SwapUartPins	16	static
+H0AR9_uart.c:501:12:ReadPortsDir	32	static
+H0AR9_uart.c:524:12:ReadPortsDirMSG	32	static
+H0AR9_uart.c:541:12:UpdateMyPortsDir	24	static

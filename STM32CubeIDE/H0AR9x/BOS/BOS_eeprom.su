@@ -1,6 +1,0 @@
-BOS_eeprom.c:565:17:EE_VerifyPageFullWriteVariable	16	static
-BOS_eeprom.c:349:10:EE_ReadVariable	8	static
-BOS_eeprom.c:403:10:EE_WriteVariable	40	static
-BOS_eeprom.c:429:10:EE_Format	8	static
-BOS_eeprom.c:36:10:EE_Init	24	static
-BOS_eeprom.c:762:10:Flash_WriteVariable	16	static

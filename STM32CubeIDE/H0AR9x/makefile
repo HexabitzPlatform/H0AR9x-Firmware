@@ -10,11 +10,11 @@ RM := rm -rf
 -include sources.mk
 -include User/subdir.mk
 -include Thirdparty/STM32F0xx_HAL_Driver/Src/subdir.mk
--include Thirdparty/Middleware/FreeRTOS/Source/portable/MemMang/subdir.mk
--include Thirdparty/Middleware/FreeRTOS/Source/portable/GCC/ARM_CM0/subdir.mk
--include Thirdparty/Middleware/FreeRTOS/Source/CMSIS_RTOS/subdir.mk
--include Thirdparty/Middleware/FreeRTOS/Source/subdir.mk
--include Thirdparty/CMSIS/Device/ST/STM32F0xx/Source/Templates/subdir.mk
+-include Thirdparty/Middleware/STM32F0xx/FreeRTOS/Source/portable/MemMang/subdir.mk
+-include Thirdparty/Middleware/STM32F0xx/FreeRTOS/Source/portable/GCC/ARM_CM0/subdir.mk
+-include Thirdparty/Middleware/STM32F0xx/FreeRTOS/Source/CMSIS_RTOS/subdir.mk
+-include Thirdparty/Middleware/STM32F0xx/FreeRTOS/Source/subdir.mk
+-include Thirdparty/CMSIS/STM32F0xx/Device/ST/STM32F0xx/Source/Templates/subdir.mk
 -include H0AR9/subdir.mk
 -include BOS/subdir.mk
 -include subdir.mk

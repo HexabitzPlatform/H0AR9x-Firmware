@@ -1,0 +1,5 @@
+FreeRTOS_CLI.c:69:15:FreeRTOS_CLIRegisterCommand	16	static
+FreeRTOS_CLI.c:110:15:FreeRTOS_CLIProcessCommand	40	static
+FreeRTOS_CLI.c:185:9:FreeRTOS_CLIGetOutputBuffer	0	static
+FreeRTOS_CLI.c:191:15:FreeRTOS_CLIGetParameter	12	static
+FreeRTOS_CLI.c:247:22:prvHelpCommand	32	static

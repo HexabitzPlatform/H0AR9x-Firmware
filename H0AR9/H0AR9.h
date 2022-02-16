@@ -18,7 +18,8 @@
 #include "H0AR9_gpio.h"
 #include "H0AR9_dma.h"
 #include "H0AR9_i2c.h"
-	
+#include "H0AR9_inputs.h"
+#include "H0AR9_eeprom.h"
 /* Exported definitions -------------------------------------------------------*/
 
 #define	modulePN		_H0AR9
@@ -190,7 +191,8 @@ Module_Status StreamDistanceToCLI(uint32_t period, uint32_t timeout);
 Module_Status StreamTemperatureToCLI(uint32_t period, uint32_t timeout);
 Module_Status StreamHumidityToCLI(uint32_t period, uint32_t timeout);
 Module_Status StreamPIRToCLI(uint32_t period, uint32_t timeout);
-
+void SetupPortForRemoteBootloaderUpdate(uint8_t port);
+void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 #endif /* H0AR9_H */
 
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
