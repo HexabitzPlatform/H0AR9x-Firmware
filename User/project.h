@@ -1,22 +1,21 @@
 /*
-    BitzOS (BOS) V0.1.0 - Copyright (C) 2017 Hexabitz
-    All rights reserved
-		
-    File Name     : project.h
-    Description   : Hexabitz project header file. This file must be modified for each project.
-*/
-	
+ BitzOS (BOS) V0.2.6 - Copyright (C) 2017-2022 Hexabitz
+ All rights reserved
+
+ File Name     : project.h
+ Description   : Hexabitz project header file. This file must be modified for each project.
+
+ */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef PROJECT_H
 #define PROJECT_H
 
-
 /* Includes ------------------------------------------------------------------*/
 
-
 /* Include a predefined topology here */
-//#include "topology_1.h"
-
+//#include "topology.h"
+/* Emulated EEPROM Virtual addresses for user parameters */
 
 #endif /* PROJECT_H */
 
