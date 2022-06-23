@@ -2,7 +2,7 @@ BOS_CLI.c:318:6:StringToLowerCase	16	static
 BOS_CLI.c:376:12:ParseSnippetCondition	56	static
 BOS_CLI.c:328:12:AddSnippet	24	static
 BOS_CLI.c:163:6:CLI_CommandParser	80	static
-BOS_CLI.c:53:6:prvCLITask	64	static
+BOS_CLI.c:53:6:prvCLITask	48	static
 BOS_CLI.c:532:6:ParseSnippetCommand	16	static
 BOS_CLI.c:567:6:CheckSnippetCondition	32	static
 BOS_CLI.c:634:12:ExecuteSnippet	24	static
