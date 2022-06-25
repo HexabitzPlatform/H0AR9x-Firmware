@@ -1,5 +1,5 @@
 /*
-    BitzOS (BOS)V0.2.6 - Copyright (C) 2017-2022 Hexabitz
+    BitzOS (BOS)V0.2.7 - Copyright (C) 2017-2022 Hexabitz
     All rights reserved
 
     File Name     : H0AR9.c
@@ -328,37 +328,37 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 
 		case CODE_H0AR9_STREAM_COLOR:
 		{
-			period = ((uint32_t) cMessage[port - 1][2 + shift] << 24) + ((uint32_t) cMessage[port - 1][3 + shift] << 16) + ((uint32_t) cMessage[port - 1][4 + shift] << 8) + cMessage[port - 1][5 + shift];
-			timeout = ((uint32_t) cMessage[port - 1][6 + shift] << 24) + ((uint32_t) cMessage[port - 1][7 + shift] << 16) + ((uint32_t) cMessage[port - 1][8 + shift] << 8) + cMessage[port - 1][9 + shift];
+			period = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] << 24);
+			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift] << 24);
 			StreamColorToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout);
 			break;
 		}
 
 		case CODE_H0AR9_STREAM_DISTANCE:
 		{
-			period = ((uint32_t) cMessage[port - 1][2 + shift] << 24) + ((uint32_t) cMessage[port - 1][3 + shift] << 16) + ((uint32_t) cMessage[port - 1][4 + shift] << 8) + cMessage[port - 1][5 + shift];
-			timeout = ((uint32_t) cMessage[port - 1][6 + shift] << 24) + ((uint32_t) cMessage[port - 1][7 + shift] << 16) + ((uint32_t) cMessage[port - 1][8 + shift] << 8) + cMessage[port - 1][9 + shift];
+			period = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] <<24);
+			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift]<<24);
 			StreamDistanceToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout);
 			break;
 		}
 		case CODE_H0AR9_STREAM_TEMP:
 		{
-			period = ((uint32_t) cMessage[port - 1][2 + shift] << 24) + ((uint32_t) cMessage[port - 1][3 + shift] << 16) + ((uint32_t) cMessage[port - 1][4 + shift] << 8) + cMessage[port - 1][5 + shift];
-			timeout = ((uint32_t) cMessage[port - 1][6 + shift] << 24) + ((uint32_t) cMessage[port - 1][7 + shift] << 16) + ((uint32_t) cMessage[port - 1][8 + shift] << 8) + cMessage[port - 1][9 + shift];
+			period = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift]<<24);
+			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift]<<24);
 			StreamTemperatureToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout);
 			break;
 		}
 		case CODE_H0AR9_STREAM_HUMIDITY:
 		{
-			period = ((uint32_t) cMessage[port - 1][2 + shift] << 24) + ((uint32_t) cMessage[port - 1][3 + shift] << 16) + ((uint32_t) cMessage[port - 1][4 + shift] << 8) + cMessage[port - 1][5 + shift];
-			timeout = ((uint32_t) cMessage[port - 1][6 + shift] << 24) + ((uint32_t) cMessage[port - 1][7 + shift] << 16) + ((uint32_t) cMessage[port - 1][8 + shift] << 8) + cMessage[port - 1][9 + shift];
+			period = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift]<<24);
+			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift]<<24);
 			StreamHumidityToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout);
 			break;
 		}
 		case CODE_H0AR9_STREAM_PIR:
 		{
-			period = ((uint32_t) cMessage[port - 1][2 + shift] << 24) + ((uint32_t) cMessage[port - 1][3 + shift] << 16) + ((uint32_t) cMessage[port - 1][4 + shift] << 8) + cMessage[port - 1][5 + shift];
-			timeout = ((uint32_t) cMessage[port - 1][6 + shift] << 24) + ((uint32_t) cMessage[port - 1][7 + shift] << 16) + ((uint32_t) cMessage[port - 1][8 + shift] << 8) + cMessage[port - 1][9 + shift];
+			period = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] <<24);
+			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift] <<24);
 			StreamPIRToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout);
 			break;
 		}
