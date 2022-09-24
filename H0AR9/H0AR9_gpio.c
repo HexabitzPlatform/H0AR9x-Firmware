@@ -40,7 +40,26 @@ void IND_LED_Init(void){
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 	HAL_GPIO_Init(_IND_LED_PORT,&GPIO_InitStruct);
 }
+/*-----------------------------------------------------------*/
+void SENSORS_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct;
 
+  /*Configure GPIO pin : PA6 & PA7 as output*/
+    GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF6_I2C2;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    __HAL_RCC_I2C2_CLK_ENABLE();
+
+    /*Configure GPIO pin : PB6 as output*/
+    GPIO_InitStruct.Pin = GPIO_PIN_6;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+}
 /*-----------------------------------------------------------*/
 
 /* --- Check for factory reset condition: 

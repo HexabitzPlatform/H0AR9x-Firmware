@@ -25,6 +25,7 @@
 #include "H0AR9_dma.h"
 #include "H0AR9_inputs.h"
 #include "H0AR9_eeprom.h"
+#include "H0AR9_i2c.h"
 /* Exported definitions -------------------------------------------------------*/
 
 #define	modulePN		_H0AR9

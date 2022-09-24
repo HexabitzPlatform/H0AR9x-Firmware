@@ -306,7 +306,12 @@ void Module_Peripheral_Init(void){
 	MX_USART4_UART_Init();
 	MX_USART5_UART_Init();
 	MX_USART6_UART_Init();
-
+	/* initialize GPIO for module */
+	  SENSORS_GPIO_Init();
+	  /* initialize I2C for module */
+	  MX_I2C_Init();
+	  /* initialize color&proximity sensor */
+	 // APDS9950_init();
 
 	/* Create module special task (if needed) */
 }

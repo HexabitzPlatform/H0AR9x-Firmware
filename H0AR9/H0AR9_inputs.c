@@ -688,7 +688,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef *adcHandle) {
 
 		/* USER CODE END ADC1_MspDeInit 0 */
 		/* Peripheral clock disable */
-		__HAL_RCC_ADC1_CLK_DISABLE();
+		__HAL_RCC_ADC_CLK_DISABLE();
 
 		/**ADC GPIO Configuration
 		 PA0     ------> ADC_IN0
