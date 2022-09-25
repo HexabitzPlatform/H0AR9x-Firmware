@@ -103,18 +103,29 @@
 /* Module-specific Definitions */
 
 #define NUM_MODULE_PARAMS						1
-
+#define STOP_MEASUREMENT_RANGING      0
+#define START_MEASUREMENT_RANGING     1
 /* Module EEPROM Variables */
 
 // Module Addressing Space 500 - 599
 #define _EE_MODULE							500		
 
 /* Module_Status Type Definition */
-typedef enum {
-	H0AR9_OK =0,
-	H0AR9_ERR_UnknownMessage,
-	H0AR9_ERR_WrongParams,
-	H0AR9_ERROR =255
+typedef enum
+{
+  H0AR9_OK = 0,
+  H0AR9_ERR_UnknownMessage,
+  H0AR9_ERR_RGB,
+  H0AR9_ERR_PROXIMITY,
+  H0AR9_ERR_TEMPRATURE,
+  H0AR9_ERR_HUMIDITY,
+  H0AR9_ERR_PIR,
+  H0AR9_ERR_BUSY,
+  H0AR9_ERR_TIMEOUT,
+  H0AR9_ERR_IO,
+  H0AR9_ERR_TERMINATED,
+  H0AR9_ERR_WrongParams,
+  H0AR9_ERROR = 25
 } Module_Status;
 
 /* Indicator LED */
@@ -139,12 +150,21 @@ extern void MX_USART6_UART_Init(void);
 extern void SystemClock_Config(void);
 extern void ExecuteMonitor(void);
 
+
 /* -----------------------------------------------------------------------
  |								  APIs							          |  																 	|
 /* -----------------------------------------------------------------------
  */
+uint16_t Read_Word(uint8_t reg);
+void WriteRegData(uint8_t reg, uint8_t data);
 void SampleTemperature(float *temperature);
 void SampleTemperatureToString(char *cstring, size_t maxLen);
+void SampleDistance(uint16_t *Proximity);
+void SampleHumidity(float *humidity);
+void SamplePIR(bool *pir);
+void SampleColor(uint16_t *Red, uint16_t *Green, uint16_t *Blue);
+void APDS9950_init(void);
+void initialValue(void);
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 

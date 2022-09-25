@@ -15,6 +15,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 #include "H0AR9_inputs.h"
 /* Define UART variables */
 UART_HandleTypeDef huart1;
@@ -30,9 +33,28 @@ extern uint8_t numOfRecordedSnippets;
 extern I2C_HandleTypeDef hi2c2;
 
 /* Module exported parameters ------------------------------------------------*/
-module_param_t modParam[NUM_MODULE_PARAMS] ={{.paramPtr = NULL, .paramFormat =FMT_FLOAT, .paramName =""}};
+uint8_t H0AR9_PIR;
+uint16_t H0AR9_RGBred;
+uint16_t H0AR9_RGBgreen;
+uint16_t H0AR9_RGBblue;
+uint16_t H0AR9_proximity;
+float H0AR9_temperature;
+float H0AR9_humidity;
+module_param_t modParam[NUM_MODULE_PARAMS] = {{.paramPtr=&H0AR9_RGBred, .paramFormat=FMT_UINT16, .paramName="RGBred"},
+{.paramPtr=&H0AR9_RGBgreen, .paramFormat=FMT_UINT16, .paramName="RGBgreen"},
+{.paramPtr=&H0AR9_RGBblue,  .paramFormat=FMT_UINT16, .paramName="RGBblue"},
+{.paramPtr=&H0AR9_proximity, .paramFormat=FMT_UINT16, .paramName="proximity"},
+{.paramPtr=&H0AR9_temperature, .paramFormat=FMT_FLOAT, .paramName="temperature"},
+{.paramPtr=&H0AR9_humidity, .paramFormat=FMT_FLOAT, .paramName="humidity"},
+{.paramPtr=&H0AR9_PIR, .paramFormat=FMT_UINT8, .paramName="PIR"},
+};
+#define MIN_MEMS_PERIOD_MS				100
+#define MAX_MEMS_TIMEOUT_MS				0xFFFFFFFF
 float H0AR9_temperature;
 /* Private variables ---------------------------------------------------------*/
+typedef void (*SampleMemsToPort)(uint8_t, uint8_t);
+typedef void (*SampleMemsToString)(char *, size_t);
+typedef void (*SampleMemsToBuffer)(float *buffer);
 //temprature and humidity sensor addresses
 static const uint8_t tempHumAdd = (0x40)<<1; // Use 7-bit address
 static const uint8_t tempReg = 0x00;
@@ -48,8 +70,19 @@ uint8_t redReg, greenReg, blueReg, distanceReg;
 uint16_t RED_data, GREEN_data, BLUE_data, Prox_data;
 uint16_t val;
 uint8_t pir;
-
+uint8_t CONTROL, Enable, ATIME, WTIME, PPULSE;
+uint16_t Red __attribute__((section(".mySection")));
+uint16_t Green __attribute__((section(".mySection")));
+uint16_t Blue __attribute__((section(".mySection")));
+uint16_t distance1 __attribute__((section(".mySection")));
+float temp __attribute__((section(".mySection")));
+float hum __attribute__((section(".mySection")));
+uint8_t Sample __attribute__((section(".mySection")));
 /* Private function prototypes -----------------------------------------------*/
+static Module_Status StreamMemsToBuf( float *buffer, uint32_t period, uint32_t timeout, SampleMemsToBuffer function);
+static Module_Status StreamMemsToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout, SampleMemsToPort function);
+static Module_Status StreamMemsToCLI(uint32_t period, uint32_t timeout, SampleMemsToString function);
+static Module_Status PollingSleepCLISafe(uint32_t period);
 void ExecuteMonitor(void);
 
 /* Create CLI commands --------------------------------------------------------*/
@@ -321,7 +354,7 @@ void Module_Peripheral_Init(void){
 	  /* initialize I2C for module */
 	  MX_I2C_Init();
 	  /* initialize color&proximity sensor */
-	 // APDS9950_init();
+	  APDS9950_init();
 
 	/* Create module special task (if needed) */
 }
@@ -361,8 +394,42 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 	
 	return 0;
 }
+/*------------------------------------------------------------*/
+//initialize APDS9950 sensor
+void APDS9950_init(void)
+{
+//registers addresses
+	CONTROL = 0x0F;
+	Enable = 0x00;
+	ATIME  = 0x01;
+	WTIME  = 0x03;
+	PPULSE = 0x0E;
+	redReg = 0x16;
+	greenReg = 0x18;
+    blueReg = 0x1A;
+    distanceReg = 0x1C;
+
+    WriteRegData (Enable,0x00);
+    WriteRegData (ATIME,0x00);
+    WriteRegData (WTIME,0xff);
+    WriteRegData (PPULSE,0x01);
+    WriteRegData (CONTROL, 0x20);
+    WriteRegData (Enable, 0x0F);
+}
 
 /*-----------------------------------------------------------*/
+void initialValue(void)
+{
+	Red=0;
+	Green=0;
+	Blue=0;
+	distance1=0;
+	temp=0;
+	hum=0;
+	Sample=0;
+}
+/*-----------------------------------------------------------*/
+
 
 /* --- Register this module CLI Commands
  */
@@ -399,13 +466,13 @@ void RegisterModuleCLICommands(void){
 
 
 /*-----------------------------------------------------------*/
-//void SampleTemperatureToString(char *cstring, size_t maxLen)
-//{
-//	float temprature = 0;
-//	SampleTemperature(&temprature);
-//	temp=temprature;
-//	snprintf(cstring, maxLen, "Temperature: %.2f\r\n", temprature);
-//}
+void SampleTemperatureToString(char *cstring, size_t maxLen)
+{
+	float temprature = 0;
+	SampleTemperature(&temprature);
+	temp=temprature;
+	snprintf(cstring, maxLen, "Temperature: %.2f\r\n", temprature);
+}
 /* -----------------------------------------------------------------------
  |								  APIs							          | 																 	|
 /* -----------------------------------------------------------------------
@@ -420,9 +487,35 @@ void SampleTemperature(float *temperature)
 	val = buf[0] << 8 | buf[1];
 	*temperature=((float)val/65536)*165.0-40.0;
 }
+/*-----------------------------------------------------------*/
+void SampleColor(uint16_t *Red, uint16_t *Green, uint16_t *Blue)
+{
+	*Red = Read_Word(redReg);
+	*Green = Read_Word(greenReg);
+	*Blue = Read_Word(blueReg);
+}
+/*-----------------------------------------------------------*/
+void SampleDistance(uint16_t *distance)
+{
+	*distance = Read_Word(distanceReg)/6.39;
+}
 
 /*-----------------------------------------------------------*/
-
+void SampleHumidity(float *humidity)
+{
+	buf[0] = humidityReg;
+	HAL_I2C_Master_Transmit(&hi2c2, tempHumAdd, buf, 1, HAL_MAX_DELAY);
+	HAL_Delay(20);
+	HAL_I2C_Master_Receive(&hi2c2, tempHumAdd, buf, 2, HAL_MAX_DELAY);
+	val = buf[0] << 8 | buf[1];
+	*humidity = (((float)val*100)/65536);
+}
+/*-----------------------------------------------------------*/
+void SamplePIR(bool *pir)
+{
+	*pir=HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6);/* USER CODE END WHILE */
+}
+/*-----------------------------------------------------------*/
 
 /* -----------------------------------------------------------------------
  |								Commands							      |
