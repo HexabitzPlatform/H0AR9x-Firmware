@@ -17,12 +17,11 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_hal.h"
-
 extern I2C_HandleTypeDef hi2c2;
 
 
-extern void MX_I2C_Init(void);
-extern void MX_I2C2_Init(void);
+extern  void MX_I2C_Init(void);
+ extern void MX_I2C2_Init(void);
 
 #ifdef __cplusplus
 }

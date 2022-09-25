@@ -27,12 +27,27 @@ UART_HandleTypeDef huart6;
 /* Exported variables */
 extern FLASH_ProcessTypeDef pFlash;
 extern uint8_t numOfRecordedSnippets;
+extern I2C_HandleTypeDef hi2c2;
 
 /* Module exported parameters ------------------------------------------------*/
 module_param_t modParam[NUM_MODULE_PARAMS] ={{.paramPtr = NULL, .paramFormat =FMT_FLOAT, .paramName =""}};
-
+float H0AR9_temperature;
 /* Private variables ---------------------------------------------------------*/
+//temprature and humidity sensor addresses
+static const uint8_t tempHumAdd = (0x40)<<1; // Use 7-bit address
+static const uint8_t tempReg = 0x00;
+static const uint8_t humidityReg = 0x01;
 
+/*Define private variables*/
+static bool stopStream = false;
+extern I2C_HandleTypeDef hi2c2;
+
+uint8_t buf[10];
+uint8_t CONTROL, Enable, ATIME, WTIME, PPULSE;
+uint8_t redReg, greenReg, blueReg, distanceReg;
+uint16_t RED_data, GREEN_data, BLUE_data, Prox_data;
+uint16_t val;
+uint8_t pir;
 
 /* Private function prototypes -----------------------------------------------*/
 void ExecuteMonitor(void);
@@ -82,10 +97,8 @@ void SystemClock_Config(void){
 	  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
 	  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
 	  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
-	  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
+      HAL_RCC_OscConfig(&RCC_OscInitStruct);
+
 	  /** Initializes the CPU, AHB and APB buses clocks
 	  */
 	  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
@@ -94,20 +107,17 @@ void SystemClock_Config(void){
 	  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
 	  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
-	  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
+	  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1);
+
 	  /** Initializes the peripherals clocks
 	  */
 	  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART2;
 	  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
 	  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
-	  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
-
+	  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
+	  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C2;
+	  PeriphClkInit.I2c2ClockSelection = RCC_I2C2CLKSOURCE_PCLK1;
+	  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
 	  HAL_NVIC_SetPriority(SysTick_IRQn,0,0);
 	
 }
@@ -389,12 +399,27 @@ void RegisterModuleCLICommands(void){
 
 
 /*-----------------------------------------------------------*/
-
+//void SampleTemperatureToString(char *cstring, size_t maxLen)
+//{
+//	float temprature = 0;
+//	SampleTemperature(&temprature);
+//	temp=temprature;
+//	snprintf(cstring, maxLen, "Temperature: %.2f\r\n", temprature);
+//}
 /* -----------------------------------------------------------------------
  |								  APIs							          | 																 	|
 /* -----------------------------------------------------------------------
  */
 
+void SampleTemperature(float *temperature)
+{
+	buf[0] = tempReg;
+	HAL_I2C_Master_Transmit(&hi2c2, tempHumAdd, buf, 1, HAL_MAX_DELAY);
+	HAL_Delay(20);
+	HAL_I2C_Master_Receive(&hi2c2, tempHumAdd, buf, 2, HAL_MAX_DELAY);
+	val = buf[0] << 8 | buf[1];
+	*temperature=((float)val/65536)*165.0-40.0;
+}
 
 /*-----------------------------------------------------------*/
 
