@@ -90,6 +90,32 @@ static Module_Status PollingSleepCLISafe(uint32_t period);
 void ExecuteMonitor(void);
 
 /* Create CLI commands --------------------------------------------------------*/
+static portBASE_TYPE SampleSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
+static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
+static portBASE_TYPE StopStreamCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
+
+/* CLI command structure : sample */
+const CLI_Command_Definition_t SampleCommandDefinition = {
+	(const int8_t *) "sample",
+	(const int8_t *) "sample:\r\n Syntax: sample [color]/[distance]/[temp]/[humidity]/[pir].\r\n\r\n",
+	SampleSensorCommand,
+	1
+};
+/* CLI command structure : stream */
+const CLI_Command_Definition_t StreamCommandDefinition = {
+	(const int8_t *) "stream",
+	(const int8_t *) "stream:\r\n Syntax: stream [color]/[distance]/[temp]/[humidity]/[pir] (period in ms) (time in ms) [port] [module].\r\n\r\n",
+	StreamSensorCommand,
+	-1
+};
+/* CLI command structure : stop */
+const CLI_Command_Definition_t StopCommandDefinition = {
+	(const int8_t *) "stop",
+	(const int8_t *) "stop:\r\n Syntax: stop\r\n \
+\tStop the current streaming of MEMS values. r\n\r\n",
+	StopStreamCommand,
+	0
+};
 
 /*-----------------------------------------------------------*/
 
@@ -438,6 +464,9 @@ void initialValue(void)
 /* --- Register this module CLI Commands
  */
 void RegisterModuleCLICommands(void){
+	FreeRTOS_CLIRegisterCommand( &SampleCommandDefinition );
+	FreeRTOS_CLIRegisterCommand( &StreamCommandDefinition );
+	FreeRTOS_CLIRegisterCommand( &StopCommandDefinition);
 
 }
 
@@ -622,16 +651,6 @@ void SampleColorToPort(uint8_t port,uint8_t module)
 }
 /*-----------------------------------------------------------*/
 
-void SampleColorBuf(float *buffer)
-{
-	uint16_t rgb[3];
-	SampleColor(rgb,rgb+1,rgb+2);
-	buffer[0]=rgb[0];
-	buffer[1]=rgb[1];
-	buffer[2]=rgb[2];
-}
-/*-----------------------------------------------------------*/
-
 void SampleDistanceToPort(uint8_t port,uint8_t module)
 {
 	float buffer[1]; // Three Samples X, Y, Z
@@ -647,12 +666,90 @@ void SampleDistanceToPort(uint8_t port,uint8_t module)
 		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
 }
 /*-----------------------------------------------------------*/
+void SampleTemperatureToPort(uint8_t port,uint8_t module)
+{
+	float buffer[1];
+	static uint8_t temp[4];
 
+	SampleTemperatureBuf(buffer);
+
+		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
+		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+
+
+		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
+
+
+}
+/*-----------------------------------------------------------*/
+void SampleHumidityToPort(uint8_t port,uint8_t module)
+{
+	float buffer[1];
+	static uint8_t temp[4];
+
+	SampleHumidityBuf(buffer);
+
+		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
+		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+
+		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
+}
+/*-----------------------------------------------------------*/
+void SamplePIRToPort(uint8_t port,uint8_t module)
+{
+	float buffer;
+	bool temp;
+
+	SamplePIRBuf(&buffer);
+
+
+	if(module == myID){
+		temp = buffer;
+		writePxITMutex(port,(char* )&temp,sizeof(bool),10);
+	}
+	else{
+		messageParams[0] =port;
+		messageParams[1] =buffer;
+		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(char)+1);
+	}
+}
+/*-----------------------------------------------------------*/
+
+void SampleColorBuf(float *buffer)
+{
+	uint16_t rgb[3];
+	SampleColor(rgb,rgb+1,rgb+2);
+	buffer[0]=rgb[0];
+	buffer[1]=rgb[1];
+	buffer[2]=rgb[2];
+}
+/*-----------------------------------------------------------*/
 void SampleDistanceBuff(float *buffer)
 {
 	uint16_t distance;
 	SampleDistance(&distance);
 	*buffer = distance;
+}
+/*-----------------------------------------------------------*/
+void SampleTemperatureBuf(float *buffer)
+{
+	SampleTemperature(buffer);
+}
+/*-----------------------------------------------------------*/
+void SampleHumidityBuf(float *buffer)
+{
+	SampleHumidity(buffer);
+}
+/*-----------------------------------------------------------*/
+void SamplePIRBuf(float *buffer)
+{
+	bool pir;
+    SamplePIR(&pir);
+    *buffer = pir;
 }
 /*-----------------------------------------------------------*/
 
@@ -681,7 +778,24 @@ void SampleTemperatureToString(char *cstring, size_t maxLen)
 	float temprature = 0;
 	SampleTemperature(&temprature);
 	temp=temprature;
-	snprintf(cstring, maxLen, "Temperature: %.2f\r\n", temprature);
+	char Number[5]={0};
+	uint16_t x;
+	volatile uint32_t temp1=1;
+	uint16_t x0,x1,x2;
+	temp1=temp;
+
+x0 = (uint8_t) (temp*10 - temp1*10);
+x1 = (uint8_t) (temp1%10);
+x2 = (uint8_t) (temp1/10%10);
+
+if(x2 == 0)  {Number[0] = 0x20;} else {Number[0] = x2 +0x30;}
+Number[1] = x1 +0x30;
+Number[2] = '.';
+Number[3] = x0 +0x30;
+Number[4] = 0;
+//    x=*((long long*)&temp);
+//	temp=atoff(Number);
+	snprintf(cstring, maxLen, "Temperature:  %.4s\r\n", Number);
 }
 /*-----------------------------------------------------------*/
 
@@ -690,7 +804,22 @@ void SampleHumidityToString(char *cstring, size_t maxLen)
 	float humidity = 0;
 	SampleHumidity(&humidity);
 	hum=humidity;
-	snprintf(cstring, maxLen, "Humidity: %.2f\r\n", humidity);
+	char Number[5]={0};
+	uint16_t x;
+	volatile uint32_t temp1=1;
+	uint16_t x0,x1,x2;
+	temp1=hum;
+
+x0 = (uint8_t) (hum*10 - temp1*10);
+x1 = (uint8_t) (temp1%10);
+x2 = (uint8_t) (temp1/10%10);
+
+if(x2 == 0)  {Number[0] = 0x20;} else {Number[0] = x2 +0x30;}
+Number[1] = x1 +0x30;
+Number[2] = '.';
+Number[3] = x0 +0x30;
+Number[4] = 0;
+	snprintf(cstring, maxLen, "Humidity: %.4s\r\n", Number);
 }
 /*-----------------------------------------------------------*/
 
@@ -706,12 +835,16 @@ void SamplePIRToString(char *cstring, size_t maxLen)
 
 void SampleTemperature(float *temperature)
 {
+
 	buf[0] = tempReg;
 	HAL_I2C_Master_Transmit(&hi2c2, tempHumAdd, buf, 1, HAL_MAX_DELAY);
 	HAL_Delay(20);
 	HAL_I2C_Master_Receive(&hi2c2, tempHumAdd, buf, 2, HAL_MAX_DELAY);
 	val = buf[0] << 8 | buf[1];
 	*temperature=((float)val/65536)*165.0-40.0;
+
+
+
 }
 /*-----------------------------------------------------------*/
 void SampleColor(uint16_t *Red, uint16_t *Green, uint16_t *Blue)
@@ -839,7 +972,197 @@ void stopStreamMems(void)
  |								Commands							      |
    -----------------------------------------------------------------------
  */
+static portBASE_TYPE SampleSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+{
+	const char *const colorCmdName = "color";
+	const char *const distanceCmdName = "distance";
+	const char *const temperatureCmdName = "temp";
+	const char *const humidityCmdName = "humidity";
+	const char *const pirCmdName = "pir";
 
+	const char *pSensName = NULL;
+	portBASE_TYPE sensNameLen = 0;
+
+	// Make sure we return something
+	*pcWriteBuffer = '\0';
+
+	pSensName = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 1, &sensNameLen);
+
+	if (pSensName == NULL) {
+		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Invalid Arguments\r\n");
+		return pdFALSE;
+	}
+
+	do {
+		if (!strncmp(pSensName, colorCmdName, strlen(colorCmdName))) {
+			SampleColorToString((char *)pcWriteBuffer, xWriteBufferLen);
+
+		} else if (!strncmp(pSensName, distanceCmdName, strlen(distanceCmdName))) {
+			SampleDistanceToString((char *)pcWriteBuffer, xWriteBufferLen);
+
+
+		} else if (!strncmp(pSensName, temperatureCmdName, strlen(temperatureCmdName))) {
+			SampleTemperatureToString((char *)pcWriteBuffer, xWriteBufferLen);
+
+
+		} else if (!strncmp(pSensName, humidityCmdName, strlen(humidityCmdName))) {
+			SampleHumidityToString((char *)pcWriteBuffer, xWriteBufferLen);
+
+
+		} else if (!strncmp(pSensName, pirCmdName, strlen(pirCmdName))) {
+			SamplePIRToString((char *)pcWriteBuffer, xWriteBufferLen);
+
+		}
+		else {
+			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Invalid Arguments\r\n");
+		}
+
+		return pdFALSE;
+	} while (0);
+
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading Sensor\r\n");
+	return pdFALSE;
+}
+/*-----------------------------------------------------------*/
+// Port Mode => false and CLI Mode => true
+static bool StreamCommandParser(const int8_t *pcCommandString, const char **ppSensName, portBASE_TYPE *pSensNameLen,
+														bool *pPortOrCLI, uint32_t *pPeriod, uint32_t *pTimeout, uint8_t *pPort, uint8_t *pModule)
+{
+	const char *pPeriodMSStr = NULL;
+	const char *pTimeoutMSStr = NULL;
+
+	portBASE_TYPE periodStrLen = 0;
+	portBASE_TYPE timeoutStrLen = 0;
+
+	const char *pPortStr = NULL;
+	const char *pModStr = NULL;
+
+	portBASE_TYPE portStrLen = 0;
+	portBASE_TYPE modStrLen = 0;
+
+	*ppSensName = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 1, pSensNameLen);
+	pPeriodMSStr = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 2, &periodStrLen);
+	pTimeoutMSStr = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 3, &timeoutStrLen);
+
+	// At least 3 Parameters are required!
+	if ((*ppSensName == NULL) || (pPeriodMSStr == NULL) || (pTimeoutMSStr == NULL))
+		return false;
+
+	// TODO: Check if Period and Timeout are integers or not!
+	*pPeriod = atoi(pPeriodMSStr);
+	*pTimeout = atoi(pTimeoutMSStr);
+	*pPortOrCLI = true;
+
+	pPortStr = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 4, &portStrLen);
+	pModStr = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 5, &modStrLen);
+
+	if ((pModStr == NULL) && (pPortStr == NULL))
+		return true;
+	if ((pModStr == NULL) || (pPortStr == NULL))	// If user has provided 4 Arguments.
+		return false;
+
+	*pPort = atoi(pPortStr);
+	*pModule = atoi(pModStr);
+	*pPortOrCLI = false;
+
+	return true;
+}
+/*-----------------------------------------------------------*/
+static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+{
+	const char *const colorCmdName = "color";
+	const char *const distanceCmdName = "distance";
+	const char *const temperatureCmdName = "temp";
+	const char *const humidityCmdName = "humidity";
+	const char *const pirCmdName = "pir";
+
+	uint32_t period = 0;
+	uint32_t timeout = 0;
+	uint8_t port = 0;
+	uint8_t module = 0;
+
+	bool portOrCLI = true; // Port Mode => false and CLI Mode => true
+
+	const char *pSensName = NULL;
+	portBASE_TYPE sensNameLen = 0;
+
+	// Make sure we return something
+	*pcWriteBuffer = '\0';
+
+	if (!StreamCommandParser(pcCommandString, &pSensName, &sensNameLen, &portOrCLI, &period, &timeout, &port, &module)) {
+		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Invalid Arguments\r\n");
+		return pdFALSE;
+	}
+
+	do {
+		if (!strncmp(pSensName, colorCmdName, strlen(colorCmdName))) {
+			if (portOrCLI) {
+				StreamColorToCLI(period, timeout);
+
+			} else {
+				StreamColorToPort(port, module, period, timeout);
+
+			}
+
+		} else if (!strncmp(pSensName, distanceCmdName, strlen(distanceCmdName))) {
+			if (portOrCLI) {
+				StreamDistanceToCLI(period, timeout);
+
+			} else {
+				StreamDistanceToPort(port, module, period, timeout);
+
+			}
+
+		}
+		else if (!strncmp(pSensName, temperatureCmdName, strlen(temperatureCmdName))) {
+			if (portOrCLI) {
+				StreamTemperatureToCLI(period, timeout);
+
+			} else {
+				StreamTemperatureToPort(port, module, period, timeout);
+
+			}
+
+		} else if (!strncmp(pSensName, humidityCmdName, strlen(humidityCmdName))) {
+			if (portOrCLI) {
+				StreamHumidityToCLI(period, timeout);
+
+			} else {
+				StreamHumidityToPort(port, module, period, timeout);
+
+			}
+
+		} else if (!strncmp(pSensName, pirCmdName, strlen(pirCmdName))) {
+			if (portOrCLI) {
+				StreamPIRToCLI(period, timeout);
+
+			} else {
+				StreamPIRToPort(port, module, period, timeout);
+
+			}
+
+		}
+		else {
+			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Invalid Arguments\r\n");
+		}
+
+		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "\r\n");
+		return pdFALSE;
+	} while (0);
+
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading Sensor\r\n");
+	return pdFALSE;
+}
+/*-----------------------------------------------------------*/
+static portBASE_TYPE StopStreamCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+{
+	// Make sure we return something
+	pcWriteBuffer[0] = '\0';
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Stopping Streaming MEMS...\r\n");
+
+	stopStreamMems();
+	return pdFALSE;
+}
 
 
 /*-----------------------------------------------------------*/
