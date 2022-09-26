@@ -36,7 +36,7 @@ void buttonReleasedForYCallback(uint8_t port, uint8_t eventType);
 
 void MX_ADC_Init(void);
 void Error_Handler(void);
-uint8_t Get_channel(UART_HandleTypeDef *huart, char *side);
+uint32_t Get_channel(UART_HandleTypeDef *huart, char *side);
 uint8_t Get_Rank(uint8_t Port, char *side);
 void ReadTempAndVref(float *temp, float *Vref);
 void ReadADCChannel(uint8_t Port, char *side, float *ADC_Value);
@@ -879,7 +879,7 @@ float GetReadPrecentage(uint8_t port, float *precentageValue) {
 
 /* --- Get the ADC_channel Number for a given UART.
  */
-uint8_t Get_channel(UART_HandleTypeDef *huart, char *side) {
+uint32_t Get_channel(UART_HandleTypeDef *huart, char *side) {
 
 	if (huart->Instance == USART2 && side == "top")
 		return ADC_CHANNEL_2;
