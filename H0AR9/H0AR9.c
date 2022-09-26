@@ -48,6 +48,10 @@ module_param_t modParam[NUM_MODULE_PARAMS] = {{.paramPtr=&H0AR9_RGBred, .paramFo
 {.paramPtr=&H0AR9_humidity, .paramFormat=FMT_FLOAT, .paramName="humidity"},
 {.paramPtr=&H0AR9_PIR, .paramFormat=FMT_UINT8, .paramName="PIR"},
 };
+
+
+
+
 #define MIN_MEMS_PERIOD_MS				100
 #define MAX_MEMS_TIMEOUT_MS				0xFFFFFFFF
 float H0AR9_temperature;
@@ -465,7 +469,213 @@ void RegisterModuleCLICommands(void){
 
 
 
+
 /*-----------------------------------------------------------*/
+static Module_Status StreamMemsToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout, SampleMemsToPort function)
+{
+	Module_Status status = H0AR9_OK;
+
+
+	if (period < MIN_MEMS_PERIOD_MS)
+		return H0AR9_ERR_WrongParams;
+	if (port == 0)
+		return H0AR9_ERR_WrongParams;
+	if (port == PcPort) // Check if CLI is not enabled at that port!
+		return H0AR9_ERR_BUSY;
+
+	if (period > timeout)
+		timeout = period;
+
+	long numTimes = timeout / period;
+	stopStream = false;
+
+	while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+		function(port, module);
+
+		vTaskDelay(pdMS_TO_TICKS(period));
+		if (stopStream) {
+			status = H0AR9_ERR_TERMINATED;
+			break;
+		}
+	}
+	return status;
+}
+/*-----------------------------------------------------------*/
+
+static Module_Status StreamMemsToBuf( float *buffer, uint32_t period, uint32_t timeout, SampleMemsToBuffer function)
+
+{
+	Module_Status status = H0AR9_OK;
+
+	if (period < MIN_MEMS_PERIOD_MS)
+		return H0AR9_ERR_WrongParams;
+
+	// TODO: Check if CLI is enable or not
+
+	if (period > timeout)
+		timeout = period;
+
+	long numTimes = timeout / period;
+	stopStream = false;
+
+	while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+		function(buffer);
+
+		vTaskDelay(pdMS_TO_TICKS(period));
+		if (stopStream) {
+			status = H0AR9_ERR_TERMINATED;
+			break;
+		}
+	}
+	return status;
+}
+/*-----------------------------------------------------------*/
+
+static Module_Status StreamMemsToCLI(uint32_t period, uint32_t timeout, SampleMemsToString function)
+{
+	Module_Status status = H0AR9_OK;
+	int8_t *pcOutputString = NULL;
+
+	if (period < MIN_MEMS_PERIOD_MS)
+		return H0AR9_ERR_WrongParams;
+
+	// TODO: Check if CLI is enable or not
+
+	if (period > timeout)
+		timeout = period;
+
+	long numTimes = timeout / period;
+	stopStream = false;
+
+	while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+		function((char *)pcOutputString, 100);
+
+
+		writePxMutex(PcPort, (char *)pcOutputString, strlen((char *)pcOutputString), cmd500ms, HAL_MAX_DELAY);
+		if (PollingSleepCLISafe(period) != H0AR9_OK)
+			break;
+	}
+
+	memset((char *) pcOutputString, 0, configCOMMAND_INT_MAX_OUTPUT_SIZE);
+  sprintf((char *)pcOutputString, "\r\n");
+	return status;
+}
+/*-----------------------------------------------------------*/
+
+/* --- Save array topology and Command Snippets in Flash RO ---
+*/
+static Module_Status PollingSleepCLISafe(uint32_t period)
+{
+	const unsigned DELTA_SLEEP_MS = 100; // milliseconds
+	long numDeltaDelay =  period / DELTA_SLEEP_MS;
+	unsigned lastDelayMS = period % DELTA_SLEEP_MS;
+
+	while (numDeltaDelay-- > 0) {
+		vTaskDelay(pdMS_TO_TICKS(DELTA_SLEEP_MS));
+
+		// Look for ENTER key to stop the stream
+		for (uint8_t chr=0 ; chr<MSG_RX_BUF_SIZE ; chr++)
+		{
+			if (UARTRxBuf[PcPort-1][chr] == '\r') {
+				UARTRxBuf[PcPort-1][chr] = 0;
+				return H0AR9_ERR_TERMINATED;
+			}
+		}
+
+		if (stopStream)
+			return H0AR9_ERR_TERMINATED;
+	}
+
+	vTaskDelay(pdMS_TO_TICKS(lastDelayMS));
+	return H0AR9_OK;
+}
+/* -----------------------------------------------------------------------
+ |								  APIs							          | 																 	|
+/* -----------------------------------------------------------------------
+ */
+void SampleColorToPort(uint8_t port,uint8_t module)
+{
+	float buffer[3]; // Three Samples RED, GREEN, BLUE
+	static uint8_t temp[12];
+
+	SampleColorBuf(buffer);
+
+
+		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
+		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+
+		temp[4] =*((__IO uint8_t* )(&buffer[1]) + 3);
+		temp[5] =*((__IO uint8_t* )(&buffer[1]) + 2);
+		temp[6] =*((__IO uint8_t* )(&buffer[1]) + 1);
+		temp[7] =*((__IO uint8_t* )(&buffer[1]) + 0);
+
+		temp[8] =*((__IO uint8_t* )(&buffer[2]) + 3);
+		temp[9] =*((__IO uint8_t* )(&buffer[2]) + 2);
+		temp[10] =*((__IO uint8_t* )(&buffer[2]) + 1);
+		temp[11] =*((__IO uint8_t* )(&buffer[2]) + 0);
+
+		writePxITMutex(port,(char* )&temp[0],12 * sizeof(uint8_t),10);
+
+}
+/*-----------------------------------------------------------*/
+
+void SampleColorBuf(float *buffer)
+{
+	uint16_t rgb[3];
+	SampleColor(rgb,rgb+1,rgb+2);
+	buffer[0]=rgb[0];
+	buffer[1]=rgb[1];
+	buffer[2]=rgb[2];
+}
+/*-----------------------------------------------------------*/
+
+void SampleDistanceToPort(uint8_t port,uint8_t module)
+{
+	float buffer[1]; // Three Samples X, Y, Z
+	static uint8_t temp[4];
+
+	SampleDistanceBuff(buffer);
+
+		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
+		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+
+		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
+}
+/*-----------------------------------------------------------*/
+
+void SampleDistanceBuff(float *buffer)
+{
+	uint16_t distance;
+	SampleDistance(&distance);
+	*buffer = distance;
+}
+/*-----------------------------------------------------------*/
+
+void SampleColorToString(char *cstring, size_t maxLen)
+{
+	uint16_t red = 0, green = 0, blue = 0;
+	SampleColor(&red, &green, &blue);
+	Red=red;
+	Green=green;
+	Blue=blue;
+	snprintf(cstring, maxLen, "Red: %d, Green: %d, Blue: %d\r\n", red, green, blue);
+}
+/*-----------------------------------------------------------*/
+
+void SampleDistanceToString(char *cstring, size_t maxLen)
+{
+	uint16_t distance = 0;
+	SampleDistance(&distance);
+	distance1=distance;
+	snprintf(cstring, maxLen, "Distance: %d\r\n", distance);
+}
+/*-----------------------------------------------------------*/
+
 void SampleTemperatureToString(char *cstring, size_t maxLen)
 {
 	float temprature = 0;
@@ -473,10 +683,26 @@ void SampleTemperatureToString(char *cstring, size_t maxLen)
 	temp=temprature;
 	snprintf(cstring, maxLen, "Temperature: %.2f\r\n", temprature);
 }
-/* -----------------------------------------------------------------------
- |								  APIs							          | 																 	|
-/* -----------------------------------------------------------------------
- */
+/*-----------------------------------------------------------*/
+
+void SampleHumidityToString(char *cstring, size_t maxLen)
+{
+	float humidity = 0;
+	SampleHumidity(&humidity);
+	hum=humidity;
+	snprintf(cstring, maxLen, "Humidity: %.2f\r\n", humidity);
+}
+/*-----------------------------------------------------------*/
+
+void SamplePIRToString(char *cstring, size_t maxLen)
+{
+	bool sample;
+	SamplePIR(&sample);
+	Sample=sample;
+	snprintf(cstring, maxLen, "PIR: %d\r\n", sample);
+}
+/*-----------------------------------------------------------*/
+
 
 void SampleTemperature(float *temperature)
 {
@@ -516,7 +742,99 @@ void SamplePIR(bool *pir)
 	*pir=HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6);/* USER CODE END WHILE */
 }
 /*-----------------------------------------------------------*/
+Module_Status StreamColorToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout)
+{
+	return StreamMemsToPort(port, module, period, timeout, SampleColorToPort);
+}
+/*-----------------------------------------------------------*/
 
+Module_Status StreamDistanceToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout)
+{
+	return StreamMemsToPort(port, module, period, timeout, SampleDistanceToPort);
+}
+/*-----------------------------------------------------------*/
+
+Module_Status StreamTemperatureToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout)
+{
+	return StreamMemsToPort(port, module, period, timeout, SampleTemperatureToPort);
+}
+/*-----------------------------------------------------------*/
+
+Module_Status StreamHumidityToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout)
+{
+	return StreamMemsToPort(port, module, period, timeout, SampleHumidityToPort);
+}
+/*-----------------------------------------------------------*/
+
+Module_Status StreamPIRToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout)
+{
+	return StreamMemsToPort(port, module, period, timeout, SamplePIRToPort);
+}
+/*-----------------------------------------------------------*/
+
+Module_Status StreamColorToBuffer(float *buffer, uint32_t period, uint32_t timeout)
+{
+	 return StreamMemsToBuf(buffer, period, timeout, SampleColorBuf);
+}
+/*-----------------------------------------------------------*/
+
+Module_Status StreamDistanceToBuffer(float *buffer, uint32_t period, uint32_t timeout)
+{
+	return StreamMemsToBuf(buffer, period, timeout, SampleDistanceBuff);
+}
+/*-----------------------------------------------------------*/
+
+Module_Status StreamTemperatureToBuffer(float *buffer, uint32_t period, uint32_t timeout)
+{
+	return StreamMemsToBuf(buffer, period, timeout, SampleTemperatureBuf);
+}
+/*-----------------------------------------------------------*/
+
+Module_Status StreamHumidityToBuffer(float *buffer, uint32_t period, uint32_t timeout)
+{
+	return StreamMemsToBuf(buffer, period, timeout, SampleHumidityBuf);
+}
+/*-----------------------------------------------------------*/
+Module_Status StreamPIRToBuffer(float *buffer, uint32_t period, uint32_t timeout)
+{
+	return StreamMemsToBuf(buffer, period, timeout, SamplePIRBuf);
+}
+/*-----------------------------------------------------------*/
+Module_Status StreamColorToCLI(uint32_t period, uint32_t timeout)
+{
+	return StreamMemsToCLI(period, timeout, SampleColorToString);
+}
+/*-----------------------------------------------------------*/
+
+Module_Status StreamDistanceToCLI(uint32_t period, uint32_t timeout)
+{
+	return StreamMemsToCLI(period, timeout, SampleDistanceToString);
+}
+/*-----------------------------------------------------------*/
+
+Module_Status StreamTemperatureToCLI(uint32_t period, uint32_t timeout)
+{
+	return StreamMemsToCLI(period, timeout, SampleTemperatureToString);
+}
+
+/*-----------------------------------------------------------*/
+
+Module_Status StreamHumidityToCLI(uint32_t period, uint32_t timeout)
+{
+	return StreamMemsToCLI(period, timeout, SampleHumidityToString);
+}
+/*-----------------------------------------------------------*/
+
+Module_Status StreamPIRToCLI(uint32_t period, uint32_t timeout)
+{
+	return StreamMemsToCLI(period, timeout, SamplePIRToString);
+}
+/*-----------------------------------------------------------*/
+
+void stopStreamMems(void)
+{
+	stopStream = true;
+}
 /* -----------------------------------------------------------------------
  |								Commands							      |
    -----------------------------------------------------------------------
