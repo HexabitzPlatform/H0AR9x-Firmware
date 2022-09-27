@@ -392,19 +392,90 @@ void Module_Peripheral_Init(void){
 /*-----------------------------------------------------------*/
 /* --- H0AR9 message processing task.
  */
-Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_t dst,uint8_t shift){
-	Module_Status result =H0AR9_OK;
+Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uint8_t dst, uint8_t shift)
+{
+	Module_Status result = H0AR9_OK;
+	uint32_t period = 0, timeout = 0;
 
+	switch (code)
+	{
+		case CODE_H0AR9_SAMPLE_COLOR:
+		{
+			SampleColorToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift]);
+			break;
+		}
+		case CODE_H0AR9_SAMPLE_DISTANCE:
+		{
+			SampleDistanceToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift]);
+			break;
+		}
+		case CODE_H0AR9_SAMPLE_TEMP:
+		{
+			SampleTemperatureToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift]);
+			break;
+		}
+		case CODE_H0AR9_SAMPLE_HUMIDITY:
+		{
+			SampleHumidityToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift]);
+			break;
+		}
+		case CODE_H0AR9_SAMPLE_PIR:
+		{
+			SamplePIRToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift]);
+			break;
+		}
 
-	switch(code){
+		case CODE_H0AR9_STREAM_COLOR:
+		{
+			period = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] << 24);
+			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift] << 24);
+			StreamColorToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout);
+			break;
+		}
+
+		case CODE_H0AR9_STREAM_DISTANCE:
+		{
+			period = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] <<24);
+			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift]<<24);
+			StreamDistanceToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout);
+			break;
+		}
+		case CODE_H0AR9_STREAM_TEMP:
+		{
+			period = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift]<<24);
+			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift]<<24);
+			StreamTemperatureToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout);
+			break;
+		}
+		case CODE_H0AR9_STREAM_HUMIDITY:
+		{
+			period = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift]<<24);
+			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift]<<24);
+			StreamHumidityToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout);
+			break;
+		}
+		case CODE_H0AR9_STREAM_PIR:
+		{
+			period = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] <<24);
+			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift] <<24);
+			StreamPIRToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout);
+			break;
+		}
+		case CODE_H0AR9_STREAM_STOP:
+		{
+			stopStreamMems();
+			result = H0AR9_OK;
+			break;
+		}
 
 		default:
-			result =H0AR9_ERR_UnknownMessage;
+			result = H0AR9_ERR_UnknownMessage;
 			break;
 	}
-	
+
 	return result;
 }
+
 /* --- Get the port for a given UART. 
  */
 uint8_t GetPort(UART_HandleTypeDef *huart){
@@ -673,13 +744,24 @@ void SampleTemperatureToPort(uint8_t port,uint8_t module)
 
 	SampleTemperatureBuf(buffer);
 
-		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+	if(module == myID){
+			temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
+			temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
+			temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
+			temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
 
 
-		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
+			writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
+		}
+		else{
+			messageParams[0] =port;
+			messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
+			messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
+			messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
+			messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
+
+			SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(float)+1);
+		}
 
 
 }
