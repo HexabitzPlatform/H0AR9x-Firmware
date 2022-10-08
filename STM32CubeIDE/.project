@@ -164,6 +164,16 @@
 			<locationURI>PARENT-1-PROJECT_LOC/H0AR9/H0AR9_gpio.h</locationURI>
 		</link>
 		<link>
+			<name>H0AR9/H0AR9_i2c.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/H0AR9/H0AR9_i2c.c</locationURI>
+		</link>
+		<link>
+			<name>H0AR9/H0AR9_i2c.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/H0AR9/H0AR9_i2c.h</locationURI>
+		</link>
+		<link>
 			<name>H0AR9/H0AR9_inputs.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/H0AR9/H0AR9_inputs.c</locationURI>
