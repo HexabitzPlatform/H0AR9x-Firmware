@@ -955,6 +955,7 @@ void SampleHumidity(float *humidity)
 void SamplePIR(bool *pir)
 {
 	*pir=HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6);/* USER CODE END WHILE */
+	 Delay_ms(2000);
 }
 /*-----------------------------------------------------------*/
 Module_Status StreamColorToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout)
