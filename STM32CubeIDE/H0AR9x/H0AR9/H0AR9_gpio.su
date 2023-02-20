@@ -1,5 +1,0 @@
-H0AR9_gpio.c:35:6:IND_LED_Init	32	static
-H0AR9_gpio.c:22:6:GPIO_Init	32	static
-H0AR9_gpio.c:47:6:SENSORS_GPIO_Init	32	static
-H0AR9_gpio.c:124:12:GetPortGPIOs	16	static
-H0AR9_gpio.c:70:9:IsFactoryReset	88	static

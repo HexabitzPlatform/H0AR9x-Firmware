@@ -17,17 +17,14 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f0xx_hal.h"
-
+#include "stm32g0xx_hal.h"
 
 extern void GPIO_Init(void);
 extern void IND_LED_Init(void);
 extern void SENSORS_GPIO_Init(void);
-
 #ifdef __cplusplus
 }
 #endif
 #endif /*__gpio_H */
-
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

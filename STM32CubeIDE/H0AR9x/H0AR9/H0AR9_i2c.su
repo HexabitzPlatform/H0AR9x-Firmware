@@ -1,4 +1,0 @@
-H0AR9_i2c.c:48:6:MX_I2C1_Init	8	static
-H0AR9_i2c.c:34:6:MX_I2C_Init	32	static
-H0AR9_i2c.c:75:6:WriteRegData	16	static
-H0AR9_i2c.c:84:10:Read_Word	24	static
