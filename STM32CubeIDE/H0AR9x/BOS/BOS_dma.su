@@ -1,3 +1,0 @@
-BOS_dma.c:47:12:StartDMAstream	24	static
-BOS_dma.c:82:6:DMA_IRQHandler	16	static
-BOS_dma.c:100:6:ResetUartORE	0	static
