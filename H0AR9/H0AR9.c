@@ -960,7 +960,50 @@ void SampleColor(uint16_t *Red, uint16_t *Green, uint16_t *Blue)
 /*-----------------------------------------------------------*/
 void SampleDistance(uint16_t *distance)
 {
-	*distance = Read_Word(distanceReg)/6.39;
+//	*distance = Read_Word(distanceReg)/6.39;
+	/*   */
+	uint16_t median_value;
+	uint16_t count = 0;
+	float summ = 0.0f;
+
+	median_value=1078-(summ/300);
+
+		while(count<300)
+		{	count++;
+		    summ+=Read_Word(distanceReg);
+			Delay_ms(1.5);
+		}
+
+		if(median_value>=1020&&median_value<1080)
+			*distance=100;
+
+		if(median_value>=1010&&median_value<1020)
+			*distance=90+(median_value%10);
+
+		if(median_value>=1000&&median_value<1010)
+			*distance=80+(median_value%10);
+
+		if(median_value>=990&&median_value<1000)
+			*distance=70+(median_value%10);
+
+		if(median_value>=970&&median_value<990)
+			*distance=60+((median_value%10)/2);
+
+		if(median_value>=950&&median_value<970)
+			*distance=50+((median_value%10)/2);
+
+		if(median_value>=850&&median_value<950)
+			*distance=40+(((median_value+50)%100)/10);
+
+		if(median_value>=700&&median_value<850)
+			*distance=30+((median_value-700)/15);
+
+		if(median_value>=400&&median_value<700)
+			*distance=20;
+
+		if(median_value>=0&&median_value<400)
+			*distance=0;
+
 }
 
 /*-----------------------------------------------------------*/
