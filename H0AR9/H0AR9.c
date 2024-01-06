@@ -966,14 +966,14 @@ void SampleDistance(uint16_t *distance)
 	uint16_t count = 0;
 	float summ = 0.0f;
 
-	median_value=1078-(summ/300);
+
 
 		while(count<300)
 		{	count++;
 		    summ+=Read_Word(distanceReg);
 			Delay_ms(1.5);
 		}
-
+median_value=1078-(summ/300);
 		if(median_value>=1020&&median_value<1080)
 			*distance=100;
 
