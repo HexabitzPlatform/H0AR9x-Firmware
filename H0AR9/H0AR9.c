@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.0 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.3.1 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
 
  File Name     : H0AR9.c
@@ -1020,7 +1020,7 @@ void SampleHumidity(float *humidity)
 void SamplePIR(bool *pir)
 {
 	*pir=HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6);/* USER CODE END WHILE */
-	 Delay_ms(2000);
+	 Delay_ms(1000);
 }
 /*-----------------------------------------------------------*/
 Module_Status StreamColorToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout)
