@@ -26,7 +26,8 @@ int main(void){
 
 /* User Task */
 void UserTask(void *argument){
-	StreamTemperatureToPort(2, 0, 100, 5000);
+//	StreamHumidityToPort(2, 0, 100, 5000);
+//	StreamTemperatureToPort(2, 0, 100, 5000);
 //	StreamColorToPort(2, 1, 100, 5000);
 //	StreamDistanceToPort(2, 5, 100, 5000);
 	// put your code here, to run repeatedly.
