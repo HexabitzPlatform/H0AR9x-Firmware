@@ -848,15 +848,14 @@ void SamplePIRToPort(uint8_t port,uint8_t module)
 
 	SamplePIRBuf(&buffer);
 
-
-	if(module == myID){
-		temp = buffer;
+	if(module == myID || module == 0){
+		temp =buffer;
 		writePxITMutex(port,(char* )&temp,sizeof(bool),10);
 	}
 	else{
 		messageParams[0] =port;
 		messageParams[1] =buffer;
-		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(char)+1);
+		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(char) + 1);
 	}
 }
 /*-----------------------------------------------------------*/

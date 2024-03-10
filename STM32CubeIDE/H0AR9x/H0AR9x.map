@@ -4946,455 +4946,454 @@ LOAD C:/ST/STM32CubeIDE_1.14.1/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
                 0x0000000008012e78       0xcc H0AR9\H0AR9.o
                 0x0000000008012e78                SampleHumidityToPort
  .text.SamplePIRToPort
-                0x0000000008012f44       0x8c H0AR9\H0AR9.o
+                0x0000000008012f44       0x98 H0AR9\H0AR9.o
                 0x0000000008012f44                SamplePIRToPort
  .text.SampleColorBuf
-                0x0000000008012fd0       0x58 H0AR9\H0AR9.o
-                0x0000000008012fd0                SampleColorBuf
+                0x0000000008012fdc       0x58 H0AR9\H0AR9.o
+                0x0000000008012fdc                SampleColorBuf
  .text.SampleDistanceBuff
-                0x0000000008013028       0x2a H0AR9\H0AR9.o
-                0x0000000008013028                SampleDistanceBuff
+                0x0000000008013034       0x2a H0AR9\H0AR9.o
+                0x0000000008013034                SampleDistanceBuff
  .text.SampleTemperatureBuf
-                0x0000000008013052       0x18 H0AR9\H0AR9.o
-                0x0000000008013052                SampleTemperatureBuf
+                0x000000000801305e       0x18 H0AR9\H0AR9.o
+                0x000000000801305e                SampleTemperatureBuf
  .text.SampleHumidityBuf
-                0x000000000801306a       0x18 H0AR9\H0AR9.o
-                0x000000000801306a                SampleHumidityBuf
+                0x0000000008013076       0x18 H0AR9\H0AR9.o
+                0x0000000008013076                SampleHumidityBuf
  .text.SamplePIRBuf
-                0x0000000008013082       0x2a H0AR9\H0AR9.o
-                0x0000000008013082                SamplePIRBuf
+                0x000000000801308e       0x2a H0AR9\H0AR9.o
+                0x000000000801308e                SamplePIRBuf
  .text.SampleColorToString
-                0x00000000080130ac       0x84 H0AR9\H0AR9.o
-                0x00000000080130ac                SampleColorToString
+                0x00000000080130b8       0x84 H0AR9\H0AR9.o
+                0x00000000080130b8                SampleColorToString
  .text.SampleDistanceToString
-                0x0000000008013130       0x44 H0AR9\H0AR9.o
-                0x0000000008013130                SampleDistanceToString
+                0x000000000801313c       0x44 H0AR9\H0AR9.o
+                0x000000000801313c                SampleDistanceToString
  .text.SampleTemperatureToString
-                0x0000000008013174      0x11c H0AR9\H0AR9.o
-                0x0000000008013174                SampleTemperatureToString
+                0x0000000008013180      0x11c H0AR9\H0AR9.o
+                0x0000000008013180                SampleTemperatureToString
  .text.SampleHumidityToString
-                0x0000000008013290      0x11c H0AR9\H0AR9.o
-                0x0000000008013290                SampleHumidityToString
+                0x000000000801329c      0x11c H0AR9\H0AR9.o
+                0x000000000801329c                SampleHumidityToString
  .text.SamplePIRToString
-                0x00000000080133ac       0x40 H0AR9\H0AR9.o
-                0x00000000080133ac                SamplePIRToString
+                0x00000000080133b8       0x40 H0AR9\H0AR9.o
+                0x00000000080133b8                SamplePIRToString
  .text.SampleTemperature
-                0x00000000080133ec       0xb8 H0AR9\H0AR9.o
-                0x00000000080133ec                SampleTemperature
+                0x00000000080133f8       0xb8 H0AR9\H0AR9.o
+                0x00000000080133f8                SampleTemperature
  .text.SampleColor
-                0x00000000080134a4       0x58 H0AR9\H0AR9.o
-                0x00000000080134a4                SampleColor
+                0x00000000080134b0       0x58 H0AR9\H0AR9.o
+                0x00000000080134b0                SampleColor
  .text.SampleDistance
-                0x00000000080134fc      0x25c H0AR9\H0AR9.o
-                0x00000000080134fc                SampleDistance
+                0x0000000008013508      0x25c H0AR9\H0AR9.o
+                0x0000000008013508                SampleDistance
  .text.SampleHumidity
-                0x0000000008013758       0x94 H0AR9\H0AR9.o
-                0x0000000008013758                SampleHumidity
+                0x0000000008013764       0x94 H0AR9\H0AR9.o
+                0x0000000008013764                SampleHumidity
  .text.SamplePIR
-                0x00000000080137ec       0x34 H0AR9\H0AR9.o
-                0x00000000080137ec                SamplePIR
+                0x00000000080137f8       0x34 H0AR9\H0AR9.o
+                0x00000000080137f8                SamplePIR
  .text.StreamColorToPort
-                0x0000000008013820       0x40 H0AR9\H0AR9.o
-                0x0000000008013820                StreamColorToPort
+                0x000000000801382c       0x40 H0AR9\H0AR9.o
+                0x000000000801382c                StreamColorToPort
  .text.StreamDistanceToPort
-                0x0000000008013860       0x40 H0AR9\H0AR9.o
-                0x0000000008013860                StreamDistanceToPort
+                0x000000000801386c       0x40 H0AR9\H0AR9.o
+                0x000000000801386c                StreamDistanceToPort
  .text.StreamTemperatureToPort
-                0x00000000080138a0       0x40 H0AR9\H0AR9.o
-                0x00000000080138a0                StreamTemperatureToPort
+                0x00000000080138ac       0x40 H0AR9\H0AR9.o
+                0x00000000080138ac                StreamTemperatureToPort
  .text.StreamHumidityToPort
-                0x00000000080138e0       0x40 H0AR9\H0AR9.o
-                0x00000000080138e0                StreamHumidityToPort
+                0x00000000080138ec       0x40 H0AR9\H0AR9.o
+                0x00000000080138ec                StreamHumidityToPort
  .text.StreamPIRToPort
-                0x0000000008013920       0x40 H0AR9\H0AR9.o
-                0x0000000008013920                StreamPIRToPort
+                0x000000000801392c       0x40 H0AR9\H0AR9.o
+                0x000000000801392c                StreamPIRToPort
  .text.StreamColorToCLI
-                0x0000000008013960       0x24 H0AR9\H0AR9.o
-                0x0000000008013960                StreamColorToCLI
+                0x000000000801396c       0x24 H0AR9\H0AR9.o
+                0x000000000801396c                StreamColorToCLI
  .text.StreamDistanceToCLI
-                0x0000000008013984       0x24 H0AR9\H0AR9.o
-                0x0000000008013984                StreamDistanceToCLI
+                0x0000000008013990       0x24 H0AR9\H0AR9.o
+                0x0000000008013990                StreamDistanceToCLI
  .text.StreamTemperatureToCLI
-                0x00000000080139a8       0x24 H0AR9\H0AR9.o
-                0x00000000080139a8                StreamTemperatureToCLI
+                0x00000000080139b4       0x24 H0AR9\H0AR9.o
+                0x00000000080139b4                StreamTemperatureToCLI
  .text.StreamHumidityToCLI
-                0x00000000080139cc       0x24 H0AR9\H0AR9.o
-                0x00000000080139cc                StreamHumidityToCLI
+                0x00000000080139d8       0x24 H0AR9\H0AR9.o
+                0x00000000080139d8                StreamHumidityToCLI
  .text.StreamPIRToCLI
-                0x00000000080139f0       0x24 H0AR9\H0AR9.o
-                0x00000000080139f0                StreamPIRToCLI
+                0x00000000080139fc       0x24 H0AR9\H0AR9.o
+                0x00000000080139fc                StreamPIRToCLI
  .text.stopStreamMems
-                0x0000000008013a14       0x14 H0AR9\H0AR9.o
-                0x0000000008013a14                stopStreamMems
+                0x0000000008013a20       0x14 H0AR9\H0AR9.o
+                0x0000000008013a20                stopStreamMems
  .text.SampleSensorCommand
-                0x0000000008013a28      0x144 H0AR9\H0AR9.o
+                0x0000000008013a34      0x144 H0AR9\H0AR9.o
  .text.StreamCommandParser
-                0x0000000008013b6c      0x116 H0AR9\H0AR9.o
- *fill*         0x0000000008013c82        0x2 
+                0x0000000008013b78      0x116 H0AR9\H0AR9.o
+ *fill*         0x0000000008013c8e        0x2 
  .text.StreamSensorCommand
-                0x0000000008013c84      0x238 H0AR9\H0AR9.o
+                0x0000000008013c90      0x238 H0AR9\H0AR9.o
  .text.StopStreamCommand
-                0x0000000008013ebc       0x30 H0AR9\H0AR9.o
+                0x0000000008013ec8       0x30 H0AR9\H0AR9.o
  .text.LL_DMAMUX_SetRequestID
-                0x0000000008013eec       0x3c H0AR9\H0AR9_dma.o
+                0x0000000008013ef8       0x3c H0AR9\H0AR9_dma.o
  .text.DMA_Init
-                0x0000000008013f28       0xbc H0AR9\H0AR9_dma.o
-                0x0000000008013f28                DMA_Init
+                0x0000000008013f34       0xbc H0AR9\H0AR9_dma.o
+                0x0000000008013f34                DMA_Init
  .text.DMA_MSG_RX_CH_Init
-                0x0000000008013fe4       0x4c H0AR9\H0AR9_dma.o
-                0x0000000008013fe4                DMA_MSG_RX_CH_Init
+                0x0000000008013ff0       0x4c H0AR9\H0AR9_dma.o
+                0x0000000008013ff0                DMA_MSG_RX_CH_Init
  .text.DMA_STREAM_CH_Init
-                0x0000000008014030       0x4c H0AR9\H0AR9_dma.o
-                0x0000000008014030                DMA_STREAM_CH_Init
+                0x000000000801403c       0x4c H0AR9\H0AR9_dma.o
+                0x000000000801403c                DMA_STREAM_CH_Init
  .text.SetupMessagingRxDMAs
-                0x000000000801407c       0xb8 H0AR9\H0AR9_dma.o
-                0x000000000801407c                SetupMessagingRxDMAs
+                0x0000000008014088       0xb8 H0AR9\H0AR9_dma.o
+                0x0000000008014088                SetupMessagingRxDMAs
  .text.DMA_MSG_RX_Setup
-                0x0000000008014134       0x38 H0AR9\H0AR9_dma.o
-                0x0000000008014134                DMA_MSG_RX_Setup
+                0x0000000008014140       0x38 H0AR9\H0AR9_dma.o
+                0x0000000008014140                DMA_MSG_RX_Setup
  .text.DMA_MSG_TX_UnSetup
-                0x000000000801416c       0x28 H0AR9\H0AR9_dma.o
-                0x000000000801416c                DMA_MSG_TX_UnSetup
+                0x0000000008014178       0x28 H0AR9\H0AR9_dma.o
+                0x0000000008014178                DMA_MSG_TX_UnSetup
  .text.DMA_STREAM_Setup
-                0x0000000008014194       0x68 H0AR9\H0AR9_dma.o
-                0x0000000008014194                DMA_STREAM_Setup
+                0x00000000080141a0       0x68 H0AR9\H0AR9_dma.o
+                0x00000000080141a0                DMA_STREAM_Setup
  .text.StopStreamDMA
-                0x00000000080141fc       0x70 H0AR9\H0AR9_dma.o
-                0x00000000080141fc                StopStreamDMA
+                0x0000000008014208       0x70 H0AR9\H0AR9_dma.o
+                0x0000000008014208                StopStreamDMA
  .text.StopMsgDMA
-                0x000000000801426c       0x4c H0AR9\H0AR9_dma.o
-                0x000000000801426c                StopMsgDMA
+                0x0000000008014278       0x4c H0AR9\H0AR9_dma.o
+                0x0000000008014278                StopMsgDMA
  .text.SwitchMsgDMAToStream
-                0x00000000080142b8       0x50 H0AR9\H0AR9_dma.o
-                0x00000000080142b8                SwitchMsgDMAToStream
+                0x00000000080142c4       0x50 H0AR9\H0AR9_dma.o
+                0x00000000080142c4                SwitchMsgDMAToStream
  .text.SwitchStreamDMAToMsg
-                0x0000000008014308       0xd8 H0AR9\H0AR9_dma.o
-                0x0000000008014308                SwitchStreamDMAToMsg
+                0x0000000008014314       0xd8 H0AR9\H0AR9_dma.o
+                0x0000000008014314                SwitchStreamDMAToMsg
  .text.UnSetupDMAInterrupts
-                0x00000000080143e0       0xe4 H0AR9\H0AR9_dma.o
-                0x00000000080143e0                UnSetupDMAInterrupts
+                0x00000000080143ec       0xe4 H0AR9\H0AR9_dma.o
+                0x00000000080143ec                UnSetupDMAInterrupts
  .text.RemapAndLinkDMAtoUARTRx
-                0x00000000080144c4      0x134 H0AR9\H0AR9_dma.o
-                0x00000000080144c4                RemapAndLinkDMAtoUARTRx
+                0x00000000080144d0      0x134 H0AR9\H0AR9_dma.o
+                0x00000000080144d0                RemapAndLinkDMAtoUARTRx
  .text.CRC_Init
-                0x00000000080145f8       0x44 H0AR9\H0AR9_dma.o
-                0x00000000080145f8                CRC_Init
+                0x0000000008014604       0x44 H0AR9\H0AR9_dma.o
+                0x0000000008014604                CRC_Init
  .text.HAL_CRC_MspInit
-                0x000000000801463c       0x30 H0AR9\H0AR9_dma.o
-                0x000000000801463c                HAL_CRC_MspInit
+                0x0000000008014648       0x30 H0AR9\H0AR9_dma.o
+                0x0000000008014648                HAL_CRC_MspInit
  .text.CalculateCRC8
-                0x000000000801466c      0x154 H0AR9\H0AR9_dma.o
-                0x000000000801466c                CalculateCRC8
- .text.EE_Init  0x00000000080147c0      0x680 H0AR9\H0AR9_eeprom.o
-                0x00000000080147c0                EE_Init
+                0x0000000008014678      0x154 H0AR9\H0AR9_dma.o
+                0x0000000008014678                CalculateCRC8
+ .text.EE_Init  0x00000000080147cc      0x680 H0AR9\H0AR9_eeprom.o
+                0x00000000080147cc                EE_Init
  .text.EE_ReadVariable
-                0x0000000008014e40       0xc0 H0AR9\H0AR9_eeprom.o
-                0x0000000008014e40                EE_ReadVariable
+                0x0000000008014e4c       0xc0 H0AR9\H0AR9_eeprom.o
+                0x0000000008014e4c                EE_ReadVariable
  .text.EE_WriteVariable
-                0x0000000008014f00       0x64 H0AR9\H0AR9_eeprom.o
-                0x0000000008014f00                EE_WriteVariable
+                0x0000000008014f0c       0x64 H0AR9\H0AR9_eeprom.o
+                0x0000000008014f0c                EE_WriteVariable
  .text.EE_Format
-                0x0000000008014f64      0x14c H0AR9\H0AR9_eeprom.o
-                0x0000000008014f64                EE_Format
+                0x0000000008014f70      0x14c H0AR9\H0AR9_eeprom.o
+                0x0000000008014f70                EE_Format
  .text.EE_FindValidPage
-                0x00000000080150b0       0x90 H0AR9\H0AR9_eeprom.o
+                0x00000000080150bc       0x90 H0AR9\H0AR9_eeprom.o
  .text.EE_VerifyPageFullWriteVariable
-                0x0000000008015140      0x11c H0AR9\H0AR9_eeprom.o
+                0x000000000801514c      0x11c H0AR9\H0AR9_eeprom.o
  .text.EE_PageTransfer
-                0x000000000801525c      0x20c H0AR9\H0AR9_eeprom.o
+                0x0000000008015268      0x20c H0AR9\H0AR9_eeprom.o
  .text.EraseSector
-                0x0000000008015468       0x60 H0AR9\H0AR9_eeprom.o
-                0x0000000008015468                EraseSector
+                0x0000000008015474       0x60 H0AR9\H0AR9_eeprom.o
+                0x0000000008015474                EraseSector
  .text.GPIO_Init
-                0x00000000080154c8       0x90 H0AR9\H0AR9_gpio.o
-                0x00000000080154c8                GPIO_Init
+                0x00000000080154d4       0x90 H0AR9\H0AR9_gpio.o
+                0x00000000080154d4                GPIO_Init
  .text.IND_LED_Init
-                0x0000000008015558       0x38 H0AR9\H0AR9_gpio.o
-                0x0000000008015558                IND_LED_Init
+                0x0000000008015564       0x38 H0AR9\H0AR9_gpio.o
+                0x0000000008015564                IND_LED_Init
  .text.SENSORS_GPIO_Init
-                0x0000000008015590       0x7c H0AR9\H0AR9_gpio.o
-                0x0000000008015590                SENSORS_GPIO_Init
+                0x000000000801559c       0x7c H0AR9\H0AR9_gpio.o
+                0x000000000801559c                SENSORS_GPIO_Init
  .text.IsFactoryReset
-                0x000000000801560c      0x15c H0AR9\H0AR9_gpio.o
-                0x000000000801560c                IsFactoryReset
+                0x0000000008015618      0x15c H0AR9\H0AR9_gpio.o
+                0x0000000008015618                IsFactoryReset
  .text.GetPortGPIOs
-                0x0000000008015768      0x144 H0AR9\H0AR9_gpio.o
-                0x0000000008015768                GetPortGPIOs
+                0x0000000008015774      0x144 H0AR9\H0AR9_gpio.o
+                0x0000000008015774                GetPortGPIOs
  .text.MX_I2C_Init
-                0x00000000080158ac       0x48 H0AR9\H0AR9_i2c.o
-                0x00000000080158ac                MX_I2C_Init
+                0x00000000080158b8       0x48 H0AR9\H0AR9_i2c.o
+                0x00000000080158b8                MX_I2C_Init
  .text.MX_I2C2_Init
-                0x00000000080158f4       0x68 H0AR9\H0AR9_i2c.o
-                0x00000000080158f4                MX_I2C2_Init
+                0x0000000008015900       0x68 H0AR9\H0AR9_i2c.o
+                0x0000000008015900                MX_I2C2_Init
  .text.WriteRegData
-                0x000000000801595c       0x50 H0AR9\H0AR9_i2c.o
-                0x000000000801595c                WriteRegData
+                0x0000000008015968       0x50 H0AR9\H0AR9_i2c.o
+                0x0000000008015968                WriteRegData
  .text.Read_Word
-                0x00000000080159ac       0x6c H0AR9\H0AR9_i2c.o
-                0x00000000080159ac                Read_Word
+                0x00000000080159b8       0x6c H0AR9\H0AR9_i2c.o
+                0x00000000080159b8                Read_Word
  .text.buttonPressedCallback
-                0x0000000008015a18       0x14 H0AR9\H0AR9_inputs.o
-                0x0000000008015a18                buttonPressedCallback
+                0x0000000008015a24       0x14 H0AR9\H0AR9_inputs.o
+                0x0000000008015a24                buttonPressedCallback
  .text.CheckAttachedButtons
-                0x0000000008015a2c      0x7a8 H0AR9\H0AR9_inputs.o
-                0x0000000008015a2c                CheckAttachedButtons
+                0x0000000008015a38      0x7a8 H0AR9\H0AR9_inputs.o
+                0x0000000008015a38                CheckAttachedButtons
  .text.CheckForTimedButtonPress
-                0x00000000080161d4       0xfc H0AR9\H0AR9_inputs.o
-                0x00000000080161d4                CheckForTimedButtonPress
+                0x00000000080161e0       0xfc H0AR9\H0AR9_inputs.o
+                0x00000000080161e0                CheckForTimedButtonPress
  .text.CheckForTimedButtonRelease
-                0x00000000080162d0       0xfc H0AR9\H0AR9_inputs.o
-                0x00000000080162d0                CheckForTimedButtonRelease
+                0x00000000080162dc       0xfc H0AR9\H0AR9_inputs.o
+                0x00000000080162dc                CheckForTimedButtonRelease
  .text.AddPortButton
-                0x00000000080163cc      0x268 H0AR9\H0AR9_inputs.o
-                0x00000000080163cc                AddPortButton
+                0x00000000080163d8      0x268 H0AR9\H0AR9_inputs.o
+                0x00000000080163d8                AddPortButton
  .text.RemovePortButton
-                0x0000000008016634      0x208 H0AR9\H0AR9_inputs.o
-                0x0000000008016634                RemovePortButton
+                0x0000000008016640      0x208 H0AR9\H0AR9_inputs.o
+                0x0000000008016640                RemovePortButton
  .text.SetButtonEvents
-                0x000000000801683c      0x77c H0AR9\H0AR9_inputs.o
-                0x000000000801683c                SetButtonEvents
+                0x0000000008016848      0x77c H0AR9\H0AR9_inputs.o
+                0x0000000008016848                SetButtonEvents
  .text.MX_ADC_Init
-                0x0000000008016fb8       0x88 H0AR9\H0AR9_inputs.o
-                0x0000000008016fb8                MX_ADC_Init
+                0x0000000008016fc4       0x88 H0AR9\H0AR9_inputs.o
+                0x0000000008016fc4                MX_ADC_Init
  .text.HAL_ADC_MspInit
-                0x0000000008017040       0xc4 H0AR9\H0AR9_inputs.o
-                0x0000000008017040                HAL_ADC_MspInit
+                0x000000000801704c       0xc4 H0AR9\H0AR9_inputs.o
+                0x000000000801704c                HAL_ADC_MspInit
  .text.ADCSelectChannel
-                0x0000000008017104       0xb0 H0AR9\H0AR9_inputs.o
-                0x0000000008017104                ADCSelectChannel
+                0x0000000008017110       0xb0 H0AR9\H0AR9_inputs.o
+                0x0000000008017110                ADCSelectChannel
  .text.ReadADCChannel
-                0x00000000080171b4      0x10c H0AR9\H0AR9_inputs.o
-                0x00000000080171b4                ReadADCChannel
+                0x00000000080171c0      0x10c H0AR9\H0AR9_inputs.o
+                0x00000000080171c0                ReadADCChannel
  .text.ReadTempAndVref
-                0x00000000080172c0      0x1f0 H0AR9\H0AR9_inputs.o
-                0x00000000080172c0                ReadTempAndVref
+                0x00000000080172cc      0x1f0 H0AR9\H0AR9_inputs.o
+                0x00000000080172cc                ReadTempAndVref
  .text.GetReadPrecentage
-                0x00000000080174b0      0x224 H0AR9\H0AR9_inputs.o
-                0x00000000080174b0                GetReadPrecentage
+                0x00000000080174bc      0x224 H0AR9\H0AR9_inputs.o
+                0x00000000080174bc                GetReadPrecentage
  .text.Get_channel
-                0x00000000080176d4       0xac H0AR9\H0AR9_inputs.o
-                0x00000000080176d4                Get_channel
+                0x00000000080176e0       0xac H0AR9\H0AR9_inputs.o
+                0x00000000080176e0                Get_channel
  .text.Error_Handler
-                0x0000000008017780       0x10 H0AR9\H0AR9_inputs.o
-                0x0000000008017780                Error_Handler
+                0x000000000801778c       0x10 H0AR9\H0AR9_inputs.o
+                0x000000000801778c                Error_Handler
  .text.Get_Rank
-                0x0000000008017790       0xa4 H0AR9\H0AR9_inputs.o
-                0x0000000008017790                Get_Rank
+                0x000000000801779c       0xa4 H0AR9\H0AR9_inputs.o
+                0x000000000801779c                Get_Rank
  .text.buttonReleasedCallback
-                0x0000000008017834       0x14 H0AR9\H0AR9_inputs.o
-                0x0000000008017834                buttonReleasedCallback
+                0x0000000008017840       0x14 H0AR9\H0AR9_inputs.o
+                0x0000000008017840                buttonReleasedCallback
  .text.buttonClickedCallback
-                0x0000000008017848       0x14 H0AR9\H0AR9_inputs.o
-                0x0000000008017848                buttonClickedCallback
+                0x0000000008017854       0x14 H0AR9\H0AR9_inputs.o
+                0x0000000008017854                buttonClickedCallback
  .text.buttonDblClickedCallback
-                0x000000000801785c       0x14 H0AR9\H0AR9_inputs.o
-                0x000000000801785c                buttonDblClickedCallback
+                0x0000000008017868       0x14 H0AR9\H0AR9_inputs.o
+                0x0000000008017868                buttonDblClickedCallback
  .text.buttonPressedForXCallback
-                0x0000000008017870       0x1a H0AR9\H0AR9_inputs.o
-                0x0000000008017870                buttonPressedForXCallback
+                0x000000000801787c       0x1a H0AR9\H0AR9_inputs.o
+                0x000000000801787c                buttonPressedForXCallback
  .text.buttonReleasedForYCallback
-                0x000000000801788a       0x1a H0AR9\H0AR9_inputs.o
-                0x000000000801788a                buttonReleasedForYCallback
+                0x0000000008017896       0x1a H0AR9\H0AR9_inputs.o
+                0x0000000008017896                buttonReleasedForYCallback
  .text.__NVIC_SystemReset
-                0x00000000080178a4       0x24 H0AR9\H0AR9_it.o
+                0x00000000080178b0       0x24 H0AR9\H0AR9_it.o
  .text.SysTick_Handler
-                0x00000000080178c8       0x12 H0AR9\H0AR9_it.o
-                0x00000000080178c8                SysTick_Handler
- *fill*         0x00000000080178da        0x2 
+                0x00000000080178d4       0x12 H0AR9\H0AR9_it.o
+                0x00000000080178d4                SysTick_Handler
+ *fill*         0x00000000080178e6        0x2 
  .text.HardFault_Handler
-                0x00000000080178dc       0x40 H0AR9\H0AR9_it.o
-                0x00000000080178dc                HardFault_Handler
+                0x00000000080178e8       0x40 H0AR9\H0AR9_it.o
+                0x00000000080178e8                HardFault_Handler
  .text.USART1_IRQHandler
-                0x000000000801791c       0x30 H0AR9\H0AR9_it.o
-                0x000000000801791c                USART1_IRQHandler
+                0x0000000008017928       0x30 H0AR9\H0AR9_it.o
+                0x0000000008017928                USART1_IRQHandler
  .text.USART2_LPUART2_IRQHandler
-                0x000000000801794c       0x30 H0AR9\H0AR9_it.o
-                0x000000000801794c                USART2_LPUART2_IRQHandler
+                0x0000000008017958       0x30 H0AR9\H0AR9_it.o
+                0x0000000008017958                USART2_LPUART2_IRQHandler
  .text.USART3_4_5_6_LPUART1_IRQHandler
-                0x000000000801797c       0x54 H0AR9\H0AR9_it.o
-                0x000000000801797c                USART3_4_5_6_LPUART1_IRQHandler
+                0x0000000008017988       0x54 H0AR9\H0AR9_it.o
+                0x0000000008017988                USART3_4_5_6_LPUART1_IRQHandler
  .text.HAL_UART_TxCpltCallback
-                0x00000000080179d0       0x48 H0AR9\H0AR9_it.o
-                0x00000000080179d0                HAL_UART_TxCpltCallback
+                0x00000000080179dc       0x48 H0AR9\H0AR9_it.o
+                0x00000000080179dc                HAL_UART_TxCpltCallback
  .text.HAL_UART_ErrorCallback
-                0x0000000008017a18       0xd4 H0AR9\H0AR9_it.o
-                0x0000000008017a18                HAL_UART_ErrorCallback
+                0x0000000008017a24       0xd4 H0AR9\H0AR9_it.o
+                0x0000000008017a24                HAL_UART_ErrorCallback
  .text.HAL_UART_RxCpltCallback
-                0x0000000008017aec       0x10 H0AR9\H0AR9_it.o
-                0x0000000008017aec                HAL_UART_RxCpltCallback
+                0x0000000008017af8       0x10 H0AR9\H0AR9_it.o
+                0x0000000008017af8                HAL_UART_RxCpltCallback
  .text.vApplicationStackOverflowHook
-                0x0000000008017afc       0x44 H0AR9\H0AR9_it.o
-                0x0000000008017afc                vApplicationStackOverflowHook
+                0x0000000008017b08       0x44 H0AR9\H0AR9_it.o
+                0x0000000008017b08                vApplicationStackOverflowHook
  .text.vApplicationMallocFailedHook
-                0x0000000008017b40       0x40 H0AR9\H0AR9_it.o
-                0x0000000008017b40                vApplicationMallocFailedHook
+                0x0000000008017b4c       0x40 H0AR9\H0AR9_it.o
+                0x0000000008017b4c                vApplicationMallocFailedHook
  .text.RTC_Init
-                0x0000000008017b80       0xc4 H0AR9\H0AR9_rtc.o
-                0x0000000008017b80                RTC_Init
+                0x0000000008017b8c       0xc4 H0AR9\H0AR9_rtc.o
+                0x0000000008017b8c                RTC_Init
  .text.RTC_CalendarConfig
-                0x0000000008017c44      0x18c H0AR9\H0AR9_rtc.o
-                0x0000000008017c44                RTC_CalendarConfig
+                0x0000000008017c50      0x18c H0AR9\H0AR9_rtc.o
+                0x0000000008017c50                RTC_CalendarConfig
  .text.BOS_CalendarConfig
-                0x0000000008017dd0      0x128 H0AR9\H0AR9_rtc.o
-                0x0000000008017dd0                BOS_CalendarConfig
+                0x0000000008017ddc      0x128 H0AR9\H0AR9_rtc.o
+                0x0000000008017ddc                BOS_CalendarConfig
  .text.GetTimeDate
-                0x0000000008017ef8       0x90 H0AR9\H0AR9_rtc.o
-                0x0000000008017ef8                GetTimeDate
+                0x0000000008017f04       0x90 H0AR9\H0AR9_rtc.o
+                0x0000000008017f04                GetTimeDate
  .text.TIM_USEC_Init
-                0x0000000008017f88       0x74 H0AR9\H0AR9_timers.o
-                0x0000000008017f88                TIM_USEC_Init
+                0x0000000008017f94       0x74 H0AR9\H0AR9_timers.o
+                0x0000000008017f94                TIM_USEC_Init
  .text.TIM_MSEC_Init
-                0x0000000008017ffc       0x78 H0AR9\H0AR9_timers.o
-                0x0000000008017ffc                TIM_MSEC_Init
+                0x0000000008018008       0x78 H0AR9\H0AR9_timers.o
+                0x0000000008018008                TIM_MSEC_Init
  .text.StartMicroDelay
-                0x0000000008018074       0x48 H0AR9\H0AR9_timers.o
-                0x0000000008018074                StartMicroDelay
+                0x0000000008018080       0x48 H0AR9\H0AR9_timers.o
+                0x0000000008018080                StartMicroDelay
  .text.StartMilliDelay
-                0x00000000080180bc       0x48 H0AR9\H0AR9_timers.o
-                0x00000000080180bc                StartMilliDelay
+                0x00000000080180c8       0x48 H0AR9\H0AR9_timers.o
+                0x00000000080180c8                StartMilliDelay
  .text.MX_USART1_UART_Init
-                0x0000000008018104       0x7c H0AR9\H0AR9_uart.o
-                0x0000000008018104                MX_USART1_UART_Init
+                0x0000000008018110       0x7c H0AR9\H0AR9_uart.o
+                0x0000000008018110                MX_USART1_UART_Init
  .text.MX_USART2_UART_Init
-                0x0000000008018180       0x7c H0AR9\H0AR9_uart.o
-                0x0000000008018180                MX_USART2_UART_Init
+                0x000000000801818c       0x7c H0AR9\H0AR9_uart.o
+                0x000000000801818c                MX_USART2_UART_Init
  .text.MX_USART3_UART_Init
-                0x00000000080181fc       0x7c H0AR9\H0AR9_uart.o
-                0x00000000080181fc                MX_USART3_UART_Init
+                0x0000000008018208       0x7c H0AR9\H0AR9_uart.o
+                0x0000000008018208                MX_USART3_UART_Init
  .text.MX_USART4_UART_Init
-                0x0000000008018278       0x58 H0AR9\H0AR9_uart.o
-                0x0000000008018278                MX_USART4_UART_Init
+                0x0000000008018284       0x58 H0AR9\H0AR9_uart.o
+                0x0000000008018284                MX_USART4_UART_Init
  .text.MX_USART5_UART_Init
-                0x00000000080182d0       0x60 H0AR9\H0AR9_uart.o
-                0x00000000080182d0                MX_USART5_UART_Init
+                0x00000000080182dc       0x60 H0AR9\H0AR9_uart.o
+                0x00000000080182dc                MX_USART5_UART_Init
  .text.MX_USART6_UART_Init
-                0x0000000008018330       0x60 H0AR9\H0AR9_uart.o
-                0x0000000008018330                MX_USART6_UART_Init
+                0x000000000801833c       0x60 H0AR9\H0AR9_uart.o
+                0x000000000801833c                MX_USART6_UART_Init
  .text.HAL_UART_MspInit
-                0x0000000008018390      0x588 H0AR9\H0AR9_uart.o
-                0x0000000008018390                HAL_UART_MspInit
+                0x000000000801839c      0x588 H0AR9\H0AR9_uart.o
+                0x000000000801839c                HAL_UART_MspInit
  .text.writePxMutex
-                0x0000000008018918       0xac H0AR9\H0AR9_uart.o
-                0x0000000008018918                writePxMutex
+                0x0000000008018924       0xac H0AR9\H0AR9_uart.o
+                0x0000000008018924                writePxMutex
  .text.writePxITMutex
-                0x00000000080189c4       0x78 H0AR9\H0AR9_uart.o
-                0x00000000080189c4                writePxITMutex
+                0x00000000080189d0       0x78 H0AR9\H0AR9_uart.o
+                0x00000000080189d0                writePxITMutex
  .text.UpdateBaudrate
-                0x0000000008018a3c       0x3e H0AR9\H0AR9_uart.o
-                0x0000000008018a3c                UpdateBaudrate
- *fill*         0x0000000008018a7a        0x2 
- .text.GetUart  0x0000000008018a7c       0x5c H0AR9\H0AR9_uart.o
-                0x0000000008018a7c                GetUart
+                0x0000000008018a48       0x3e H0AR9\H0AR9_uart.o
+                0x0000000008018a48                UpdateBaudrate
+ *fill*         0x0000000008018a86        0x2 
+ .text.GetUart  0x0000000008018a88       0x5c H0AR9\H0AR9_uart.o
+                0x0000000008018a88                GetUart
  .text.SwapUartPins
-                0x0000000008018ad8       0xd0 H0AR9\H0AR9_uart.o
-                0x0000000008018ad8                SwapUartPins
+                0x0000000008018ae4       0xd0 H0AR9\H0AR9_uart.o
+                0x0000000008018ae4                SwapUartPins
  .text.ReadPortsDir
-                0x0000000008018ba8       0xa8 H0AR9\H0AR9_uart.o
-                0x0000000008018ba8                ReadPortsDir
+                0x0000000008018bb4       0xa8 H0AR9\H0AR9_uart.o
+                0x0000000008018bb4                ReadPortsDir
  .text.ReadPortsDirMSG
-                0x0000000008018c50       0x80 H0AR9\H0AR9_uart.o
-                0x0000000008018c50                ReadPortsDirMSG
+                0x0000000008018c5c       0x80 H0AR9\H0AR9_uart.o
+                0x0000000008018c5c                ReadPortsDirMSG
  .text.UpdateMyPortsDir
-                0x0000000008018cd0       0x84 H0AR9\H0AR9_uart.o
-                0x0000000008018cd0                UpdateMyPortsDir
+                0x0000000008018cdc       0x84 H0AR9\H0AR9_uart.o
+                0x0000000008018cdc                UpdateMyPortsDir
  .text.Reset_Handler
-                0x0000000008018d54       0x90 H0AR9\startup_stm32g0b1ceuxn.o
-                0x0000000008018d54                Reset_Handler
+                0x0000000008018d60       0x90 H0AR9\startup_stm32g0b1ceuxn.o
+                0x0000000008018d60                Reset_Handler
  .text.Default_Handler
-                0x0000000008018de4        0x2 H0AR9\startup_stm32g0b1ceuxn.o
-                0x0000000008018de4                I2C2_3_IRQHandler
-                0x0000000008018de4                TIM1_CC_IRQHandler
-                0x0000000008018de4                ADC1_COMP_IRQHandler
-                0x0000000008018de4                NMI_Handler
-                0x0000000008018de4                I2C1_IRQHandler
-                0x0000000008018de4                TIM7_LPTIM2_IRQHandler
-                0x0000000008018de4                TIM17_FDCAN_IT1_IRQHandler
-                0x0000000008018de4                DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQHandler
-                0x0000000008018de4                RCC_CRS_IRQHandler
-                0x0000000008018de4                RTC_TAMP_IRQHandler
-                0x0000000008018de4                SPI1_IRQHandler
-                0x0000000008018de4                USB_UCPD1_2_IRQHandler
-                0x0000000008018de4                EXTI2_3_IRQHandler
-                0x0000000008018de4                PVD_VDDIO2_IRQHandler
-                0x0000000008018de4                EXTI4_15_IRQHandler
-                0x0000000008018de4                DMA1_Channel1_IRQHandler
-                0x0000000008018de4                Default_Handler
-                0x0000000008018de4                CEC_IRQHandler
-                0x0000000008018de4                TIM14_IRQHandler
-                0x0000000008018de4                TIM15_IRQHandler
-                0x0000000008018de4                TIM3_TIM4_IRQHandler
-                0x0000000008018de4                EXTI0_1_IRQHandler
-                0x0000000008018de4                SPI2_3_IRQHandler
-                0x0000000008018de4                TIM6_DAC_LPTIM1_IRQHandler
-                0x0000000008018de4                WWDG_IRQHandler
-                0x0000000008018de4                TIM2_IRQHandler
-                0x0000000008018de4                DMA1_Channel2_3_IRQHandler
-                0x0000000008018de4                FLASH_IRQHandler
-                0x0000000008018de4                TIM16_FDCAN_IT0_IRQHandler
-                0x0000000008018de4                TIM1_BRK_UP_TRG_COM_IRQHandler
+                0x0000000008018df0        0x2 H0AR9\startup_stm32g0b1ceuxn.o
+                0x0000000008018df0                I2C2_3_IRQHandler
+                0x0000000008018df0                TIM1_CC_IRQHandler
+                0x0000000008018df0                ADC1_COMP_IRQHandler
+                0x0000000008018df0                NMI_Handler
+                0x0000000008018df0                I2C1_IRQHandler
+                0x0000000008018df0                TIM7_LPTIM2_IRQHandler
+                0x0000000008018df0                TIM17_FDCAN_IT1_IRQHandler
+                0x0000000008018df0                DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQHandler
+                0x0000000008018df0                RCC_CRS_IRQHandler
+                0x0000000008018df0                RTC_TAMP_IRQHandler
+                0x0000000008018df0                SPI1_IRQHandler
+                0x0000000008018df0                USB_UCPD1_2_IRQHandler
+                0x0000000008018df0                EXTI2_3_IRQHandler
+                0x0000000008018df0                PVD_VDDIO2_IRQHandler
+                0x0000000008018df0                EXTI4_15_IRQHandler
+                0x0000000008018df0                DMA1_Channel1_IRQHandler
+                0x0000000008018df0                Default_Handler
+                0x0000000008018df0                CEC_IRQHandler
+                0x0000000008018df0                TIM14_IRQHandler
+                0x0000000008018df0                TIM15_IRQHandler
+                0x0000000008018df0                TIM3_TIM4_IRQHandler
+                0x0000000008018df0                EXTI0_1_IRQHandler
+                0x0000000008018df0                SPI2_3_IRQHandler
+                0x0000000008018df0                TIM6_DAC_LPTIM1_IRQHandler
+                0x0000000008018df0                WWDG_IRQHandler
+                0x0000000008018df0                TIM2_IRQHandler
+                0x0000000008018df0                DMA1_Channel2_3_IRQHandler
+                0x0000000008018df0                FLASH_IRQHandler
+                0x0000000008018df0                TIM16_FDCAN_IT0_IRQHandler
+                0x0000000008018df0                TIM1_BRK_UP_TRG_COM_IRQHandler
  .text.SystemInit
-                0x0000000008018de6        0xa Thirdparty\CMSIS\STM32G0xx\Device\ST\STM32G0xx\Source\Templates\system_stm32g0xx.o
-                0x0000000008018de6                SystemInit
+                0x0000000008018df2        0xa Thirdparty\CMSIS\STM32G0xx\Device\ST\STM32G0xx\Source\Templates\system_stm32g0xx.o
+                0x0000000008018df2                SystemInit
  .text.inHandlerMode
-                0x0000000008018df0       0x1c Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
+                0x0000000008018dfc       0x1c Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
  .text.osKernelStart
-                0x0000000008018e0c       0x10 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
-                0x0000000008018e0c                osKernelStart
- .text.osDelay  0x0000000008018e1c       0x28 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
-                0x0000000008018e1c                osDelay
+                0x0000000008018e18       0x10 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
+                0x0000000008018e18                osKernelStart
+ .text.osDelay  0x0000000008018e28       0x28 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
+                0x0000000008018e28                osDelay
  .text.osSemaphoreCreate
-                0x0000000008018e44       0x4a Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
-                0x0000000008018e44                osSemaphoreCreate
- *fill*         0x0000000008018e8e        0x2 
+                0x0000000008018e50       0x4a Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
+                0x0000000008018e50                osSemaphoreCreate
+ *fill*         0x0000000008018e9a        0x2 
  .text.osSemaphoreWait
-                0x0000000008018e90       0x94 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
-                0x0000000008018e90                osSemaphoreWait
+                0x0000000008018e9c       0x94 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
+                0x0000000008018e9c                osSemaphoreWait
  .text.osSemaphoreRelease
-                0x0000000008018f24       0x64 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
-                0x0000000008018f24                osSemaphoreRelease
+                0x0000000008018f30       0x64 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
+                0x0000000008018f30                osSemaphoreRelease
  .text.osSystickHandler
-                0x0000000008018f88       0x18 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
-                0x0000000008018f88                osSystickHandler
+                0x0000000008018f94       0x18 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
+                0x0000000008018f94                osSystickHandler
  .text.FreeRTOS_CLIRegisterCommand
-                0x0000000008018fa0       0x50 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\FreeRTOS_CLI.o
-                0x0000000008018fa0                FreeRTOS_CLIRegisterCommand
+                0x0000000008018fac       0x50 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\FreeRTOS_CLI.o
+                0x0000000008018fac                FreeRTOS_CLIRegisterCommand
  .text.FreeRTOS_CLIProcessCommand
-                0x0000000008018ff0      0x11c Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\FreeRTOS_CLI.o
-                0x0000000008018ff0                FreeRTOS_CLIProcessCommand
+                0x0000000008018ffc      0x11c Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\FreeRTOS_CLI.o
+                0x0000000008018ffc                FreeRTOS_CLIProcessCommand
  .text.FreeRTOS_CLIGetOutputBuffer
-                0x000000000801910c       0x10 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\FreeRTOS_CLI.o
-                0x000000000801910c                FreeRTOS_CLIGetOutputBuffer
+                0x0000000008019118       0x10 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\FreeRTOS_CLI.o
+                0x0000000008019118                FreeRTOS_CLIGetOutputBuffer
  .text.FreeRTOS_CLIGetParameter
-                0x000000000801911c       0xbc Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\FreeRTOS_CLI.o
-                0x000000000801911c                FreeRTOS_CLIGetParameter
+                0x0000000008019128       0xbc Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\FreeRTOS_CLI.o
+                0x0000000008019128                FreeRTOS_CLIGetParameter
  .text.prvHelpCommand
-                0x00000000080191d8      0x154 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\FreeRTOS_CLI.o
+                0x00000000080191e4      0x154 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\FreeRTOS_CLI.o
  .text.prvGetNumberOfParameters
-                0x000000000801932c       0x7a Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\FreeRTOS_CLI.o
+                0x0000000008019338       0x7a Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\FreeRTOS_CLI.o
  .text.vListInitialise
-                0x00000000080193a6       0x3c Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\list.o
-                0x00000000080193a6                vListInitialise
+                0x00000000080193b2       0x3c Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\list.o
+                0x00000000080193b2                vListInitialise
  .text.vListInitialiseItem
-                0x00000000080193e2       0x16 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\list.o
-                0x00000000080193e2                vListInitialiseItem
+                0x00000000080193ee       0x16 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\list.o
+                0x00000000080193ee                vListInitialiseItem
  .text.vListInsertEnd
-                0x00000000080193f8       0x44 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\list.o
-                0x00000000080193f8                vListInsertEnd
+                0x0000000008019404       0x44 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\list.o
+                0x0000000008019404                vListInsertEnd
  .text.vListInsert
-                0x000000000801943c       0x6c Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\list.o
-                0x000000000801943c                vListInsert
+                0x0000000008019448       0x6c Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\list.o
+                0x0000000008019448                vListInsert
  .text.uxListRemove
-                0x00000000080194a8       0x50 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\list.o
-                0x00000000080194a8                uxListRemove
+                0x00000000080194b4       0x50 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\list.o
+                0x00000000080194b4                uxListRemove
  .text.pxPortInitialiseStack
-                0x00000000080194f8       0x54 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\portable\GCC\ARM_CM0\port.o
-                0x00000000080194f8                pxPortInitialiseStack
+                0x0000000008019504       0x54 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\portable\GCC\ARM_CM0\port.o
+                0x0000000008019504                pxPortInitialiseStack
  .text.prvTaskExitError
-                0x000000000801954c       0x1e Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\portable\GCC\ARM_CM0\port.o
+                0x0000000008019558       0x1e Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\portable\GCC\ARM_CM0\port.o
  .text.SVC_Handler
-                0x000000000801956a        0xa Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\portable\GCC\ARM_CM0\port.o
-                0x000000000801956a                SVC_Handler
- *fill*         0x0000000008019574        0xc 
+                0x0000000008019576        0xa Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\portable\GCC\ARM_CM0\port.o
+                0x0000000008019576                SVC_Handler
  .text.vPortStartFirstTask
                 0x0000000008019580       0x38 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\portable\GCC\ARM_CM0\port.o
  .text.xPortStartScheduler
@@ -7577,7 +7576,7 @@ LOAD C:/ST/STM32CubeIDE_1.14.1/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_rnglists
                 0x0000000000001ed1       0x19 User\main.o
 
-.debug_line     0x0000000000000000    0x28607
+.debug_line     0x0000000000000000    0x2860b
  .debug_line    0x0000000000000000     0x213b BOS\BOS.o
  .debug_line    0x000000000000213b      0xd08 BOS\BOS_CLI.o
  .debug_line    0x0000000000002e43     0x1855 BOS\BOS_CLIcommands.o
@@ -7585,47 +7584,47 @@ LOAD C:/ST/STM32CubeIDE_1.14.1/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_line    0x0000000000004a92      0x9ac BOS\BOS_freertos.o
  .debug_line    0x000000000000543e      0xbaa BOS\BOS_messaging.o
  .debug_line    0x0000000000005fe8     0x2637 BOS\BOS_msgparser.o
- .debug_line    0x000000000000861f     0x189c H0AR9\H0AR9.o
- .debug_line    0x0000000000009ebb      0x8dc H0AR9\H0AR9_dma.o
- .debug_line    0x000000000000a797      0x81a H0AR9\H0AR9_eeprom.o
- .debug_line    0x000000000000afb1      0x473 H0AR9\H0AR9_gpio.o
- .debug_line    0x000000000000b424      0x3be H0AR9\H0AR9_i2c.o
- .debug_line    0x000000000000b7e2     0x10b9 H0AR9\H0AR9_inputs.o
- .debug_line    0x000000000000c89b      0x8cf H0AR9\H0AR9_it.o
- .debug_line    0x000000000000d16a      0x5df H0AR9\H0AR9_rtc.o
- .debug_line    0x000000000000d749      0x44b H0AR9\H0AR9_timers.o
- .debug_line    0x000000000000db94      0x9c0 H0AR9\H0AR9_uart.o
- .debug_line    0x000000000000e554       0x98 H0AR9\startup_stm32g0b1ceuxn.o
- .debug_line    0x000000000000e5ec      0x396 Thirdparty\CMSIS\STM32G0xx\Device\ST\STM32G0xx\Source\Templates\system_stm32g0xx.o
- .debug_line    0x000000000000e982     0x10b8 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
- .debug_line    0x000000000000fa3a      0x795 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\FreeRTOS_CLI.o
- .debug_line    0x00000000000101cf      0x3f9 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\list.o
- .debug_line    0x00000000000105c8      0x4ac Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\portable\GCC\ARM_CM0\port.o
- .debug_line    0x0000000000010a74      0x682 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\portable\MemMang\heap_4.o
- .debug_line    0x00000000000110f6      0xeaa Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\queue.o
- .debug_line    0x0000000000011fa0     0x188f Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\tasks.o
- .debug_line    0x000000000001382f      0x929 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\timers.o
- .debug_line    0x0000000000014158      0x747 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal.o
- .debug_line    0x000000000001489f     0x14d4 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_adc.o
- .debug_line    0x0000000000015d73      0x767 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_cortex.o
- .debug_line    0x00000000000164da      0x662 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_crc.o
- .debug_line    0x0000000000016b3c      0x3bc Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_crc_ex.o
- .debug_line    0x0000000000016ef8      0xa5a Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_dma.o
- .debug_line    0x0000000000017952      0x6ac Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_flash.o
- .debug_line    0x0000000000017ffe      0xc7c Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_flash_ex.o
- .debug_line    0x0000000000018c7a      0x732 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_gpio.o
- .debug_line    0x00000000000193ac     0x3306 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_i2c.o
- .debug_line    0x000000000001c6b2      0x53c Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_i2c_ex.o
- .debug_line    0x000000000001cbee      0x2d4 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_msp_template.o
- .debug_line    0x000000000001cec2      0x7e9 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_pwr_ex.o
- .debug_line    0x000000000001d6ab      0xb9f Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_rcc.o
- .debug_line    0x000000000001e24a      0xda0 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_rcc_ex.o
- .debug_line    0x000000000001efea      0xd51 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_rtc.o
- .debug_line    0x000000000001fd3b     0x1141 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_rtc_ex.o
- .debug_line    0x0000000000020e7c     0x38f5 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_tim.o
- .debug_line    0x0000000000024771     0x31a7 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_uart.o
- .debug_line    0x0000000000027918      0xa3c Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_uart_ex.o
- .debug_line    0x0000000000028354      0x2b3 User\main.o
+ .debug_line    0x000000000000861f     0x18a0 H0AR9\H0AR9.o
+ .debug_line    0x0000000000009ebf      0x8dc H0AR9\H0AR9_dma.o
+ .debug_line    0x000000000000a79b      0x81a H0AR9\H0AR9_eeprom.o
+ .debug_line    0x000000000000afb5      0x473 H0AR9\H0AR9_gpio.o
+ .debug_line    0x000000000000b428      0x3be H0AR9\H0AR9_i2c.o
+ .debug_line    0x000000000000b7e6     0x10b9 H0AR9\H0AR9_inputs.o
+ .debug_line    0x000000000000c89f      0x8cf H0AR9\H0AR9_it.o
+ .debug_line    0x000000000000d16e      0x5df H0AR9\H0AR9_rtc.o
+ .debug_line    0x000000000000d74d      0x44b H0AR9\H0AR9_timers.o
+ .debug_line    0x000000000000db98      0x9c0 H0AR9\H0AR9_uart.o
+ .debug_line    0x000000000000e558       0x98 H0AR9\startup_stm32g0b1ceuxn.o
+ .debug_line    0x000000000000e5f0      0x396 Thirdparty\CMSIS\STM32G0xx\Device\ST\STM32G0xx\Source\Templates\system_stm32g0xx.o
+ .debug_line    0x000000000000e986     0x10b8 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.o
+ .debug_line    0x000000000000fa3e      0x795 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\FreeRTOS_CLI.o
+ .debug_line    0x00000000000101d3      0x3f9 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\list.o
+ .debug_line    0x00000000000105cc      0x4ac Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\portable\GCC\ARM_CM0\port.o
+ .debug_line    0x0000000000010a78      0x682 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\portable\MemMang\heap_4.o
+ .debug_line    0x00000000000110fa      0xeaa Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\queue.o
+ .debug_line    0x0000000000011fa4     0x188f Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\tasks.o
+ .debug_line    0x0000000000013833      0x929 Thirdparty\Middleware\STM32G0xx\FreeRTOS\Source\timers.o
+ .debug_line    0x000000000001415c      0x747 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal.o
+ .debug_line    0x00000000000148a3     0x14d4 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_adc.o
+ .debug_line    0x0000000000015d77      0x767 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_cortex.o
+ .debug_line    0x00000000000164de      0x662 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_crc.o
+ .debug_line    0x0000000000016b40      0x3bc Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_crc_ex.o
+ .debug_line    0x0000000000016efc      0xa5a Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_dma.o
+ .debug_line    0x0000000000017956      0x6ac Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_flash.o
+ .debug_line    0x0000000000018002      0xc7c Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_flash_ex.o
+ .debug_line    0x0000000000018c7e      0x732 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_gpio.o
+ .debug_line    0x00000000000193b0     0x3306 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_i2c.o
+ .debug_line    0x000000000001c6b6      0x53c Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_i2c_ex.o
+ .debug_line    0x000000000001cbf2      0x2d4 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_msp_template.o
+ .debug_line    0x000000000001cec6      0x7e9 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_pwr_ex.o
+ .debug_line    0x000000000001d6af      0xb9f Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_rcc.o
+ .debug_line    0x000000000001e24e      0xda0 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_rcc_ex.o
+ .debug_line    0x000000000001efee      0xd51 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_rtc.o
+ .debug_line    0x000000000001fd3f     0x1141 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_rtc_ex.o
+ .debug_line    0x0000000000020e80     0x38f5 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_tim.o
+ .debug_line    0x0000000000024775     0x31a7 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_uart.o
+ .debug_line    0x000000000002791c      0xa3c Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_uart_ex.o
+ .debug_line    0x0000000000028358      0x2b3 User\main.o
 
 .debug_str      0x0000000000000000     0xd21a
  .debug_str     0x0000000000000000     0x1c86 BOS\BOS.o
@@ -7723,7 +7722,7 @@ LOAD C:/ST/STM32CubeIDE_1.14.1/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_str     0x000000000000cfbb      0x248 Thirdparty\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_uart_ex.o
                                         0xb56 (size before relaxing)
  .debug_str     0x000000000000d203       0x17 User\main.o
-                                        0x2da (size before relaxing)
+                                        0x2d5 (size before relaxing)
 
 .debug_frame    0x0000000000000000     0xabe0
  .debug_frame   0x0000000000000000      0x688 BOS\BOS.o
