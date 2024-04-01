@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.1 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.3.2 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
 
  File Name     : H0AR9.c
@@ -723,7 +723,7 @@ void SampleColorToPort(uint8_t port,uint8_t module)
 
 	SampleColorBuf(buffer);
 
-
+	if(module == myID || module == 0){
 		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
 		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
 		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
@@ -740,6 +740,27 @@ void SampleColorToPort(uint8_t port,uint8_t module)
 		temp[11] =*((__IO uint8_t* )(&buffer[2]) + 0);
 
 		writePxITMutex(port,(char* )&temp[0],12 * sizeof(uint8_t),10);
+	}
+	else{
+		messageParams[0] =port;
+		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
+		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
+
+		messageParams[5] =*((__IO uint8_t* )(&buffer[1]) + 3);
+		messageParams[6] =*((__IO uint8_t* )(&buffer[1]) + 2);
+		messageParams[7] =*((__IO uint8_t* )(&buffer[1]) + 1);
+		messageParams[8] =*((__IO uint8_t* )(&buffer[1]) + 0);
+
+		messageParams[9] =*((__IO uint8_t* )(&buffer[2]) + 3);
+		messageParams[10] =*((__IO uint8_t* )(&buffer[2]) + 2);
+		messageParams[11] =*((__IO uint8_t* )(&buffer[2]) + 1);
+		messageParams[12] =*((__IO uint8_t* )(&buffer[2]) + 0);
+
+		SendMessageToModule(module,CODE_PORT_FORWARD,(sizeof(float) * 3) + 1);
+
+	}
 
 }
 /*-----------------------------------------------------------*/
@@ -750,13 +771,22 @@ void SampleDistanceToPort(uint8_t port,uint8_t module)
 	static uint8_t temp[4];
 
 	SampleDistanceBuff(buffer);
-
+	if(module == myID || module == 0){
 		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
 		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
 		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
 		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
 
 		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
+	}
+	else{
+		messageParams[0] =port;
+		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
+		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(float) + 1);
+	}
 }
 /*-----------------------------------------------------------*/
 void SampleTemperatureToPort(uint8_t port,uint8_t module)
@@ -766,25 +796,23 @@ void SampleTemperatureToPort(uint8_t port,uint8_t module)
 
 	SampleTemperatureBuf(buffer);
 
-	if(module == myID){
-			temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
-			temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
-			temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
-			temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+	if(module == myID || module == 0){
+		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
+		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
 
+		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
+	}
+	else{
+		messageParams[0] =port;
+		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
+		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
 
-			writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
-		}
-		else{
-			messageParams[0] =port;
-			messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
-			messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
-			messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
-			messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
-
-			SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(float)+1);
-		}
-
+		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(float) + 1);
+	}
 
 }
 /*-----------------------------------------------------------*/
@@ -794,13 +822,23 @@ void SampleHumidityToPort(uint8_t port,uint8_t module)
 	static uint8_t temp[4];
 
 	SampleHumidityBuf(buffer);
-
+	if(module == myID || module == 0){
 		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
 		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
 		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
 		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
 
 		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
+	}
+	else{
+		messageParams[0] =port;
+		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
+		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
+
+		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(float) + 1);
+	}
 }
 /*-----------------------------------------------------------*/
 void SamplePIRToPort(uint8_t port,uint8_t module)
@@ -810,15 +848,14 @@ void SamplePIRToPort(uint8_t port,uint8_t module)
 
 	SamplePIRBuf(&buffer);
 
-
-	if(module == myID){
-		temp = buffer;
+	if(module == myID || module == 0){
+		temp =buffer;
 		writePxITMutex(port,(char* )&temp,sizeof(bool),10);
 	}
 	else{
 		messageParams[0] =port;
 		messageParams[1] =buffer;
-		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(char)+1);
+		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(char) + 1);
 	}
 }
 /*-----------------------------------------------------------*/
