@@ -677,28 +677,40 @@ static Module_Status StreamMemsToPort(uint8_t port, uint8_t module, uint32_t Num
 }
 /*-----------------------------------------------------------*/
 
-static Module_Status StreamMemsToBuf( float *buffer, uint32_t period, uint32_t timeout, SampleMemsToBuffer function)
+static Module_Status StreamMemsToBuf( float *buffer, uint32_t Numofsamples, uint32_t timeout, SampleMemsToBuffer function)
 
 {
-	Module_Status status = H0AR9_OK;
-
-	if (period < MIN_MEMS_PERIOD_MS)
+	Module_Status status =H0AR9_OK;
+	uint32_t period =timeout / Numofsamples;
+	if(period < MIN_MEMS_PERIOD_MS)
 		return H0AR9_ERR_WrongParams;
 
 	// TODO: Check if CLI is enable or not
 
-	if (period > timeout)
-		timeout = period;
+	if(period > timeout)
+		timeout =period;
 
-	long numTimes = timeout / period;
+	long numTimes =timeout / period;
 	stopStream = false;
 
-	while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
-		function(buffer);
+	while((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)){
+		if(function == SampleColorBuf){
+			float color[3];
+			function(color);
+			buffer[cont] =color[0];
+			buffer[cont+1] =color[1];
+			buffer[cont+2] =color[2];
+			cont+=3;
+		} else {
+			float sample;
+		function(&sample);
+		buffer[cont] =sample;
+		cont++;
+		}
 
 		vTaskDelay(pdMS_TO_TICKS(period));
-		if (stopStream) {
-			status = H0AR9_ERR_TERMINATED;
+		if(stopStream){
+			status =H0AR9_ERR_TERMINATED;
 			break;
 		}
 	}
@@ -1133,33 +1145,30 @@ Module_Status StreamToPort(uint8_t port, uint8_t module, uint32_t Numofsamples, 
 }
 /*-----------------------------------------------------------*/
 
-Module_Status StreamColorToBuffer(float *buffer, uint32_t period, uint32_t timeout)
+Module_Status StreamToBuffer(float *buffer, uint32_t Numofsamples, uint32_t timeout,All_Data function)
 {
-	 return StreamMemsToBuf(buffer, period, timeout, SampleColorBuf);
-}
-/*-----------------------------------------------------------*/
+	switch (function) {
+		case Color:
+			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleColorBuf);
+			break;
+		case PIR:
+			return StreamMemsToBuf(buffer, Numofsamples, timeout, SamplePIRBuf);
+			break;
+		case Humidity:
+			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleHumidityBuf);
+			break;
+		case Temperature:
+			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleTemperatureBuf);
+			break;
+		case Distance:
+			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleDistanceBuff);
+			break;
+		default:
+			break;
+	}
 
-Module_Status StreamDistanceToBuffer(float *buffer, uint32_t period, uint32_t timeout)
-{
-	return StreamMemsToBuf(buffer, period, timeout, SampleDistanceBuff);
 }
-/*-----------------------------------------------------------*/
 
-Module_Status StreamTemperatureToBuffer(float *buffer, uint32_t period, uint32_t timeout)
-{
-	return StreamMemsToBuf(buffer, period, timeout, SampleTemperatureBuf);
-}
-/*-----------------------------------------------------------*/
-
-Module_Status StreamHumidityToBuffer(float *buffer, uint32_t period, uint32_t timeout)
-{
-	return StreamMemsToBuf(buffer, period, timeout, SampleHumidityBuf);
-}
-/*-----------------------------------------------------------*/
-Module_Status StreamPIRToBuffer(float *buffer, uint32_t period, uint32_t timeout)
-{
-	return StreamMemsToBuf(buffer, period, timeout, SamplePIRBuf);
-}
 /*-----------------------------------------------------------*/
 Module_Status StreamColorToCLI(uint32_t period, uint32_t timeout)
 {

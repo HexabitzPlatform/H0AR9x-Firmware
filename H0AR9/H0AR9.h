@@ -197,11 +197,8 @@ void SampleDistanceToString(char *cstring, size_t maxLen);
 void SampleTemperatureToString(char *cstring, size_t maxLen);
 void SampleHumidityToString(char *cstring, size_t maxLen);
 void SamplePIRToString(char *cstring, size_t maxLen);
-Module_Status StreamColorToBuffer(float *buffer, uint32_t period, uint32_t timeout);
-Module_Status StreamDistanceToBuffer(float *buffer, uint32_t period, uint32_t timeout);
-Module_Status StreamTemperatureToBuffer(float *buffer, uint32_t period, uint32_t timeout);
-Module_Status StreamHumidityToBuffer(float *buffer, uint32_t period, uint32_t timeout);
-Module_Status StreamPIRToBuffer(float *buffer, uint32_t period, uint32_t timeout);
+
+Module_Status StreamToBuffer(float *buffer, uint32_t Numofsamples, uint32_t timeout,All_Data function);
 
 Module_Status StreamToPort(uint8_t port, uint8_t module, uint32_t Numofsamples, uint32_t timeout,All_Data function);
 
@@ -210,6 +207,7 @@ Module_Status StreamDistanceToCLI(uint32_t period, uint32_t timeout);
 Module_Status StreamTemperatureToCLI(uint32_t period, uint32_t timeout);
 Module_Status StreamHumidityToCLI(uint32_t period, uint32_t timeout);
 Module_Status StreamPIRToCLI(uint32_t period, uint32_t timeout);
+
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 
