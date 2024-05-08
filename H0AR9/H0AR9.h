@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.3 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.3.1 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
  
  File Name     : H0AR9.h
@@ -102,9 +102,15 @@
 
 /* Module-specific Definitions */
 
-#define NUM_MODULE_PARAMS						7
+#define SAMPLE_TEM              0
+#define SAMPLE_TO_PORT          1
+#define STREAM_TO_PORT          2
+#define STREAM_TO_Terminal      3
+
+#define NUM_MODULE_PARAMS			  7
 #define STOP_MEASUREMENT_RANGING      0
 #define START_MEASUREMENT_RANGING     1
+
 /* Module EEPROM Variables */
 
 // Module Addressing Space 500 - 599
@@ -127,6 +133,16 @@ typedef enum
   H0AR9_ERR_WrongParams,
   H0AR9_ERROR = 25
 } Module_Status;
+
+typedef enum
+{
+  Color = 0,
+  PIR,
+  Humidity,
+  Temperature,
+  Distance,
+
+} All_Data;
 
 /* Indicator LED */
 #define _IND_LED_PORT			GPIOB
@@ -151,7 +167,7 @@ extern void SystemClock_Config(void);
 extern void ExecuteMonitor(void);
 
 
-/* -----------------------------------------------------------------------
+/*-----------------------------------------------------------------------
  |								  APIs							          |  																 	|
 /* -----------------------------------------------------------------------
  */
@@ -186,11 +202,9 @@ Module_Status StreamDistanceToBuffer(float *buffer, uint32_t period, uint32_t ti
 Module_Status StreamTemperatureToBuffer(float *buffer, uint32_t period, uint32_t timeout);
 Module_Status StreamHumidityToBuffer(float *buffer, uint32_t period, uint32_t timeout);
 Module_Status StreamPIRToBuffer(float *buffer, uint32_t period, uint32_t timeout);
-Module_Status StreamColorToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
-Module_Status StreamDistanceToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
-Module_Status StreamTemperatureToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
-Module_Status StreamHumidityToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
-Module_Status StreamPIRToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
+
+Module_Status StreamToPort(uint8_t port, uint8_t module, uint32_t Numofsamples, uint32_t timeout,All_Data function);
+
 Module_Status StreamColorToCLI(uint32_t period, uint32_t timeout);
 Module_Status StreamDistanceToCLI(uint32_t period, uint32_t timeout);
 Module_Status StreamTemperatureToCLI(uint32_t period, uint32_t timeout);
