@@ -198,6 +198,8 @@ void SampleTemperatureToString(char *cstring, size_t maxLen);
 void SampleHumidityToString(char *cstring, size_t maxLen);
 void SamplePIRToString(char *cstring, size_t maxLen);
 
+Module_Status StreamToTerminal(uint32_t Numofsamples, uint32_t timeout,uint8_t port,All_Data function);
+
 Module_Status StreamToBuffer(float *buffer, uint32_t Numofsamples, uint32_t timeout,All_Data function);
 
 Module_Status StreamToPort(uint8_t port, uint8_t module, uint32_t Numofsamples, uint32_t timeout,All_Data function);

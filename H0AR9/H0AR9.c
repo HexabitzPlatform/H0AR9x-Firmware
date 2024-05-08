@@ -96,7 +96,8 @@ uint8_t tofMode ;
 static Module_Status StreamMemsToBuf( float *buffer, uint32_t period, uint32_t timeout, SampleMemsToBuffer function);
 static Module_Status StreamMemsToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout, SampleMemsToPort function);
 static Module_Status StreamMemsToCLI(uint32_t period, uint32_t timeout, SampleMemsToString function);
-static Module_Status PollingSleepCLISafe(uint32_t period);
+static Module_Status ExportToTerminal(uint32_t Numofsamples, uint32_t timeout,uint8_t Port, SampleMemsToString function);
+static Module_Status PollingSleepCLISafe(uint32_t period, long Numofsamples);
 void FLASH_Page_Eras(uint32_t Addr );
 void ExecuteMonitor(void);
 void SensorHub(void *argument);
@@ -439,7 +440,7 @@ v++;
 						break;
 					case Temperature:
 						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SampleTemperatureToPort);
-						break;
+					 	break;
 					case Humidity:
 						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SampleHumidityToPort);
 						break;
@@ -452,6 +453,28 @@ v++;
 					default:
 						break;
 				}
+
+				case STREAM_TO_Terminal :
+
+					switch(mode1){
+						case Distance:
+							ExportToTerminal(Numofsamples3, timeout3, port3,SampleDistanceToString);
+							break;
+						case Temperature:
+							ExportToTerminal(Numofsamples3, timeout3, port3,SampleTemperatureToString);
+						 	break;
+						case Humidity:
+							ExportToTerminal(Numofsamples3, timeout3, port3,SampleHumidityToString);
+							break;
+						case PIR:
+							ExportToTerminal(Numofsamples3, timeout3, port3,SamplePIRToString);
+							break;
+						case Color:
+							ExportToTerminal(Numofsamples3, timeout3, port3,SampleColorToString);
+							break;
+						default:
+							break;
+					}
 
 			break;
 			default:
@@ -717,12 +740,23 @@ static Module_Status StreamMemsToBuf( float *buffer, uint32_t Numofsamples, uint
 	return status;
 }
 /*-----------------------------------------------------------*/
+Module_Status StreamToTerminal(uint32_t Numofsamples, uint32_t timeout,uint8_t port,All_Data function)
+ {
+	Module_Status status = H0AR9_OK;
+	tofMode = STREAM_TO_Terminal;
+	port3 = port;
+	Numofsamples3 = Numofsamples;
+	timeout3 = timeout;
+	mode1 = function;
+	return status;
 
-static Module_Status StreamMemsToCLI(uint32_t period, uint32_t timeout, SampleMemsToString function)
+}
+/*-----------------------------------------------------------*/
+static Module_Status StreamMemsToCLI(uint32_t Numofsamples, uint32_t timeout, SampleMemsToString function)
 {
 	Module_Status status = H0AR9_OK;
 	int8_t *pcOutputString = NULL;
-
+	uint32_t period = timeout / Numofsamples;
 	if (period < MIN_MEMS_PERIOD_MS)
 		return H0AR9_ERR_WrongParams;
 
@@ -740,7 +774,7 @@ static Module_Status StreamMemsToCLI(uint32_t period, uint32_t timeout, SampleMe
 
 
 		writePxMutex(PcPort, (char *)pcOutputString, strlen((char *)pcOutputString), cmd500ms, HAL_MAX_DELAY);
-		if (PollingSleepCLISafe(period) != H0AR9_OK)
+		if (PollingSleepCLISafe(period,Numofsamples)  != H0AR9_OK)
 			break;
 	}
 
@@ -752,7 +786,7 @@ static Module_Status StreamMemsToCLI(uint32_t period, uint32_t timeout, SampleMe
 
 /* --- Save array topology and Command Snippets in Flash RO ---
 */
-static Module_Status PollingSleepCLISafe(uint32_t period)
+static Module_Status PollingSleepCLISafe(uint32_t period, long Numofsamples)
 {
 	const unsigned DELTA_SLEEP_MS = 100; // milliseconds
 	long numDeltaDelay =  period / DELTA_SLEEP_MS;
@@ -762,10 +796,11 @@ static Module_Status PollingSleepCLISafe(uint32_t period)
 		vTaskDelay(pdMS_TO_TICKS(DELTA_SLEEP_MS));
 
 		// Look for ENTER key to stop the stream
-		for (uint8_t chr=0 ; chr<MSG_RX_BUF_SIZE ; chr++)
+		for (uint8_t chr=1 ; chr<MSG_RX_BUF_SIZE ; chr++)
 		{
 			if (UARTRxBuf[PcPort-1][chr] == '\r') {
 				UARTRxBuf[PcPort-1][chr] = 0;
+				flag=1;
 				return H0AR9_ERR_TERMINATED;
 			}
 		}
@@ -777,6 +812,7 @@ static Module_Status PollingSleepCLISafe(uint32_t period)
 	vTaskDelay(pdMS_TO_TICKS(lastDelayMS));
 	return H0AR9_OK;
 }
+
 /* -----------------------------------------------------------------------
  |								  APIs							          | 																 	|
 /* -----------------------------------------------------------------------
@@ -1168,7 +1204,38 @@ Module_Status StreamToBuffer(float *buffer, uint32_t Numofsamples, uint32_t time
 	}
 
 }
+/*-----------------------------------------------------------*/
+static Module_Status ExportToTerminal(uint32_t Numofsamples, uint32_t timeout,uint8_t Port, SampleMemsToString function)
+{
+	Module_Status status = H0AR9_OK;
+	int8_t *pcOutputString = NULL;
+	uint32_t period = timeout / Numofsamples;
+	if (period < MIN_MEMS_PERIOD_MS)
+		return H0AR9_ERR_WrongParams;
 
+	// TODO: Check if CLI is enable or not
+
+	if (period > timeout)
+		timeout = period;
+
+	long numTimes = timeout / period;
+	stopStream = false;
+
+	while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+		function((char *)pcOutputString, 100);
+
+
+		writePxMutex(Port, (char *)pcOutputString, strlen((char *)pcOutputString), cmd500ms, HAL_MAX_DELAY);
+		if (PollingSleepCLISafe(period,Numofsamples) != H0AR9_OK)
+			break;
+	}
+
+	memset((char *) pcOutputString, 0, configCOMMAND_INT_MAX_OUTPUT_SIZE);
+  sprintf((char *)pcOutputString, "\r\n");
+	tofMode=20;
+	return status;
+}
 /*-----------------------------------------------------------*/
 Module_Status StreamColorToCLI(uint32_t period, uint32_t timeout)
 {
