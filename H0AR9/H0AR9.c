@@ -754,32 +754,41 @@ Module_Status StreamToTerminal(uint32_t Numofsamples, uint32_t timeout,uint8_t p
 /*-----------------------------------------------------------*/
 static Module_Status StreamMemsToCLI(uint32_t Numofsamples, uint32_t timeout, SampleMemsToString function)
 {
-	Module_Status status = H0AR9_OK;
+	Module_Status status =H0AR9_OK;
 	int8_t *pcOutputString = NULL;
-	uint32_t period = timeout / Numofsamples;
-	if (period < MIN_MEMS_PERIOD_MS)
+	uint32_t period =timeout / Numofsamples;
+	if(period < MIN_MEMS_PERIOD_MS)
 		return H0AR9_ERR_WrongParams;
 
 	// TODO: Check if CLI is enable or not
+	for(uint8_t chr =0; chr < MSG_RX_BUF_SIZE; chr++){
+		if(UARTRxBuf[PcPort - 1][chr] == '\r'){
+			UARTRxBuf[PcPort - 1][chr] =0;
+		}
+	}
+	if(1 == flag){
+		flag =0;
+		static char *pcOKMessage =(int8_t* )"Stop stream !\n\r";
+		writePxITMutex(PcPort,pcOKMessage,strlen(pcOKMessage),10);
+		return status;
+	}
+	if(period > timeout)
+		timeout =period;
 
-	if (period > timeout)
-		timeout = period;
-
-	long numTimes = timeout / period;
+	long numTimes =timeout / period;
 	stopStream = false;
 
-	while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
-		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
-		function((char *)pcOutputString, 100);
+	while((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)){
+		pcOutputString =FreeRTOS_CLIGetOutputBuffer();
+		function((char* )pcOutputString,100);
 
-
-		writePxMutex(PcPort, (char *)pcOutputString, strlen((char *)pcOutputString), cmd500ms, HAL_MAX_DELAY);
-		if (PollingSleepCLISafe(period,Numofsamples)  != H0AR9_OK)
+		writePxMutex(PcPort,(char* )pcOutputString,strlen((char* )pcOutputString),cmd500ms,HAL_MAX_DELAY);
+		if(PollingSleepCLISafe(period,Numofsamples) != H0AR9_OK)
 			break;
 	}
 
-	memset((char *) pcOutputString, 0, configCOMMAND_INT_MAX_OUTPUT_SIZE);
-  sprintf((char *)pcOutputString, "\r\n");
+	memset((char* )pcOutputString,0,configCOMMAND_INT_MAX_OUTPUT_SIZE);
+	sprintf((char* )pcOutputString,"\r\n");
 	return status;
 }
 /*-----------------------------------------------------------*/
@@ -1401,7 +1410,7 @@ static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBuf
 	do {
 		if (!strncmp(pSensName, colorCmdName, strlen(colorCmdName))) {
 			if (portOrCLI) {
-//				StreamColorToCLI(period, timeout);
+				StreamColorToCLI(Numofsamples, timeout);
 
 			} else {
 				StreamToPort(port, module, Numofsamples, timeout ,Color);
@@ -1410,7 +1419,7 @@ static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBuf
 
 		} else if (!strncmp(pSensName, distanceCmdName, strlen(distanceCmdName))) {
 			if (portOrCLI) {
-//				StreamDistanceToCLI(period, timeout);
+				StreamDistanceToCLI(Numofsamples, timeout);
 
 			} else {
 				StreamToPort(port, module, Numofsamples, timeout ,Distance);
@@ -1420,7 +1429,7 @@ static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBuf
 		}
 		else if (!strncmp(pSensName, temperatureCmdName, strlen(temperatureCmdName))) {
 			if (portOrCLI) {
-//				StreamTemperatureToCLI(period, timeout);
+				StreamTemperatureToCLI(Numofsamples, timeout);
 
 			} else {
 				StreamToPort(port, module, Numofsamples, timeout ,Temperature);
@@ -1429,7 +1438,7 @@ static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBuf
 
 		} else if (!strncmp(pSensName, humidityCmdName, strlen(humidityCmdName))) {
 			if (portOrCLI) {
-//				StreamHumidityToCLI(period, timeout);
+				StreamHumidityToCLI(Numofsamples, timeout);
 
 			} else {
 				StreamToPort(port, module, Numofsamples, timeout ,Humidity);
@@ -1438,7 +1447,7 @@ static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBuf
 
 		} else if (!strncmp(pSensName, pirCmdName, strlen(pirCmdName))) {
 			if (portOrCLI) {
-//				StreamPIRToCLI(period, timeout);
+				StreamPIRToCLI(Numofsamples, timeout);
 
 			} else {
 				StreamToPort(port, module, Numofsamples, timeout ,PIR);
