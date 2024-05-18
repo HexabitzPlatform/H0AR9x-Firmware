@@ -423,13 +423,13 @@ void Module_Peripheral_Init(void){
 
 }
 /*-----------------------------------------------------------*/
-int v;
+
 void SensorHub(void *argument){
 
 	/* Infinite loop */
 	for(;;){
 		/*  */
-v++;
+
 
 		switch(tofMode){
 			case STREAM_TO_PORT:
@@ -877,10 +877,10 @@ void SampleColorToPort(uint8_t port,uint8_t module)
 
 void SampleDistanceToPort(uint8_t port,uint8_t module)
 {
-	float buffer[1]; // Three Samples X, Y, Z
+	uint16_t buffer[1]; // Three Samples X, Y, Z
 	static uint8_t temp[4];
 
-	SampleDistanceBuff(buffer);
+	SampleDistance(buffer);
 	if(module == myID || module == 0){
 		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
 		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
@@ -890,12 +890,13 @@ void SampleDistanceToPort(uint8_t port,uint8_t module)
 		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
 	}
 	else{
-		messageParams[0] =port;
+		messageParams[0] =FMT_UINT16;
 		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
 		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
 		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
 		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
-		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(float) + 1);
+
+		SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 1);
 	}
 }
 /*-----------------------------------------------------------*/
@@ -915,13 +916,13 @@ void SampleTemperatureToPort(uint8_t port,uint8_t module)
 		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
 	}
 	else{
-		messageParams[0] =port;
+		messageParams[0] =FMT_FLOAT;
 		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
 		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
 		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
 		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
 
-		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(float) + 1);
+		SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 1);
 	}
 
 }
@@ -941,31 +942,32 @@ void SampleHumidityToPort(uint8_t port,uint8_t module)
 		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
 	}
 	else{
-		messageParams[0] =port;
+		messageParams[0] =FMT_FLOAT;
 		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
 		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
 		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
 		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
 
-		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(float) + 1);
+		SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 1);
 	}
 }
 /*-----------------------------------------------------------*/
 void SamplePIRToPort(uint8_t port,uint8_t module)
 {
-	float buffer;
+	bool buffer;
 	bool temp;
 
-	SamplePIRBuf(&buffer);
+	SamplePIR(&buffer);
 
 	if(module == myID || module == 0){
 		temp =buffer;
 		writePxITMutex(port,(char* )&temp,sizeof(bool),10);
 	}
 	else{
-		messageParams[0] =port;
+		messageParams[0] =FMT_BOOL;
 		messageParams[1] =buffer;
-		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(char) + 1);
+
+		SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 1);
 	}
 }
 /*-----------------------------------------------------------*/
