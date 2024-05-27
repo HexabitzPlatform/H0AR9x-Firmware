@@ -526,7 +526,7 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 		{
 			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] << 24);
 			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift] << 24);
-			StreamToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], Numofsamples, timeout,Color);
+			StreamToPort(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Color, Numofsamples, timeout);
 			break;
 		}
 
@@ -534,28 +534,28 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 		{
 			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] <<24);
 			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift]<<24);
-			StreamToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], Numofsamples, timeout,Distance);
+			StreamToPort(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Distance, Numofsamples, timeout);
 			break;
 		}
 		case CODE_H0AR9_STREAM_TEMP:
 		{
 			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift]<<24);
 			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift]<<24);
-			StreamToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], Numofsamples, timeout,Temperature);
+			StreamToPort(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Temperature, Numofsamples, timeout);
 			break;
 		}
 		case CODE_H0AR9_STREAM_HUMIDITY:
 		{
 			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift]<<24);
 			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift]<<24);
-			StreamToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], Numofsamples, timeout,Humidity);
+			StreamToPort(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Humidity, Numofsamples, timeout);
 			break;
 		}
 		case CODE_H0AR9_STREAM_PIR:
 		{
 			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] <<24);
 			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift] <<24);
-			StreamToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], Numofsamples, timeout,PIR);
+			StreamToPort(cMessage[port-1][shift] ,cMessage[port-1][1+shift],PIR, Numofsamples, timeout);
 			break;
 		}
 		case CODE_H0AR9_STREAM_STOP:
@@ -740,7 +740,7 @@ static Module_Status StreamMemsToBuf( float *buffer, uint32_t Numofsamples, uint
 	return status;
 }
 /*-----------------------------------------------------------*/
-Module_Status StreamToTerminal(uint32_t Numofsamples, uint32_t timeout,uint8_t port,All_Data function)
+Module_Status StreamToTerminal(uint8_t port,All_Data function,uint32_t Numofsamples, uint32_t timeout)
  {
 	Module_Status status = H0AR9_OK;
 	tofMode = STREAM_TO_Terminal;
@@ -834,41 +834,41 @@ void SampleColorToPort(uint8_t port,uint8_t module)
 	SampleColorBuf(buffer);
 
 	if(module == myID || module == 0){
-		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
-		temp[4] =*((__IO uint8_t* )(&buffer[1]) + 3);
-		temp[5] =*((__IO uint8_t* )(&buffer[1]) + 2);
-		temp[6] =*((__IO uint8_t* )(&buffer[1]) + 1);
-		temp[7] =*((__IO uint8_t* )(&buffer[1]) + 0);
+		temp[4] =*((__IO uint8_t* )(&buffer[1]) + 0);
+		temp[5] =*((__IO uint8_t* )(&buffer[1]) + 1);
+		temp[6] =*((__IO uint8_t* )(&buffer[1]) + 2);
+		temp[7] =*((__IO uint8_t* )(&buffer[1]) + 3);
 
-		temp[8] =*((__IO uint8_t* )(&buffer[2]) + 3);
-		temp[9] =*((__IO uint8_t* )(&buffer[2]) + 2);
-		temp[10] =*((__IO uint8_t* )(&buffer[2]) + 1);
-		temp[11] =*((__IO uint8_t* )(&buffer[2]) + 0);
+		temp[8] =*((__IO uint8_t* )(&buffer[2]) + 0);
+		temp[9] =*((__IO uint8_t* )(&buffer[2]) + 1);
+		temp[10] =*((__IO uint8_t* )(&buffer[2]) + 2);
+		temp[11] =*((__IO uint8_t* )(&buffer[2]) + 3);
 
 		writePxITMutex(port,(char* )&temp[0],12 * sizeof(uint8_t),10);
 	}
 	else{
-		messageParams[0] =port;
-		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[0] =FMT_FLOAT;
+		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
-		messageParams[5] =*((__IO uint8_t* )(&buffer[1]) + 3);
-		messageParams[6] =*((__IO uint8_t* )(&buffer[1]) + 2);
-		messageParams[7] =*((__IO uint8_t* )(&buffer[1]) + 1);
-		messageParams[8] =*((__IO uint8_t* )(&buffer[1]) + 0);
+		messageParams[5] =*((__IO uint8_t* )(&buffer[1]) + 0);
+		messageParams[6] =*((__IO uint8_t* )(&buffer[1]) + 1);
+		messageParams[7] =*((__IO uint8_t* )(&buffer[1]) + 2);
+		messageParams[8] =*((__IO uint8_t* )(&buffer[1]) + 3);
 
-		messageParams[9] =*((__IO uint8_t* )(&buffer[2]) + 3);
-		messageParams[10] =*((__IO uint8_t* )(&buffer[2]) + 2);
-		messageParams[11] =*((__IO uint8_t* )(&buffer[2]) + 1);
-		messageParams[12] =*((__IO uint8_t* )(&buffer[2]) + 0);
+		messageParams[9] =*((__IO uint8_t* )(&buffer[2]) + 0);
+		messageParams[10] =*((__IO uint8_t* )(&buffer[2]) + 1);
+		messageParams[11] =*((__IO uint8_t* )(&buffer[2]) + 2);
+		messageParams[12] =*((__IO uint8_t* )(&buffer[2]) + 3);
 
-		SendMessageToModule(module,CODE_PORT_FORWARD,(sizeof(float) * 3) + 1);
+		SendMessageToModule(module,CODE_READ_RESPONSE,(sizeof(float) * 3) + 1);
 
 	}
 
@@ -1178,7 +1178,7 @@ void SamplePIR(bool *pir)
 }
 
 /*-----------------------------------------------------------*/
-Module_Status StreamToPort(uint8_t port, uint8_t module, uint32_t Numofsamples, uint32_t timeout,All_Data function)
+Module_Status StreamToPort(uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples, uint32_t timeout)
 {
 	Module_Status status =H0AR9_OK;
 	tofMode =STREAM_TO_PORT;
@@ -1192,7 +1192,7 @@ Module_Status StreamToPort(uint8_t port, uint8_t module, uint32_t Numofsamples, 
 }
 /*-----------------------------------------------------------*/
 
-Module_Status StreamToBuffer(float *buffer, uint32_t Numofsamples, uint32_t timeout,All_Data function)
+Module_Status StreamToBuffer(float *buffer,All_Data function, uint32_t Numofsamples, uint32_t timeout)
 {
 	switch (function) {
 		case Color:
@@ -1415,7 +1415,7 @@ static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBuf
 				StreamColorToCLI(Numofsamples, timeout);
 
 			} else {
-				StreamToPort(port, module, Numofsamples, timeout ,Color);
+				StreamToPort(module, port,Color, Numofsamples, timeout );
 
 			}
 
@@ -1424,7 +1424,7 @@ static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBuf
 				StreamDistanceToCLI(Numofsamples, timeout);
 
 			} else {
-				StreamToPort(port, module, Numofsamples, timeout ,Distance);
+				StreamToPort(module, port,Distance, Numofsamples, timeout);
 
 			}
 
@@ -1434,7 +1434,7 @@ static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBuf
 				StreamTemperatureToCLI(Numofsamples, timeout);
 
 			} else {
-				StreamToPort(port, module, Numofsamples, timeout ,Temperature);
+				StreamToPort(module, port,Temperature, Numofsamples, timeout);
 
 			}
 
@@ -1443,7 +1443,7 @@ static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBuf
 				StreamHumidityToCLI(Numofsamples, timeout);
 
 			} else {
-				StreamToPort(port, module, Numofsamples, timeout ,Humidity);
+				StreamToPort(module, port,Humidity, Numofsamples, timeout);
 
 			}
 
@@ -1452,7 +1452,7 @@ static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBuf
 				StreamPIRToCLI(Numofsamples, timeout);
 
 			} else {
-				StreamToPort(port, module, Numofsamples, timeout ,PIR);
+				StreamToPort(module, port,PIR, Numofsamples, timeout);
 
 			}
 
@@ -1483,3 +1483,6 @@ static portBASE_TYPE StopStreamCommand(int8_t *pcWriteBuffer, size_t xWriteBuffe
 /*-----------------------------------------------------------*/
 
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
+
+
+
