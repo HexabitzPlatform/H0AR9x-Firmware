@@ -882,19 +882,19 @@ void SampleDistanceToPort(uint8_t port,uint8_t module)
 
 	SampleDistance(buffer);
 	if(module == myID || module == 0){
-		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
 		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
 	}
 	else{
 		messageParams[0] =FMT_UINT16;
-		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
 		SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 1);
 	}
@@ -908,19 +908,19 @@ void SampleTemperatureToPort(uint8_t port,uint8_t module)
 	SampleTemperatureBuf(buffer);
 
 	if(module == myID || module == 0){
-		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
 		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
 	}
 	else{
 		messageParams[0] =FMT_FLOAT;
-		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
 		SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 1);
 	}
@@ -934,19 +934,19 @@ void SampleHumidityToPort(uint8_t port,uint8_t module)
 
 	SampleHumidityBuf(buffer);
 	if(module == myID || module == 0){
-		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
 		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
 	}
 	else{
 		messageParams[0] =FMT_FLOAT;
-		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
 		SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 1);
 	}
