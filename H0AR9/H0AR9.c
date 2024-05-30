@@ -33,6 +33,7 @@ UART_HandleTypeDef huart6;
 /* Exported variables */
 extern FLASH_ProcessTypeDef pFlash;
 extern uint8_t numOfRecordedSnippets;
+extern I2C_HandleTypeDef hi2c2;
 EventGroupHandle_t handleNewReadyData = NULL;
 
 
@@ -43,15 +44,20 @@ module_param_t modParam[NUM_MODULE_PARAMS];
 
 /* Private variables ---------------------------------------------------------*/
 TaskHandle_t ToFHandle = NULL;
-
+static const uint8_t colorProximityAdd = (0x39)<<1;
 uint8_t coun;
 uint16_t Dist;
 uint8_t flag ;
+uint8_t receive[2];
+uint8_t send[2];
+
+
+
 
 static bool stopStream = false;
 /* Private function prototypes -----------------------------------------------*/
 void ToFTask(void *argument);
-
+Module_Status WriteRegData(uint8_t reg, uint8_t data);
 /* Create CLI commands --------------------------------------------------------*/
 
 ///*-----------------------------------------------------------*/
@@ -459,6 +465,32 @@ void ToFTask(void *argument) {
  |                               APIs                                    |
  -----------------------------------------------------------------------
  */
+Module_Status WriteRegData(uint8_t reg, uint8_t data)
+ {
+	Module_Status status = H0AR9_OK;
+	HAL_StatusTypeDef HAL_status;
+	send[0] = 0x80 | reg;
+	send[1] = data;
+	HAL_status = HAL_I2C_Master_Transmit(&hi2c2, colorProximityAdd, send, 2,
+	HAL_MAX_DELAY);
+
+	switch (HAL_status) {
+	case HAL_ERROR:
+		status = H0AR9_ERROR;
+		break;
+	case HAL_BUSY:
+		status = H0AR9_ERR_BUSY;
+		break;
+	case HAL_OK:
+		status = H0AR9_OK;
+		break;
+	default:
+		break;
+	}
+	return status;
+
+}
+
 
 /* -----------------------------------------------------------------------
  |                             Commands                                  |
