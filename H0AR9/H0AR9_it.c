@@ -52,7 +52,7 @@ void HardFault_Handler(void){
 }
 
 /******************************************************************************/
-/* STM32G0xx Peripheral Interrupt Handlers                                    */
+/* STM32F0xx Peripheral Interrupt Handlers                                    */
 /* Add here the Interrupt Handlers for the used peripherals.                  */
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32f0xx.s).                    */
@@ -329,17 +329,6 @@ void vApplicationMallocFailedHook(void){
 	NVIC_SystemReset();
 //	taskDISABLE_INTERRUPTS();
 	for(;;);
-}
-
-void EXTI0_1_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI0_1_IRQn 0 */
-//	IntCount_ToF=1;
-  /* USER CODE END EXTI0_1_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
-  /* USER CODE BEGIN EXTI0_1_IRQn 1 */
-
-  /* USER CODE END EXTI0_1_IRQn 1 */
 }
 /*-----------------------------------------------------------*/
 
