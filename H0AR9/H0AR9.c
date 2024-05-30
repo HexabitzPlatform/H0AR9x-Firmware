@@ -58,6 +58,7 @@ static bool stopStream = false;
 /* Private function prototypes -----------------------------------------------*/
 void ToFTask(void *argument);
 Module_Status WriteRegData(uint8_t reg, uint8_t data);
+Module_Status APDS9950_init(void);
 /* Create CLI commands --------------------------------------------------------*/
 
 ///*-----------------------------------------------------------*/
@@ -209,6 +210,12 @@ void Module_Peripheral_Init(void) {
 	MX_USART4_UART_Init();
 	MX_USART5_UART_Init();
 	MX_USART6_UART_Init();
+	/* initialize GPIO for module */
+	  SENSORS_GPIO_Init();
+	  /* initialize I2C for module */
+	  MX_I2C_Init();
+	  /* initialize color&proximity sensor */
+	  APDS9950_init();
 
 	//Circulating DMA Channels ON All Module
 	for (int i = 1; i <= NumOfPorts; i++) {
@@ -230,8 +237,6 @@ void Module_Peripheral_Init(void) {
 	/* create a event group for measurement ranging */
 	handleNewReadyData = xEventGroupCreate();
 
-	/* I2C initialization */
-	MX_I2C_Init();
 
 	/* Create a ToF task */
 	xTaskCreate(ToFTask, (const char*) "ToFTask",
@@ -465,6 +470,14 @@ void ToFTask(void *argument) {
  |                               APIs                                    |
  -----------------------------------------------------------------------
  */
+uint16_t Read_Word(uint8_t reg)
+{
+   send[0]= 0xA0 | reg;
+   HAL_I2C_Master_Transmit(&hi2c2, colorProximityAdd, send, 1, HAL_MAX_DELAY);
+   HAL_I2C_Master_Receive(&hi2c2, colorProximityAdd, receive, 2, HAL_MAX_DELAY);
+    return (uint16_t)(receive[0] + (256 * receive[1]));
+
+}
 Module_Status WriteRegData(uint8_t reg, uint8_t data)
  {
 	Module_Status status = H0AR9_OK;
@@ -490,6 +503,45 @@ Module_Status WriteRegData(uint8_t reg, uint8_t data)
 	return status;
 
 }
+/*------------------------------------------------------------*/
+//initialize APDS9950 sensor
+Module_Status APDS9950_init(void)
+ {
+	Module_Status status = H0AR9_OK;
+	uint8_t CONTROL, Enable, ATIME, WTIME, PPULSE;
+	uint8_t redReg, greenReg, blueReg, distanceReg;
+    //registers addresses
+	CONTROL = 0x0F;
+	Enable = 0x00;
+	ATIME = 0x01;
+	WTIME = 0x03;
+	PPULSE = 0x0E;
+	redReg = 0x16;
+	greenReg = 0x18;
+	blueReg = 0x1A;
+	distanceReg = 0x1C;
+
+	if (H0AR9_OK != WriteRegData(Enable, 0x00))
+		return status = H0AR9_ERROR;
+
+	if (H0AR9_OK != WriteRegData(ATIME, 0x00))
+		return status = H0AR9_ERROR;
+
+	if (H0AR9_OK != WriteRegData(WTIME, 0xff))
+		return status = H0AR9_ERROR;
+
+	if (H0AR9_OK != WriteRegData(PPULSE, 0x01))
+		return status = H0AR9_ERROR;
+
+	if (H0AR9_OK != WriteRegData(CONTROL, 0x20))
+		return status = H0AR9_ERROR;
+
+	if (H0AR9_OK != WriteRegData(Enable, 0x0F))
+		return status = H0AR9_ERROR;
+
+	return status;
+}
+/*-----------------------------------------------------------*/
 
 
 /* -----------------------------------------------------------------------
