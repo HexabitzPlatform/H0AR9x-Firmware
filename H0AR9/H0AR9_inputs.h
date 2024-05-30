@@ -9,8 +9,7 @@
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 
-//#ifndef BOS_INPUTS_H
-//#define BOS_INPUTS_H
+
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
 #include "stm32g0xx_hal_adc.h"

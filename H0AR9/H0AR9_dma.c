@@ -1,7 +1,7 @@
 /*
  BitzOS (BOS) V0.3.3 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
-
+ 
  File Name     : H0AR9_dma.c
  Description   : source file Contains Peripheral DMA setup .
 
@@ -16,8 +16,8 @@
 
 /* Variables ---------------------------------------------------------*/
 
-/* DMA structs. Number of structs depends on available DMA channels and array ports where some channels might be reconfigured.
- - Update for non-standard MCUs
+/* DMA structs. Number of structs depends on available DMA channels and array ports where some channels might be reconfigured. 
+ - Update for non-standard MCUs 
  */
 DMA_HandleTypeDef msgRxDMA[6] ={0};
 DMA_HandleTypeDef msgTxDMA[3] ={0};
@@ -38,7 +38,7 @@ void RemapAndLinkDMAtoUARTTx(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA);
 
 /*-----------------------------------------------------------*/
 
-/**
+/** 
  * Initialize the DMAs
  */
 void DMA_Init(void){
@@ -49,30 +49,22 @@ void DMA_Init(void){
 	/* Initialize messaging RX DMAs x 6 - Update for non-standard MCUs */
 #ifdef _P1
 	DMA_MSG_RX_CH_Init(&msgRxDMA[0],DMA1_Channel4);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[0],DMA2_Channel1);
 #endif
 #ifdef _P2
 	DMA_MSG_RX_CH_Init(&msgRxDMA[1],DMA1_Channel2);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[1],DMA1_Channel4);
 #endif
 #ifdef _P3
 	DMA_MSG_RX_CH_Init(&msgRxDMA[2],DMA1_Channel3);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[2],DMA1_Channel6);
 #endif
 #ifdef _P4
 	DMA_MSG_RX_CH_Init(&msgRxDMA[3],DMA1_Channel1);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[3],DMA1_Channel2);
 #endif
 #ifdef _P5
 	DMA_MSG_RX_CH_Init(&msgRxDMA[4],DMA1_Channel5);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[4],DMA2_Channel3);
 #endif
 #ifdef _P6
 	DMA_MSG_RX_CH_Init(&msgRxDMA[5],DMA1_Channel6);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[5],DMA2_Channel5);
 #endif
-
-
 
 	/* Initialize streaming RX DMAs x 0 */
 	// No more channels. Dynamically reconfigure from messaging RX DMAs.
@@ -84,7 +76,7 @@ void DMA_Init(void){
 /* Initialization functions ---------------------------------*/
 /*-----------------------------------------------------------*/
 
-/* Initialize a messaging RX DMA channel
+/* Initialize a messaging RX DMA channel 
  */
 void DMA_MSG_RX_CH_Init(DMA_HandleTypeDef *hDMA,DMA_Channel_TypeDef *ch){
 	hDMA->Instance =ch;
@@ -95,14 +87,14 @@ void DMA_MSG_RX_CH_Init(DMA_HandleTypeDef *hDMA,DMA_Channel_TypeDef *ch){
 	hDMA->Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
 	hDMA->Init.Mode = DMA_CIRCULAR;
 	hDMA->Init.Priority = MSG_DMA_PRIORITY;
-
+	
 	HAL_DMA_Init(hDMA);
 
 }
 
 /*-----------------------------------------------------------*/
 
-/* Initialize a messaging TX DMA channel
+/* Initialize a messaging TX DMA channel 
  */
 void DMA_MSG_TX_CH_Init(DMA_HandleTypeDef *hDMA,DMA_Channel_TypeDef *ch){
 	hDMA->Instance =ch;
@@ -113,13 +105,13 @@ void DMA_MSG_TX_CH_Init(DMA_HandleTypeDef *hDMA,DMA_Channel_TypeDef *ch){
 	hDMA->Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
 	hDMA->Init.Mode = DMA_NORMAL;
 	hDMA->Init.Priority = MSG_DMA_PRIORITY;
-
+	
 	HAL_DMA_Init(hDMA);
 }
 
 /*-----------------------------------------------------------*/
 
-/* Initialize a streaming DMA channel (RX only)
+/* Initialize a streaming DMA channel (RX only) 
  */
 void DMA_STREAM_CH_Init(DMA_HandleTypeDef *hDMA,DMA_Channel_TypeDef *ch){
 	hDMA->Instance =ch;
@@ -130,13 +122,13 @@ void DMA_STREAM_CH_Init(DMA_HandleTypeDef *hDMA,DMA_Channel_TypeDef *ch){
 	hDMA->Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
 	hDMA->Init.Mode = DMA_CIRCULAR;
 	hDMA->Init.Priority = STREAM_DMA_PRIORITY;
-
+	
 	HAL_DMA_Init(hDMA);
 }
 
 /*-----------------------------------------------------------*/
 
-/* Initialize a frontend DMA channel - modify based on frontend needs
+/* Initialize a frontend DMA channel - modify based on frontend needs 
  */
 void DMA_FRONTEND_CH_Init(DMA_HandleTypeDef *hDMA,DMA_Channel_TypeDef *ch){
 	hDMA->Instance =ch;
@@ -147,7 +139,7 @@ void DMA_FRONTEND_CH_Init(DMA_HandleTypeDef *hDMA,DMA_Channel_TypeDef *ch){
 	hDMA->Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
 	hDMA->Init.Mode = DMA_CIRCULAR;
 	hDMA->Init.Priority = FRONTEND_DMA_PRIORITY;
-
+	
 	HAL_DMA_Init(hDMA);
 }
 
@@ -155,7 +147,7 @@ void DMA_FRONTEND_CH_Init(DMA_HandleTypeDef *hDMA,DMA_Channel_TypeDef *ch){
 /* Setup and control functions ------------------------------*/
 /*-----------------------------------------------------------*/
 
-/* Setup and start Messaging DMAs
+/* Setup and start Messaging DMAs 
  */
 void SetupMessagingRxDMAs(void){
 #ifdef _P1
@@ -186,7 +178,7 @@ void SetupMessagingRxDMAs(void){
 
 /*-----------------------------------------------------------*/
 
-/* Messaging DMA RX setup (port-to-memory)
+/* Messaging DMA RX setup (port-to-memory) 
  */
 void DMA_MSG_RX_Setup(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 	/* Remap and link to UART Rx */
@@ -205,11 +197,11 @@ void DMA_MSG_RX_Setup(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 
 /*-----------------------------------------------------------*/
 
-/* Messaging DMA TX setup (memory-to-port)
+/* Messaging DMA TX setup (memory-to-port) 
  */
 void DMA_MSG_TX_Setup(UART_HandleTypeDef *huart){
 	DMA_HandleTypeDef *hDMA;
-
+	
 	/* Assign the first free TX DMA */
 	if(msgTxDMA[0].Parent == NULL)
 		hDMA =&msgTxDMA[0];
@@ -218,13 +210,13 @@ void DMA_MSG_TX_Setup(UART_HandleTypeDef *huart){
 	else if(msgTxDMA[2].Parent == NULL)
 		hDMA =&msgTxDMA[2];
 	// TODO return no enough TX DMAs
-
+	
 	/* Remap and link to UART Tx */
 	RemapAndLinkDMAtoUARTTx(huart,hDMA);
-
+	
 	/* Setup DMA interrupts */
 	SetupDMAInterrupts(hDMA,MSG_DMA_INT_PRIORITY);
-
+	
 	/* Start DMA stream	when needed */
 }
 
@@ -235,7 +227,7 @@ void DMA_MSG_TX_Setup(UART_HandleTypeDef *huart){
 void DMA_MSG_TX_UnSetup(UART_HandleTypeDef *huart){
 	/* Setup DMA interrupts */
 	UnSetupDMAInterrupts(huart->hdmatx);
-
+	
 	/* Unlink the TX DMA and UART */
 	huart->hdmatx->Parent = NULL;
 	huart->hdmatx = NULL;
@@ -243,21 +235,21 @@ void DMA_MSG_TX_UnSetup(UART_HandleTypeDef *huart){
 
 /*-----------------------------------------------------------*/
 
-/* Streaming DMA setup (port-to-port)
+/* Streaming DMA setup (port-to-port) 
  */
 void DMA_STREAM_Setup(UART_HandleTypeDef *huartSrc,UART_HandleTypeDef *huartDst,uint16_t num){
 	DMA_HandleTypeDef *hDMA;
 	uint8_t port =GetPort(huartSrc);
-
+	
 	/* Select DMA struct */
 	hDMA =&streamDMA[port - 1];
-
+	
 	/* Remap and link to UART RX */
 	RemapAndLinkDMAtoUARTRx(huartSrc,hDMA);
 
 	/* Setup DMA interrupts */
 	//SetupDMAInterrupts(hDMA,STREAM_DMA_INT_PRIORITY);
-
+	
 	/* Start DMA stream	*/
 	huartSrc->gState =HAL_UART_STATE_READY;
 	HAL_UART_Receive_DMA(huartSrc,(uint8_t* )(&(huartDst->Instance->TDR)),num);
@@ -334,7 +326,7 @@ void SwitchStreamDMAToMsg(uint8_t port) {
 }
 
 
-/* Setup DMA interrupts
+/* Setup DMA interrupts  
  */
 void SetupDMAInterrupts(DMA_HandleTypeDef *hDMA,uint8_t priority){
 	switch((uint32_t )hDMA->Instance){
@@ -342,7 +334,7 @@ void SetupDMAInterrupts(DMA_HandleTypeDef *hDMA,uint8_t priority){
 			HAL_NVIC_SetPriority(DMA1_Channel1_IRQn,priority,0);
 			HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
 			break;
-
+			
 		case (uint32_t ) DMA1_Channel2:
 		case (uint32_t ) DMA1_Channel3:
 		case (uint32_t ) DMA2_Channel1:
@@ -350,7 +342,7 @@ void SetupDMAInterrupts(DMA_HandleTypeDef *hDMA,uint8_t priority){
 			HAL_NVIC_SetPriority(DMA1_Channel2_3_IRQn,priority,0);
 			HAL_NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
 			break;
-
+			
 		case (uint32_t ) DMA1_Channel4:
 		case (uint32_t ) DMA1_Channel5:
 		case (uint32_t ) DMA1_Channel6:
@@ -361,7 +353,7 @@ void SetupDMAInterrupts(DMA_HandleTypeDef *hDMA,uint8_t priority){
 			HAL_NVIC_SetPriority(DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn,priority,0);
 			HAL_NVIC_EnableIRQ(DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn);
 			break;
-
+			
 		default:
 			break;
 	}
@@ -369,7 +361,7 @@ void SetupDMAInterrupts(DMA_HandleTypeDef *hDMA,uint8_t priority){
 //TOBECHECKED
 /*-----------------------------------------------------------*/
 
-/* UnSetup DMA interrupts
+/* UnSetup DMA interrupts  
  */
 void UnSetupDMAInterrupts(DMA_HandleTypeDef *hDMA){
 	switch((uint32_t )hDMA->Instance){
@@ -377,14 +369,14 @@ void UnSetupDMAInterrupts(DMA_HandleTypeDef *hDMA){
 			//HAL_NVIC_DisableIRQ(DMA1_Ch1_IRQn);
 			HAL_NVIC_DisableIRQ(DMA1_Channel1_IRQn);
 			break;
-
+			
 		case (uint32_t ) DMA1_Channel2:
 		case (uint32_t ) DMA1_Channel3:
 		case (uint32_t ) DMA2_Channel1:
 		case (uint32_t ) DMA2_Channel2:
 			HAL_NVIC_DisableIRQ(DMA1_Channel2_3_IRQn);
 			break;
-
+			
 		case (uint32_t ) DMA1_Channel4:
 		case (uint32_t ) DMA1_Channel5:
 		case (uint32_t ) DMA1_Channel6:
@@ -394,7 +386,7 @@ void UnSetupDMAInterrupts(DMA_HandleTypeDef *hDMA){
 		case (uint32_t ) DMA2_Channel5:
 			HAL_NVIC_DisableIRQ(DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn);
 			break;
-
+			
 		default:
 			break;
 	}
@@ -402,7 +394,7 @@ void UnSetupDMAInterrupts(DMA_HandleTypeDef *hDMA){
 //TOBECHECKED
 /*-----------------------------------------------------------*/
 
-/* Remap and link the UART RX and DMA structs
+/* Remap and link the UART RX and DMA structs 
  */
 void RemapAndLinkDMAtoUARTRx(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 	// USART 1
@@ -448,7 +440,7 @@ void RemapAndLinkDMAtoUARTRx(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 
 /*-----------------------------------------------------------*/
 
-/* Remap and link the UART TX and DMA structs
+/* Remap and link the UART TX and DMA structs 
  */
 void RemapAndLinkDMAtoUARTTx(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 	// USART 1
@@ -559,7 +551,7 @@ uint8_t  CalculateCRC8(uint8_t pBuffer[], uint16_t size)
 
 	return pTemp;
   }
-
+  
 else
 	return 0;
 }

@@ -26,6 +26,7 @@ static uint16_t EE_VerifyPageFullWriteVariable(uint16_t VirtAddress,uint16_t Dat
 static uint16_t EE_PageTransfer(uint16_t VirtAddress,uint16_t Data);
 static uint16_t EE_FindValidPage(uint8_t Operation);
 
+
 /**
  * @brief  Restore the pages to a known good state in case of page's status
  *   corruption after a power loss.
@@ -116,7 +117,9 @@ uint16_t EE_Init(void){
 			else /* First EEPROM access (PageA&B are erased) or invalid state -> format EEPROM */
 			{
 				/* Erase both PageA and PageB and set PageA as valid page */
+
 				FlashStatus =EE_Format();
+
 				/* If erase/program operation was failed, a Flash error code is returned */
 				/* Wait for last operation to be completed */
 				FlashStatus =FLASH_WaitForLastOperation((uint32_t )HAL_FLASH_TIMEOUT_VALUE);
@@ -211,7 +214,7 @@ uint16_t EE_Init(void){
 					}
 				}
 				/* Mark PageA as valid */
-				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,PAGEB1_BASE_ADDRESS,VALID_PAGE_WRITE);
+				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,PAGEA1_BASE_ADDRESS,VALID_PAGE_WRITE);
 				//TOBECHECKED
 				/* If program operation was failed, a Flash error code is returned */
 				/* Wait for last operation to be completed */
@@ -298,7 +301,7 @@ uint16_t EE_Init(void){
 					}
 				}
 				/* Mark PageB as valid */
-				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,PAGEB1_BASE_ADDRESS,VALID_PAGE);
+				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,PAGEB1_BASE_ADDRESS,VALID_PAGE_WRITE);
 				//TOBECHECKED
 				/* If program operation was failed, a Flash error code is returned */
 				/* Wait for last operation to be completed */
@@ -389,7 +392,7 @@ uint16_t EE_ReadVariable(uint16_t VirtAddress,uint16_t *Data){
 		/* Compare the read address with the virtual address */
 		if(AddressValue == VirtAddress){
 			/* Get content of Address-2 which is variable value */
-			*Data =(*(__IO uint16_t* )(Address - 8));
+			*Data =(*(__IO uint16_t* )(Address-8));
 			
 			/* In case variable value is read, reset ReadStatus flag */
 			ReadStatus =0;
@@ -448,7 +451,10 @@ uint16_t EE_Format(void){
 	HAL_FLASH_Unlock();
 	
 	/* Erase PageA */
+
 	FLASH_PageErase(FLASH_BANK_2,PAGEA1_BASE_ADDRESS);
+
+
 	//TOBECHECKED
 	/* Wait for last operation to be completed */
 	FlashStatus =FLASH_WaitForLastOperation((uint32_t )HAL_FLASH_TIMEOUT_VALUE);
@@ -623,7 +629,7 @@ static uint16_t EE_VerifyPageFullWriteVariable(uint16_t VirtAddress,uint16_t Dat
 			}
 			
 			/* Set variable virtual address */
-			//HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,Address + 2,VirtAddress);
+			HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,Address + 8,VirtAddress);
 			//TOBECHECKED
 			/* Wait for last operation to be completed */
 			FlashStatus =FLASH_WaitForLastOperation((uint32_t )HAL_FLASH_TIMEOUT_VALUE);
@@ -828,6 +834,7 @@ BOS_Status EraseSector(uint32_t sector ) {
 
 	return result;
 }
+
 
 /**
  * @}
