@@ -646,6 +646,14 @@ Module_Status SampleDistance(uint16_t *distance)
 	return status;
 
 }
+/*-----------------------------------------------------------*/
+Module_Status SamplePIR(bool *pir)
+ {
+	Module_Status status = H0AR9_OK;
+	*pir = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6);/* USER CODE END WHILE */
+	Delay_ms(500);
+	return status;
+}
 
 /*-----------------------------------------------------------*/
 
