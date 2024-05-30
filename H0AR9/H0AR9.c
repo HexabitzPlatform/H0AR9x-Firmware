@@ -45,6 +45,10 @@ module_param_t modParam[NUM_MODULE_PARAMS];
 /* Private variables ---------------------------------------------------------*/
 TaskHandle_t ToFHandle = NULL;
 static const uint8_t colorProximityAdd = (0x39)<<1;
+//temprature and humidity sensor addresses
+static const uint8_t tempHumAdd = (0x40)<<1; // Use 7-bit address
+static const uint8_t tempReg = 0x00;
+static const uint8_t humidityReg = 0x01;
 uint8_t coun;
 uint16_t Dist;
 uint8_t flag ;
@@ -654,7 +658,30 @@ Module_Status SamplePIR(bool *pir)
 	Delay_ms(500);
 	return status;
 }
+/*-----------------------------------------------------------*/
 
+
+Module_Status SampleTemperature(float *temperature)
+ {
+	Module_Status status = H0AR9_OK;
+	HAL_StatusTypeDef HAL_status;
+	uint8_t buf[2];
+	uint16_t val;
+	buf[0] = tempReg;
+	if (HAL_OK!= HAL_I2C_Master_Transmit(&hi2c2, tempHumAdd, buf, 1,HAL_MAX_DELAY))
+		return status = H0AR9_ERROR;
+
+	HAL_Delay(20);
+
+	if (HAL_OK!= HAL_I2C_Master_Receive(&hi2c2, tempHumAdd, buf, 2,HAL_MAX_DELAY))
+		return status = H0AR9_ERROR;
+
+	val = buf[0] << 8 | buf[1];
+	*temperature = ((float) val / 65536) * 165.0 - 40.0;
+
+	return status;
+
+}
 /*-----------------------------------------------------------*/
 
 /* -----------------------------------------------------------------------
