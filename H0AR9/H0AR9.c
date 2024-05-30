@@ -55,10 +55,13 @@ uint8_t send[2];
 
 
 static bool stopStream = false;
+uint8_t CONTROL, Enable, ATIME, WTIME, PPULSE;
+uint8_t redReg, greenReg, blueReg, distanceReg;
 /* Private function prototypes -----------------------------------------------*/
 void ToFTask(void *argument);
 Module_Status WriteRegData(uint8_t reg, uint8_t data);
 Module_Status APDS9950_init(void);
+Module_Status Read_Word(uint8_t reg , uint16_t *Data );
 /* Create CLI commands --------------------------------------------------------*/
 
 ///*-----------------------------------------------------------*/
@@ -211,11 +214,11 @@ void Module_Peripheral_Init(void) {
 	MX_USART5_UART_Init();
 	MX_USART6_UART_Init();
 	/* initialize GPIO for module */
-	  SENSORS_GPIO_Init();
-	  /* initialize I2C for module */
-	  MX_I2C_Init();
-	  /* initialize color&proximity sensor */
-	  APDS9950_init();
+	SENSORS_GPIO_Init();
+	/* initialize I2C for module */
+	MX_I2C_Init();
+	/* initialize color&proximity sensor */
+	APDS9950_init();
 
 	//Circulating DMA Channels ON All Module
 	for (int i = 1; i <= NumOfPorts; i++) {
@@ -236,7 +239,6 @@ void Module_Peripheral_Init(void) {
 
 	/* create a event group for measurement ranging */
 	handleNewReadyData = xEventGroupCreate();
-
 
 	/* Create a ToF task */
 	xTaskCreate(ToFTask, (const char*) "ToFTask",
@@ -470,14 +472,7 @@ void ToFTask(void *argument) {
  |                               APIs                                    |
  -----------------------------------------------------------------------
  */
-uint16_t Read_Word(uint8_t reg)
-{
-   send[0]= 0xA0 | reg;
-   HAL_I2C_Master_Transmit(&hi2c2, colorProximityAdd, send, 1, HAL_MAX_DELAY);
-   HAL_I2C_Master_Receive(&hi2c2, colorProximityAdd, receive, 2, HAL_MAX_DELAY);
-    return (uint16_t)(receive[0] + (256 * receive[1]));
 
-}
 Module_Status WriteRegData(uint8_t reg, uint8_t data)
  {
 	Module_Status status = H0AR9_OK;
@@ -508,8 +503,7 @@ Module_Status WriteRegData(uint8_t reg, uint8_t data)
 Module_Status APDS9950_init(void)
  {
 	Module_Status status = H0AR9_OK;
-	uint8_t CONTROL, Enable, ATIME, WTIME, PPULSE;
-	uint8_t redReg, greenReg, blueReg, distanceReg;
+
     //registers addresses
 	CONTROL = 0x0F;
 	Enable = 0x00;
@@ -542,7 +536,49 @@ Module_Status APDS9950_init(void)
 	return status;
 }
 /*-----------------------------------------------------------*/
+Module_Status Read_Word(uint8_t reg , uint16_t *Data )
+ {
+	Module_Status status = H0AR9_OK;
+	HAL_StatusTypeDef HAL_status;
+	send[0] = 0xA0 | reg;
 
+	HAL_status =HAL_I2C_Master_Transmit(&hi2c2, colorProximityAdd, send, 1, HAL_MAX_DELAY);
+	switch (HAL_status) {
+	case HAL_ERROR:
+		return	status = H0AR9_ERROR;
+		break;
+	case HAL_BUSY:
+		return	status = H0AR9_ERR_BUSY;
+		break;
+	case HAL_OK:
+		status = H0AR9_OK;
+		break;
+	default:
+		break;
+	}
+	HAL_status =HAL_I2C_Master_Receive(&hi2c2, colorProximityAdd, receive, 2,HAL_MAX_DELAY);
+
+	switch (HAL_status) {
+	case HAL_ERROR:
+		return	status = H0AR9_ERROR;
+		break;
+	case HAL_BUSY:
+		return	status = H0AR9_ERR_BUSY;
+		break;
+	case HAL_OK:
+		status = H0AR9_OK;
+		break;
+	default:
+		break;
+	}
+
+	*Data = (uint16_t) (receive[0] + (256 * receive[1]));
+
+	return status;
+}
+
+
+/*-----------------------------------------------------------*/
 
 /* -----------------------------------------------------------------------
  |                             Commands                                  |

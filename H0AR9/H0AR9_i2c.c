@@ -19,9 +19,6 @@
 
 
 I2C_HandleTypeDef hi2c2;
-static const uint8_t colorProximityAdd = (0x39)<<1;
-uint8_t receive[2];
-uint8_t send[2];
 
 
 
