@@ -28,20 +28,6 @@ void GPIO_Init(void){
 	__GPIOF_CLK_ENABLE();		// for HSE and Boot0
 	
 	IND_LED_Init();
-	GPIO_InitTypeDef GPIO_InitStruct;
-
-	GPIO_InitStruct.Pin = GPIO_PIN_5;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-	GPIO_InitStruct.Pin = GPIO_PIN_1;
-	GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-
 }
 
 //-- Configure indicator LED
@@ -54,7 +40,29 @@ void IND_LED_Init(void){
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 	HAL_GPIO_Init(_IND_LED_PORT,&GPIO_InitStruct);
 }
+/*-----------------------------------------------------------*/
+void SENSORS_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct;
 
+  /**I2C2 GPIO Configuration
+  PA6     ------> I2C2_SDA
+  PA7     ------> I2C2_SCL
+  */
+  GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF8_I2C2;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    __HAL_RCC_I2C2_CLK_ENABLE();
+
+    /*Configure GPIO pin : PB6 as output*/
+    GPIO_InitStruct.Pin = GPIO_PIN_6;
+    GPIO_InitStruct.Mode =  GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+}
 /*-----------------------------------------------------------*/
 
 /* --- Check for factory reset condition: 
