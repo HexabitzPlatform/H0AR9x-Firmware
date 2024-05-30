@@ -152,6 +152,7 @@ Module_Status SamplePIR(bool *pir);
 Module_Status SampleDistance(uint16_t *distance);
 Module_Status SampleColor(uint16_t *Red, uint16_t *Green, uint16_t *Blue);
 Module_Status SampleTemperature(float *temperature);
+Module_Status SampleHumidity(float *humidity);
 
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);

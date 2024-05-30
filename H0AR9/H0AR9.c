@@ -683,6 +683,28 @@ Module_Status SampleTemperature(float *temperature)
 
 }
 /*-----------------------------------------------------------*/
+Module_Status SampleHumidity(float *humidity)
+ {
+	Module_Status status = H0AR9_OK;
+	HAL_StatusTypeDef HAL_status;
+	uint8_t buf[2];
+	uint16_t val;
+	buf[0] = humidityReg;
+	if (HAL_OK!= HAL_I2C_Master_Transmit(&hi2c2, tempHumAdd, buf, 1,HAL_MAX_DELAY))
+		return status = H0AR9_ERROR;
+
+	HAL_Delay(20);
+
+	if (HAL_OK!= HAL_I2C_Master_Receive(&hi2c2, tempHumAdd, buf, 2,HAL_MAX_DELAY))
+		return status = H0AR9_ERROR;
+
+	val = buf[0] << 8 | buf[1];
+	*humidity = (((float) val * 100) / 65536);
+
+	return status;
+
+}
+/*-----------------------------------------------------------*/
 
 /* -----------------------------------------------------------------------
  |                             Commands                                  |

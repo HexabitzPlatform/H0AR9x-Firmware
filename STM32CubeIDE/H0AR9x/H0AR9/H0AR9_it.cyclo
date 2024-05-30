@@ -12,4 +12,3 @@
 ..\..\H0AR9\H0AR9_it.c:220:6:HAL_UART_RxCpltCallback	1
 ..\..\H0AR9\H0AR9_it.c:303:6:vApplicationStackOverflowHook	0
 ..\..\H0AR9\H0AR9_it.c:325:6:vApplicationMallocFailedHook	0
-..\..\H0AR9\H0AR9_it.c:334:6:EXTI0_1_IRQHandler	1

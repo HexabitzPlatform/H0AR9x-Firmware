@@ -23,14 +23,21 @@ int main(void) {
 	}
 }
 
-/*-----------------------------------------------------------*/
+/*----------- ------------------------------------------------*/
+uint16_t Red ,Green ,Blue ,d;
+float ww ;
+Module_Status s ;
+bool g  ;
 
 /* User Task */
 void UserTask(void *argument) {
 
 	// put your code here, to run repeatedly.
 	while (1) {
-
+//		SampleTemperature(&ww) ;
+		SampleHumidity(&ww);
+//		SampleDistance(&d);
+//		 s= SampleColor(&Red, &Green, &Blue);
 	}
 }
 
