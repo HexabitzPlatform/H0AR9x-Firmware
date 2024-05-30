@@ -148,7 +148,7 @@ extern void MX_USART6_UART_Init(void);
  |                               APIs                                    |
  -----------------------------------------------------------------------
  */
-
+Module_Status SampleColor(uint16_t *Red, uint16_t *Green, uint16_t *Blue);
 
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);

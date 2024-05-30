@@ -576,6 +576,22 @@ Module_Status Read_Word(uint8_t reg , uint16_t *Data )
 
 	return status;
 }
+/*-----------------------------------------------------------*/
+Module_Status SampleColor(uint16_t *Red, uint16_t *Green, uint16_t *Blue) {
+
+	Module_Status status = H0AR9_OK;
+
+	if (H0AR9_OK != Read_Word(redReg, Red) )
+		return	status = H0AR9_ERROR;
+
+	if (H0AR9_OK != Read_Word(greenReg, Green) )
+		return	status = H0AR9_ERROR;
+
+	if (H0AR9_OK != Read_Word(blueReg, Blue) )
+		return	status = H0AR9_ERROR;
+
+	return status;
+}
 
 
 /*-----------------------------------------------------------*/
