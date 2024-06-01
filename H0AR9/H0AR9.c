@@ -73,6 +73,13 @@ void ToFTask(void *argument);
 Module_Status WriteRegData(uint8_t reg, uint8_t data);
 Module_Status APDS9950_init(void);
 Module_Status Read_Word(uint8_t reg , uint16_t *Data );
+Module_Status SamplePIRToString(char *cstring, size_t maxLen);
+Module_Status SampleDistanceToString(char *cstring, size_t maxLen);
+Module_Status SampleTemperatureToString(char *cstring, size_t maxLen);
+Module_Status SampleHumidityToString(char *cstring, size_t maxLen);
+Module_Status SampleColorToString(char *cstring, size_t maxLen);
+
+
 /* Create CLI commands --------------------------------------------------------*/
 
 ///*-----------------------------------------------------------*/
@@ -726,17 +733,90 @@ Module_Status SampleColorToString(char *cstring, size_t maxLen)
 	snprintf(cstring, maxLen, "Red: %d, Green: %d, Blue: %d\r\n", red, green,blue);
 	return status;
  }
-
+/*-----------------------------------------------------------*/
 Module_Status SampleDistanceToString(char *cstring, size_t maxLen)
 {
 	Module_Status status = H0AR9_OK;
 	uint16_t distance = 0;
-	SampleDistance(&distance);
+	status=SampleDistance(&distance);
 	distance1=distance;
 	snprintf(cstring, maxLen, "Distance: %d\r\n", distance);
 	return status;
 }
 
+/*-----------------------------------------------------------*/
+Module_Status SampleTemperatureToString(char *cstring, size_t maxLen)
+ {
+
+	Module_Status status = H0AR9_OK;
+	float temprature = 0;
+	status=SampleTemperature(&temprature);
+	temp = temprature;
+	char Number[5] = { 0 };
+	uint16_t x;
+	volatile uint32_t temp1 = 1;
+	uint16_t x0, x1, x2;
+	temp1 = temp;
+
+	x0 = (uint8_t) (temp * 10 - temp1 * 10);
+	x1 = (uint8_t) (temp1 % 10);
+	x2 = (uint8_t) (temp1 / 10 % 10);
+
+	if (x2 == 0) {
+		Number[0] = 0x20;
+	} else {
+		Number[0] = x2 + 0x30;
+	}
+	Number[1] = x1 + 0x30;
+	Number[2] = '.';
+	Number[3] = x0 + 0x30;
+	Number[4] = 0;
+	snprintf(cstring, maxLen, "Temperature:  %.4s\r\n", Number);
+	return status;
+ }
+/*-----------------------------------------------------------*/
+
+Module_Status SampleHumidityToString(char *cstring, size_t maxLen)
+{
+	Module_Status status = H0AR9_OK;
+	float humidity =0;
+	status=SampleHumidity(&humidity);
+	hum =humidity;
+	char Number[5] ={0};
+	uint16_t x;
+	volatile uint32_t temp1 =1;
+	uint16_t x0, x1, x2;
+	temp1 =hum;
+
+	x0 =(uint8_t )(hum * 10 - temp1 * 10);
+	x1 =(uint8_t )(temp1 % 10);
+	x2 =(uint8_t )(temp1 / 10 % 10);
+
+	if(x2 == 0){
+		Number[0] =0x20;
+	}
+	else{
+		Number[0] =x2 + 0x30;
+	}
+	Number[1] =x1 + 0x30;
+	Number[2] ='.';
+	Number[3] =x0 + 0x30;
+	Number[4] =0;
+	snprintf(cstring,maxLen,"Humidity: %.4s\r\n",Number);
+	return status;
+}
+/*-----------------------------------------------------------*/
+
+Module_Status SamplePIRToString(char *cstring, size_t maxLen)
+{
+	Module_Status status = H0AR9_OK;
+	bool sample;
+	status=SamplePIR(&sample);
+	Sample=sample;
+	snprintf(cstring, maxLen, "PIR: %d\r\n", sample);
+	return status;
+}
+/*-----------------------------------------------------------*/
 
 /*-----------------------------------------------------------*/
 
