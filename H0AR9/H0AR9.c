@@ -61,6 +61,13 @@ uint8_t send[2];
 static bool stopStream = false;
 uint8_t CONTROL, Enable, ATIME, WTIME, PPULSE;
 uint8_t redReg, greenReg, blueReg, distanceReg;
+uint16_t Red __attribute__((section(".mySection")));
+uint16_t Green __attribute__((section(".mySection")));
+uint16_t Blue __attribute__((section(".mySection")));
+uint16_t distance1 __attribute__((section(".mySection")));
+float temp __attribute__((section(".mySection")));
+float hum __attribute__((section(".mySection")));
+uint8_t Sample __attribute__((section(".mySection")));
 /* Private function prototypes -----------------------------------------------*/
 void ToFTask(void *argument);
 Module_Status WriteRegData(uint8_t reg, uint8_t data);
@@ -585,17 +592,19 @@ Module_Status SampleColor(uint16_t *Red, uint16_t *Green, uint16_t *Blue) {
 
 	Module_Status status = H0AR9_OK;
 
-	if (H0AR9_OK != Read_Word(redReg, Red) )
-		return	status = H0AR9_ERROR;
+	if (H0AR9_OK != Read_Word(redReg, Red))
+		return status = H0AR9_ERROR;
 
-	if (H0AR9_OK != Read_Word(greenReg, Green) )
-		return	status = H0AR9_ERROR;
+	if (H0AR9_OK != Read_Word(greenReg, Green))
+		return status = H0AR9_ERROR;
 
-	if (H0AR9_OK != Read_Word(blueReg, Blue) )
-		return	status = H0AR9_ERROR;
+	if (H0AR9_OK != Read_Word(blueReg, Blue))
+		return status = H0AR9_ERROR;
 
 	return status;
+
 }
+
 /*-----------------------------------------------------------*/
 
 Module_Status SampleDistance(uint16_t *distance)
@@ -704,6 +713,31 @@ Module_Status SampleHumidity(float *humidity)
 	return status;
 
 }
+
+/*-----------------------------------------------------------*/
+Module_Status SampleColorToString(char *cstring, size_t maxLen)
+ {
+	Module_Status status = H0AR9_OK;
+	uint16_t red = 0, green = 0, blue = 0;
+	Red=red;
+	Green=green;
+	Blue=blue;
+	status=SampleColor(&red, &green, &blue);;
+	snprintf(cstring, maxLen, "Red: %d, Green: %d, Blue: %d\r\n", red, green,blue);
+	return status;
+ }
+
+Module_Status SampleDistanceToString(char *cstring, size_t maxLen)
+{
+	Module_Status status = H0AR9_OK;
+	uint16_t distance = 0;
+	SampleDistance(&distance);
+	distance1=distance;
+	snprintf(cstring, maxLen, "Distance: %d\r\n", distance);
+	return status;
+}
+
+
 /*-----------------------------------------------------------*/
 
 /* -----------------------------------------------------------------------
