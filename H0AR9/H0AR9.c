@@ -468,49 +468,14 @@ void SensorHub(void *argument){
 
 
 		switch(tofMode){
-			case STREAM_TO_PORT:
+		case STREAM_TO_PORT:
+			Exportstreamtoport(module1, port1, mode1, Numofsamples1, timeout1);
+			break;
+		case SAMPLE_TO_PORT:
 
-//				switch(mode2){
-//					case Distance:
-//						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SampleDistanceToPort);
-//						break;
-//					case Temperature:
-//						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SampleTemperatureToPort);
-//					 	break;
-//					case Humidity:
-//						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SampleHumidityToPort);
-//						break;
-//					case PIR:
-//						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SamplePIRToPort);
-//						break;
-//					case Color:
-//						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SampleColorToPort);
-//						break;
-//					default:
-//						break;
-//				}
-//
-//				case STREAM_TO_Terminal :
-//
-//					switch(mode1){
-//						case Distance:
-//							ExportToTerminal(Numofsamples3, timeout3, port3,SampleDistanceToString);
-//							break;
-//						case Temperature:
-//							ExportToTerminal(Numofsamples3, timeout3, port3,SampleTemperatureToString);
-//						 	break;
-//						case Humidity:
-//							ExportToTerminal(Numofsamples3, timeout3, port3,SampleHumidityToString);
-//							break;
-//						case PIR:
-//							ExportToTerminal(Numofsamples3, timeout3, port3,SamplePIRToString);
-//							break;
-//						case Color:
-//							ExportToTerminal(Numofsamples3, timeout3, port3,SampleColorToString);
-//							break;
-//						default:
-//							break;
-//					}
+			Exporttoport(module2, port2, mode2);
+			break;
+
 
 			break;
 			default:
@@ -1135,6 +1100,22 @@ static Module_Status PollingSleepCLISafe(uint32_t period, long Numofsamples)
 	vTaskDelay(pdMS_TO_TICKS(lastDelayMS));
 	return H0AR9_OK;
 }
+/*-----------------------------------------------------------*/
+Module_Status StreamtoPort(uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout)
+{
+	Module_Status status = H0AR9_OK;
+	tofMode=STREAM_TO_PORT;
+	port1 = port ;
+	module1 =module;
+	Numofsamples1=Numofsamples;
+	timeout1=timeout;
+	mode1= function;
+	return status;
+
+}
+/*-----------------------------------------------------------*/
+
+/*-----------------------------------------------------------*/
 
 /* -----------------------------------------------------------------------
  |                             Commands                                  |
