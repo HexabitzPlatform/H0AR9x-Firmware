@@ -86,7 +86,7 @@ Module_Status SampleDistanceToString(char *cstring, size_t maxLen);
 Module_Status SampleTemperatureToString(char *cstring, size_t maxLen);
 Module_Status SampleHumidityToString(char *cstring, size_t maxLen);
 Module_Status SampleColorToString(char *cstring, size_t maxLen);
-Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function);
+Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function);
 Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
 static Module_Status ExportToTerminal(uint32_t Numofsamples, uint32_t timeout,uint8_t Port, SampleMemsToString function);
 static Module_Status PollingSleepCLISafe(uint32_t period, long Numofsamples);
@@ -269,7 +269,7 @@ void Module_Peripheral_Init(void) {
 	/* create a event group for measurement ranging */
 	handleNewReadyData = xEventGroupCreate();
 
-	/* Create a ToF task */
+	/* Create a SensorHub task */
 	xTaskCreate(SensorHub,(const char* ) "SensorHub",configMINIMAL_STACK_SIZE,NULL,osPriorityNormal - osPriorityIdle,&SensorHubTaskHandle);
 
 
@@ -473,7 +473,7 @@ void SensorHub(void *argument){
 			break;
 		case SAMPLE_TO_PORT:
 
-			Exporttoport(module2, port2, mode2);
+			SampletoPort(module2, port2, mode2);
 			break;
 
 
@@ -870,7 +870,7 @@ Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,
 		return H0AR9_ERR_WrongParams;
 
 	while (samples < Numofsamples) {
-		status = Exporttoport(module, port, function);
+		status = SampletoPort(module, port, function);
 		vTaskDelay(pdMS_TO_TICKS(period));
 		samples++;
 	}
@@ -879,7 +879,7 @@ Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,
 	return status;
 }
 /*-----------------------------------------------------------*/
-Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function)
+Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function)
  {
 
 	static uint8_t temp[4] = { 0 };
