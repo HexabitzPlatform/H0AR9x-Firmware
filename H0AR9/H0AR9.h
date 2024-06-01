@@ -105,6 +105,9 @@
 #define UNSNGD_HALF_WORD_MAX_VAL    0xFFFF
 #define UNSNGD_HALF_WORD_MIN_VAL	0x0000
 
+#define MIN_MEMS_PERIOD_MS				100
+#define MAX_MEMS_TIMEOUT_MS				0xFFFFFFFF
+
 #define SAMPLE_TEM              0
 #define SAMPLE_TO_PORT          1
 #define STREAM_TO_PORT          2

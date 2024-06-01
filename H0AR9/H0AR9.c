@@ -43,12 +43,14 @@ float sample __attribute__((section(".mySection")));
 module_param_t modParam[NUM_MODULE_PARAMS];
 
 /* Private variables ---------------------------------------------------------*/
-TaskHandle_t ToFHandle = NULL;
+TaskHandle_t SensorHubTaskHandle = NULL;
+static bool stopStream = false;
 static const uint8_t colorProximityAdd = (0x39)<<1;
 //temprature and humidity sensor addresses
 static const uint8_t tempHumAdd = (0x40)<<1; // Use 7-bit address
 static const uint8_t tempReg = 0x00;
 static const uint8_t humidityReg = 0x01;
+typedef void (*SampleMemsToString)(char *, size_t);
 uint8_t coun;
 uint16_t Dist;
 uint8_t flag ;
@@ -64,7 +66,7 @@ uint8_t flag ;
 uint8_t tofMode ;
 
 
-static bool stopStream = false;
+
 uint8_t CONTROL, Enable, ATIME, WTIME, PPULSE;
 uint8_t redReg, greenReg, blueReg, distanceReg;
 uint16_t Red __attribute__((section(".mySection")));
@@ -75,7 +77,7 @@ float temp __attribute__((section(".mySection")));
 float hum __attribute__((section(".mySection")));
 uint8_t Sample __attribute__((section(".mySection")));
 /* Private function prototypes -----------------------------------------------*/
-void ToFTask(void *argument);
+void SensorHub(void *argument);
 Module_Status WriteRegData(uint8_t reg, uint8_t data);
 Module_Status APDS9950_init(void);
 Module_Status Read_Word(uint8_t reg , uint16_t *Data );
@@ -86,7 +88,8 @@ Module_Status SampleHumidityToString(char *cstring, size_t maxLen);
 Module_Status SampleColorToString(char *cstring, size_t maxLen);
 Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function);
 Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
-
+static Module_Status ExportToTerminal(uint32_t Numofsamples, uint32_t timeout,uint8_t Port, SampleMemsToString function);
+static Module_Status PollingSleepCLISafe(uint32_t period, long Numofsamples);
 
 /* Create CLI commands --------------------------------------------------------*/
 
@@ -267,9 +270,8 @@ void Module_Peripheral_Init(void) {
 	handleNewReadyData = xEventGroupCreate();
 
 	/* Create a ToF task */
-	xTaskCreate(ToFTask, (const char*) "ToFTask",
-			(2 * configMINIMAL_STACK_SIZE), NULL,
-			osPriorityNormal - osPriorityIdle, &ToFHandle);
+	xTaskCreate(SensorHub,(const char* ) "SensorHub",configMINIMAL_STACK_SIZE,NULL,osPriorityNormal - osPriorityIdle,&SensorHubTaskHandle);
+
 
 }
 
@@ -458,40 +460,67 @@ uint8_t GetPort(UART_HandleTypeDef *huart) {
 /* --- ToF streaming task 
  */
 
-void ToFTask(void *argument) {
-	/* Initialization Tof VL53L1 */
-	Module_Status st;
+void SensorHub(void *argument){
+
+	/* Infinite loop */
+	for(;;){
+		/*  */
 
 
-	while (1) {
+		switch(tofMode){
+			case STREAM_TO_PORT:
 
-		// Process data when it's ready from the sensor or when the period timer is expired
-//		if (tofState == REQ_MEASUREMENT_READY
-//				|| (HAL_GetTick() - t0) >= tofPeriod) {
-//			switch (tofMode) {
-//			case SAMPLE_TOF:
-//
-//				if (tofModeMeasurement(Dev, PresetMode_User, DistanceMode_User,
-//						InterruptMode_User, dynamicZone_s_User,
-//						&ToFStructure_User) == STATUS_OK) {
-//					statusD = H0AR9_OK;
-//				} else {
-//					statusD = H0AR9_ERROR;
+//				switch(mode2){
+//					case Distance:
+//						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SampleDistanceToPort);
+//						break;
+//					case Temperature:
+//						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SampleTemperatureToPort);
+//					 	break;
+//					case Humidity:
+//						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SampleHumidityToPort);
+//						break;
+//					case PIR:
+//						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SamplePIRToPort);
+//						break;
+//					case Color:
+//						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SampleColorToPort);
+//						break;
+//					default:
+//						break;
 //				}
-//				Dist = ToFStructure_User.ObjectNumber[0].tofDistanceMm;
 //
-//				break;
+//				case STREAM_TO_Terminal :
 //
-//			default:
-//				break;
-//			}
-//
-//			t0 = HAL_GetTick();			// Reset the timer
-//		}
+//					switch(mode1){
+//						case Distance:
+//							ExportToTerminal(Numofsamples3, timeout3, port3,SampleDistanceToString);
+//							break;
+//						case Temperature:
+//							ExportToTerminal(Numofsamples3, timeout3, port3,SampleTemperatureToString);
+//						 	break;
+//						case Humidity:
+//							ExportToTerminal(Numofsamples3, timeout3, port3,SampleHumidityToString);
+//							break;
+//						case PIR:
+//							ExportToTerminal(Numofsamples3, timeout3, port3,SamplePIRToString);
+//							break;
+//						case Color:
+//							ExportToTerminal(Numofsamples3, timeout3, port3,SampleColorToString);
+//							break;
+//						default:
+//							break;
+//					}
 
-//		tofState = REQ_IDLE;
+			break;
+			default:
+				osDelay(10);
+				break;
+		}
+
 		taskYIELD();
 	}
+
 }
 
 /* -----------------------------------------------------------------------
@@ -884,7 +913,7 @@ Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,
 	samples = 0;
 	return status;
 }
-
+/*-----------------------------------------------------------*/
 Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function)
  {
 
@@ -1047,9 +1076,65 @@ Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function)
 	memset(&temp[0], 0, sizeof(temp));
 	return status;
 }
-
-
 /*-----------------------------------------------------------*/
+static Module_Status ExportToTerminal(uint32_t Numofsamples, uint32_t timeout,uint8_t Port, SampleMemsToString function)
+{
+	Module_Status status = H0AR9_OK;
+	int8_t *pcOutputString = NULL;
+	uint32_t period = timeout / Numofsamples;
+	if (period < MIN_MEMS_PERIOD_MS)
+		return H0AR9_ERR_WrongParams;
+
+	// TODO: Check if CLI is enable or not
+
+	if (period > timeout)
+		timeout = period;
+
+	long numTimes = timeout / period;
+	stopStream = false;
+
+	while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+		function((char *)pcOutputString, 100);
+
+
+		writePxMutex(Port, (char *)pcOutputString, strlen((char *)pcOutputString), cmd500ms, HAL_MAX_DELAY);
+		if (PollingSleepCLISafe(period,Numofsamples) != H0AR9_OK)
+			break;
+	}
+
+	memset((char *) pcOutputString, 0, configCOMMAND_INT_MAX_OUTPUT_SIZE);
+  sprintf((char *)pcOutputString, "\r\n");
+	tofMode=20;
+	return status;
+}
+/*-----------------------------------------------------------*/
+static Module_Status PollingSleepCLISafe(uint32_t period, long Numofsamples)
+{
+	const unsigned DELTA_SLEEP_MS = 100; // milliseconds
+	long numDeltaDelay =  period / DELTA_SLEEP_MS;
+	unsigned lastDelayMS = period % DELTA_SLEEP_MS;
+
+	while (numDeltaDelay-- > 0) {
+		vTaskDelay(pdMS_TO_TICKS(DELTA_SLEEP_MS));
+
+		// Look for ENTER key to stop the stream
+		for (uint8_t chr=1 ; chr<MSG_RX_BUF_SIZE ; chr++)
+		{
+			if (UARTRxBuf[PcPort-1][chr] == '\r') {
+				UARTRxBuf[PcPort-1][chr] = 0;
+				flag=1;
+				return H0AR9_ERR_TERMINATED;
+			}
+		}
+
+		if (stopStream)
+			return H0AR9_ERR_TERMINATED;
+	}
+
+	vTaskDelay(pdMS_TO_TICKS(lastDelayMS));
+	return H0AR9_OK;
+}
 
 /* -----------------------------------------------------------------------
  |                             Commands                                  |
