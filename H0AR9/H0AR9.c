@@ -55,7 +55,13 @@ uint8_t flag ;
 uint8_t receive[2];
 uint8_t send[2];
 
-
+uint8_t port1, module1;
+uint8_t port2 ,module2,mode2,mode1;
+uint32_t Numofsamples1 ,timeout1;
+uint8_t port3 ,module3,mode3;
+uint32_t Numofsamples3 ,timeout3;
+uint8_t flag ;
+uint8_t tofMode ;
 
 
 static bool stopStream = false;
@@ -78,6 +84,8 @@ Module_Status SampleDistanceToString(char *cstring, size_t maxLen);
 Module_Status SampleTemperatureToString(char *cstring, size_t maxLen);
 Module_Status SampleHumidityToString(char *cstring, size_t maxLen);
 Module_Status SampleColorToString(char *cstring, size_t maxLen);
+Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function);
+Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
 
 
 /* Create CLI commands --------------------------------------------------------*/
@@ -817,6 +825,229 @@ Module_Status SamplePIRToString(char *cstring, size_t maxLen)
 	return status;
 }
 /*-----------------------------------------------------------*/
+Module_Status SampleColorToPort(uint8_t port,uint8_t module )
+ {
+	Module_Status status = H0AR9_OK;
+	static uint8_t temp[6];
+	uint16_t red = 0, green = 0, blue = 0;
+
+	status = SampleColor(&red, &green, &blue);
+
+	if (module == myID || module == 0) {
+		temp[0] = *((__IO uint8_t*) (&red) + 0);
+		temp[1] = *((__IO uint8_t*) (&red) + 1);
+
+		temp[2] = *((__IO uint8_t*) (&green) + 0);
+		temp[3] = *((__IO uint8_t*) (&green) + 1);
+
+		temp[4] = *((__IO uint8_t*) (&blue) + 0);
+		temp[5] = *((__IO uint8_t*) (&blue) + 1);
+
+		writePxITMutex(port, (char*) &temp[0], 6 * sizeof(uint8_t), 10);
+	} else {
+		if (H0AR9_OK == status)
+			messageParams[1] = BOS_OK;
+		else
+			messageParams[1] = BOS_ERROR;
+		messageParams[0] = FMT_UINT16;
+		messageParams[2] = *((__IO uint8_t*) (&red) + 0);
+		messageParams[3] = *((__IO uint8_t*) (&red) + 1);
+
+		messageParams[4] = *((__IO uint8_t*) (&green) + 0);
+		messageParams[5] = *((__IO uint8_t*) (&green) + 1);
+
+		messageParams[6] = *((__IO uint8_t*) (&blue) + 0);
+		messageParams[7] = *((__IO uint8_t*) (&blue) + 1);
+
+		SendMessageToModule(module, CODE_READ_RESPONSE,(sizeof(uint16_t) * 3) + 2);
+
+	}
+
+}
+/*-----------------------------------------------------------*/
+Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout)
+ {
+	Module_Status status = H0AR9_OK;
+	uint32_t samples = 0;
+	uint32_t period = 0;
+	period = timeout / Numofsamples;
+
+	if (timeout < MIN_PERIOD_MS || period < MIN_PERIOD_MS)
+		return H0AR9_ERR_WrongParams;
+
+	while (samples < Numofsamples) {
+		status = Exporttoport(module, port, function);
+		vTaskDelay(pdMS_TO_TICKS(period));
+		samples++;
+	}
+	module1 = 20;
+	samples = 0;
+	return status;
+}
+
+Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function)
+ {
+
+	static uint8_t temp[4] = { 0 };
+	Module_Status status = H0AR9_OK;
+
+	if (port == 0 && module == myID) {
+		return H0AR9_ERR_WrongParams;
+	}
+	switch (function) {
+	case Color:
+
+		uint16_t red = 0, green = 0, blue = 0;
+
+		status = SampleColor(&red, &green, &blue);
+
+		if (module == myID || module == 0) {
+			temp[0] = *((__IO uint8_t*) (&red) + 0);
+			temp[1] = *((__IO uint8_t*) (&red) + 1);
+
+			temp[2] = *((__IO uint8_t*) (&green) + 0);
+			temp[3] = *((__IO uint8_t*) (&green) + 1);
+
+			temp[4] = *((__IO uint8_t*) (&blue) + 0);
+			temp[5] = *((__IO uint8_t*) (&blue) + 1);
+
+			writePxITMutex(port, (char*) &temp[0], 6 * sizeof(uint8_t), 10);
+		} else {
+			if (H0AR9_OK == status)
+				messageParams[1] = BOS_OK;
+			else
+				messageParams[1] = BOS_ERROR;
+			messageParams[0] = FMT_UINT16;
+			messageParams[2] = *((__IO uint8_t*) (&red) + 0);
+			messageParams[3] = *((__IO uint8_t*) (&red) + 1);
+
+			messageParams[4] = *((__IO uint8_t*) (&green) + 0);
+			messageParams[5] = *((__IO uint8_t*) (&green) + 1);
+
+			messageParams[6] = *((__IO uint8_t*) (&blue) + 0);
+			messageParams[7] = *((__IO uint8_t*) (&blue) + 1);
+
+			SendMessageToModule(module, CODE_READ_RESPONSE,(sizeof(uint16_t) * 3) + 2);
+
+		}
+
+		break;
+
+	case PIR:
+
+		bool PIR ;
+
+
+		status =SamplePIR(&PIR);
+
+		if(module == myID || module == 0){
+			temp[0] =PIR;
+			writePxITMutex(port,(char* )&temp,sizeof(bool),10);
+		}
+		else{
+			if (H0AR9_OK == status)
+				messageParams[1] = BOS_OK;
+			else
+				messageParams[1] = BOS_ERROR;
+			messageParams[0] =FMT_BOOL;
+			messageParams[2] =PIR;
+
+			SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 2);
+		}
+		break;
+
+	case Distance:
+
+		uint16_t Distance;
+
+
+		status =SampleDistance(&Distance);
+		if (module == myID || module == 0) {
+			temp[0] = *((__IO uint8_t*) (&Distance) + 0);
+			temp[1] = *((__IO uint8_t*) (&Distance) + 1);
+
+			writePxITMutex(port, (char*) &temp[0], 4 * sizeof(uint8_t), 10);
+		} else {
+
+			if (H0AR9_OK == status)
+				messageParams[1] = BOS_OK;
+			else
+				messageParams[1] = BOS_ERROR;
+
+			messageParams[0] = FMT_UINT16;
+			messageParams[2] = *((__IO uint8_t*) (&Distance) + 0);
+			messageParams[3] = *((__IO uint8_t*) (&Distance) + 1);
+
+
+			SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(uint16_t) + 2);
+		}
+		break;
+
+	case Temperature:
+
+		float temperature;
+
+		status =SampleTemperature(&temperature);
+
+		if (module == myID || module == 0) {
+			temp[0] = *((__IO uint8_t*) (&temperature) + 0);
+			temp[1] = *((__IO uint8_t*) (&temperature) + 1);
+			temp[2] = *((__IO uint8_t*) (&temperature) + 2);
+			temp[3] = *((__IO uint8_t*) (&temperature) + 3);
+
+			writePxITMutex(port, (char*) &temp[0], 4 * sizeof(uint8_t), 10);
+		} else {
+			if (H0AR9_OK == status)
+				messageParams[1] = BOS_OK;
+			else
+				messageParams[1] = BOS_ERROR;
+
+			messageParams[0] = FMT_FLOAT;
+			messageParams[2] = *((__IO uint8_t*) (&temperature) + 0);
+			messageParams[3] = *((__IO uint8_t*) (&temperature) + 1);
+			messageParams[4] = *((__IO uint8_t*) (&temperature) + 2);
+			messageParams[5] = *((__IO uint8_t*) (&temperature) + 3);
+
+			SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 2);
+		}
+		break;
+
+	case Humidity:
+
+		float humidity;
+
+		status =SampleHumidity(&humidity);
+
+		if (module == myID || module == 0) {
+			temp[0] = *((__IO uint8_t*) (&humidity) + 0);
+			temp[1] = *((__IO uint8_t*) (&humidity) + 1);
+			temp[2] = *((__IO uint8_t*) (&humidity) + 2);
+			temp[3] = *((__IO uint8_t*) (&humidity) + 3);
+
+			writePxITMutex(port, (char*) &temp[0], 4 * sizeof(uint8_t), 10);
+		} else {
+			if (H0AR9_OK == status)
+				messageParams[1] = BOS_OK;
+			else
+				messageParams[1] = BOS_ERROR;
+			messageParams[0] = FMT_FLOAT;
+			messageParams[2] = *((__IO uint8_t*) (&humidity) + 0);
+			messageParams[3] = *((__IO uint8_t*) (&humidity) + 1);
+			messageParams[4] = *((__IO uint8_t*) (&humidity) + 2);
+			messageParams[5] = *((__IO uint8_t*) (&humidity) + 3);
+
+			SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 2);
+		}
+		break;
+
+	default:
+		status = H0AR9_ERR_WrongParams;
+		break;
+	}
+	memset(&temp[0], 0, sizeof(temp));
+	return status;
+}
+
 
 /*-----------------------------------------------------------*/
 
@@ -829,3 +1060,4 @@ Module_Status SamplePIRToString(char *cstring, size_t maxLen)
 /*-----------------------------------------------------------*/
 
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
+
