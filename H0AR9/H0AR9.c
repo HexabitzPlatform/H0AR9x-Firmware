@@ -429,19 +429,73 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 
   switch (code)
   {
-//	case CODE_H0AR9_GET_INFO:
-//		break;
-//	case CODE_H0AR9_SAMPLE_PORT:
-//		SampletoPort(cMessage[port - 1][shift], cMessage[port - 1][1 + shift]);
-//		break;
-//	case CODE_H0AR9_STREAM_PORT:
-//			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] << 24);
-//			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift] << 24);
-//			StreamDistanceToPort( cMessage[port-1][shift],cMessage[port-1][shift+1], Numofsamples, timeout);
-//		break;
-//	default:
-//		result = H0AR9_ERR_UnknownMessage;
-//		break;
+	case CODE_H0AR9_SAMPLE_COLOR:
+		{
+			SampletoPort(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Color);
+			break;
+		}
+		case CODE_H0AR9_SAMPLE_DISTANCE:
+		{
+			SampletoPort(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Distance);
+			break;
+		}
+		case CODE_H0AR9_SAMPLE_TEMP:
+		{
+			SampletoPort(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Temperature);
+			break;
+		}
+		case CODE_H0AR9_SAMPLE_HUMIDITY:
+		{
+			SampletoPort(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Humidity);
+			break;
+		}
+		case CODE_H0AR9_SAMPLE_PIR:
+		{
+			SampletoPort(cMessage[port-1][shift] ,cMessage[port-1][1+shift],PIR);
+			break;
+		}
+
+		case CODE_H0AR9_STREAM_COLOR:
+		{
+			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] << 24);
+			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift] << 24);
+			Exportstreamtoport(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Color, Numofsamples, timeout);
+			break;
+		}
+
+		case CODE_H0AR9_STREAM_DISTANCE:
+		{
+			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] <<24);
+			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift]<<24);
+			Exportstreamtoport(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Distance, Numofsamples, timeout);
+			break;
+		}
+		case CODE_H0AR9_STREAM_TEMP:
+		{
+			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift]<<24);
+			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift]<<24);
+			Exportstreamtoport(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Temperature, Numofsamples, timeout);
+			break;
+		}
+		case CODE_H0AR9_STREAM_HUMIDITY:
+		{
+			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift]<<24);
+			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift]<<24);
+			Exportstreamtoport(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Humidity, Numofsamples, timeout);
+			break;
+		}
+		case CODE_H0AR9_STREAM_PIR:
+		{
+			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] <<24);
+			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift] <<24);
+			Exportstreamtoport(cMessage[port-1][shift] ,cMessage[port-1][1+shift],PIR, Numofsamples, timeout);
+			break;
+		}
+
+
+		default:
+			result = H0AR9_ERR_UnknownMessage;
+			break;
   }
 
   return result;
@@ -918,46 +972,6 @@ Module_Status Exportstreamtoterminal(uint32_t Numofsamples, uint32_t timeout,uin
 }
 
 
-/*-----------------------------------------------------------*/
-Module_Status SampleColorToPort(uint8_t port,uint8_t module )
- {
-	Module_Status status = H0AR9_OK;
-	static uint8_t temp[6];
-	uint16_t red = 0, green = 0, blue = 0;
-
-	status = SampleColor(&red, &green, &blue);
-
-	if (module == myID || module == 0) {
-		temp[0] = *((__IO uint8_t*) (&red) + 0);
-		temp[1] = *((__IO uint8_t*) (&red) + 1);
-
-		temp[2] = *((__IO uint8_t*) (&green) + 0);
-		temp[3] = *((__IO uint8_t*) (&green) + 1);
-
-		temp[4] = *((__IO uint8_t*) (&blue) + 0);
-		temp[5] = *((__IO uint8_t*) (&blue) + 1);
-
-		writePxITMutex(port, (char*) &temp[0], 6 * sizeof(uint8_t), 10);
-	} else {
-		if (H0AR9_OK == status)
-			messageParams[1] = BOS_OK;
-		else
-			messageParams[1] = BOS_ERROR;
-		messageParams[0] = FMT_UINT16;
-		messageParams[2] = *((__IO uint8_t*) (&red) + 0);
-		messageParams[3] = *((__IO uint8_t*) (&red) + 1);
-
-		messageParams[4] = *((__IO uint8_t*) (&green) + 0);
-		messageParams[5] = *((__IO uint8_t*) (&green) + 1);
-
-		messageParams[6] = *((__IO uint8_t*) (&blue) + 0);
-		messageParams[7] = *((__IO uint8_t*) (&blue) + 1);
-
-		SendMessageToModule(module, CODE_READ_RESPONSE,(sizeof(uint16_t) * 3) + 2);
-
-	}
-
-}
 /*-----------------------------------------------------------*/
 Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout)
  {
