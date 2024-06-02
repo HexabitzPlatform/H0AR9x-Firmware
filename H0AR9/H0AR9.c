@@ -81,11 +81,6 @@ void SensorHub(void *argument);
 Module_Status WriteRegData(uint8_t reg, uint8_t data);
 Module_Status APDS9950_init(void);
 Module_Status Read_Word(uint8_t reg , uint16_t *Data );
-Module_Status SamplePIRToString(char *cstring, size_t maxLen);
-Module_Status SampleDistanceToString(char *cstring, size_t maxLen);
-Module_Status SampleTemperatureToString(char *cstring, size_t maxLen);
-Module_Status SampleHumidityToString(char *cstring, size_t maxLen);
-Module_Status SampleColorToString(char *cstring, size_t maxLen);
 Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function);
 Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
 static Module_Status ExportToTerminal(uint32_t Numofsamples, uint32_t timeout,uint8_t Port, SampleMemsToString function);
@@ -477,6 +472,7 @@ void SensorHub(void *argument){
 			break;
 
 
+
 			break;
 			default:
 				osDelay(10);
@@ -723,101 +719,164 @@ Module_Status SampleHumidity(float *humidity)
 
 }
 
-/*-----------------------------------------------------------*/
-Module_Status SampleColorToString(char *cstring, size_t maxLen)
+
+Module_Status Exportstreamtoterminal(uint32_t Numofsamples, uint32_t timeout,uint8_t Port,All_Data function)
  {
 	Module_Status status = H0AR9_OK;
-	uint16_t red = 0, green = 0, blue = 0;
-	Red=red;
-	Green=green;
-	Blue=blue;
-	status=SampleColor(&red, &green, &blue);;
-	snprintf(cstring, maxLen, "Red: %d, Green: %d, Blue: %d\r\n", red, green,blue);
-	return status;
- }
-/*-----------------------------------------------------------*/
-Module_Status SampleDistanceToString(char *cstring, size_t maxLen)
-{
-	Module_Status status = H0AR9_OK;
-	uint16_t distance = 0;
-	status=SampleDistance(&distance);
-	distance1=distance;
-	snprintf(cstring, maxLen, "Distance: %d\r\n", distance);
+	int8_t *pcOutputString = NULL;
+	uint32_t period = timeout / Numofsamples;
+	char cstring[100];
+	long numTimes = timeout / period;
+	if (period < MIN_MEMS_PERIOD_MS)
+		return H0AR9_ERR_WrongParams;
+
+	// TODO: Check if CLI is enable or not
+	switch (function) {
+	case Color:
+		if (period > timeout)
+			timeout = period;
+		uint16_t red = 0, green = 0, blue = 0;
+		stopStream = false;
+
+		while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+			pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+			SampleColor(&red, &green, &blue);
+
+			snprintf(cstring, 50, "Red: %d, Green: %d, Blue: %d\r\n", red,
+					green, blue);
+
+			writePxMutex(Port, (char*) cstring, strlen((char*) cstring),
+			cmd500ms, HAL_MAX_DELAY);
+			if (PollingSleepCLISafe(period, Numofsamples) != H0AR9_OK)
+				break;
+		}
+		break;
+
+	case PIR:
+		if (period > timeout)
+			timeout = period;
+		bool sample;
+		stopStream = false;
+
+		while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+			pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+			SamplePIR(&sample);
+
+			snprintf(cstring, 50, "PIR: %d\r\n", sample);
+
+			writePxMutex(Port, (char*) cstring, strlen((char*) cstring),
+			cmd500ms, HAL_MAX_DELAY);
+			if (PollingSleepCLISafe(period, Numofsamples) != H0AR9_OK)
+				break;
+		}
+		break;
+
+		break;
+
+	case Humidity:
+
+		if (period > timeout)
+			timeout = period;
+		float humidity = 0;
+		char Number[5] = { 0 };
+		uint16_t x;
+		volatile uint32_t temp1 = 1;
+		uint16_t x0, x1, x2;
+		stopStream = false;
+
+		while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+			pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+			SampleHumidity(&humidity);
+			hum = humidity;
+			temp1 = hum;
+
+			x0 = (uint8_t) (hum * 10 - temp1 * 10);
+			x1 = (uint8_t) (temp1 % 10);
+			x2 = (uint8_t) (temp1 / 10 % 10);
+
+			if (x2 == 0) {
+				Number[0] = 0x20;
+			} else {
+				Number[0] = x2 + 0x30;
+			}
+			Number[1] = x1 + 0x30;
+			Number[2] = '.';
+			Number[3] = x0 + 0x30;
+			Number[4] = 0;
+			snprintf(cstring, 50, "Humidity: %.4s\r\n", Number);
+
+			writePxMutex(Port, (char*) cstring, strlen((char*) cstring),
+			cmd500ms, HAL_MAX_DELAY);
+			if (PollingSleepCLISafe(period, Numofsamples) != H0AR9_OK)
+				break;
+		}
+		break;
+		break;
+
+	case Temperature:
+
+		if (period > timeout)
+			timeout = period;
+		stopStream = false;
+		float temprature = 0;
+		while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+			pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+			SampleTemperature(&temprature);
+
+			temp1 = temp;
+
+			x0 = (uint8_t) (temp * 10 - temp1 * 10);
+			x1 = (uint8_t) (temp1 % 10);
+			x2 = (uint8_t) (temp1 / 10 % 10);
+
+			if (x2 == 0) {
+				Number[0] = 0x20;
+			} else {
+				Number[0] = x2 + 0x30;
+			}
+			Number[1] = x1 + 0x30;
+			Number[2] = '.';
+			Number[3] = x0 + 0x30;
+			Number[4] = 0;
+
+			snprintf(cstring, 50, "Temperature:  %.4s\r\n", Number);
+
+			writePxMutex(Port, (char*) cstring, strlen((char*) cstring),
+			cmd500ms, HAL_MAX_DELAY);
+			if (PollingSleepCLISafe(period, Numofsamples) != H0AR9_OK)
+				break;
+		}
+		break;
+
+	case Distance:
+
+		if (period > timeout)
+			timeout = period;
+		stopStream = false;
+		uint16_t distance = 0;
+		while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+			pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+			SampleDistance(&distance);
+
+			snprintf(cstring, 50, "Distance: %d\r\n", distance);
+
+			writePxMutex(Port, (char*) cstring, strlen((char*) cstring),
+			cmd500ms, HAL_MAX_DELAY);
+			if (PollingSleepCLISafe(period, Numofsamples) != H0AR9_OK)
+				break;
+		}
+		break;
+
+	default:
+		status = H0AR9_ERR_WrongParams;
+		break;
+	}
+
+	tofMode = 20;
 	return status;
 }
 
-/*-----------------------------------------------------------*/
-Module_Status SampleTemperatureToString(char *cstring, size_t maxLen)
- {
 
-	Module_Status status = H0AR9_OK;
-	float temprature = 0;
-	status=SampleTemperature(&temprature);
-	temp = temprature;
-	char Number[5] = { 0 };
-	uint16_t x;
-	volatile uint32_t temp1 = 1;
-	uint16_t x0, x1, x2;
-	temp1 = temp;
-
-	x0 = (uint8_t) (temp * 10 - temp1 * 10);
-	x1 = (uint8_t) (temp1 % 10);
-	x2 = (uint8_t) (temp1 / 10 % 10);
-
-	if (x2 == 0) {
-		Number[0] = 0x20;
-	} else {
-		Number[0] = x2 + 0x30;
-	}
-	Number[1] = x1 + 0x30;
-	Number[2] = '.';
-	Number[3] = x0 + 0x30;
-	Number[4] = 0;
-	snprintf(cstring, maxLen, "Temperature:  %.4s\r\n", Number);
-	return status;
- }
-/*-----------------------------------------------------------*/
-
-Module_Status SampleHumidityToString(char *cstring, size_t maxLen)
-{
-	Module_Status status = H0AR9_OK;
-	float humidity =0;
-	status=SampleHumidity(&humidity);
-	hum =humidity;
-	char Number[5] ={0};
-	uint16_t x;
-	volatile uint32_t temp1 =1;
-	uint16_t x0, x1, x2;
-	temp1 =hum;
-
-	x0 =(uint8_t )(hum * 10 - temp1 * 10);
-	x1 =(uint8_t )(temp1 % 10);
-	x2 =(uint8_t )(temp1 / 10 % 10);
-
-	if(x2 == 0){
-		Number[0] =0x20;
-	}
-	else{
-		Number[0] =x2 + 0x30;
-	}
-	Number[1] =x1 + 0x30;
-	Number[2] ='.';
-	Number[3] =x0 + 0x30;
-	Number[4] =0;
-	snprintf(cstring,maxLen,"Humidity: %.4s\r\n",Number);
-	return status;
-}
-/*-----------------------------------------------------------*/
-
-Module_Status SamplePIRToString(char *cstring, size_t maxLen)
-{
-	Module_Status status = H0AR9_OK;
-	bool sample;
-	status=SamplePIR(&sample);
-	Sample=sample;
-	snprintf(cstring, maxLen, "PIR: %d\r\n", sample);
-	return status;
-}
 /*-----------------------------------------------------------*/
 Module_Status SampleColorToPort(uint8_t port,uint8_t module )
  {
