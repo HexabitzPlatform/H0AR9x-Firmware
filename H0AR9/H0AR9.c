@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.3 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.3.4 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
 
  File Name     : H0AR9.c
@@ -65,9 +65,10 @@ static const uint8_t tempReg = 0x00;
 static const uint8_t humidityReg = 0x01;
 
 /*Define private variables*/
+TaskHandle_t SensorHubTaskHandle = NULL;
 static bool stopStream = false;
 extern I2C_HandleTypeDef hi2c2;
-
+uint8_t tofMode ;
 uint8_t buf[10];
 uint8_t CONTROL, Enable, ATIME, WTIME, PPULSE;
 uint8_t redReg, greenReg, blueReg, distanceReg;
@@ -82,14 +83,24 @@ uint16_t distance1 __attribute__((section(".mySection")));
 float temp __attribute__((section(".mySection")));
 float hum __attribute__((section(".mySection")));
 uint8_t Sample __attribute__((section(".mySection")));
+uint8_t port1, module1;
+uint8_t port2 ,module2,mode2,mode1;
+uint32_t Numofsamples1 ,timeout1;
+uint8_t port3 ,module3,mode3;
+uint32_t Numofsamples2 ,timeout2;
+uint32_t Numofsamples3 ,timeout3;
+uint8_t flag ;
+uint8_t cont ;
+uint8_t tofMode ;
 /* Private function prototypes -----------------------------------------------*/
 static Module_Status StreamMemsToBuf( float *buffer, uint32_t period, uint32_t timeout, SampleMemsToBuffer function);
 static Module_Status StreamMemsToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout, SampleMemsToPort function);
 static Module_Status StreamMemsToCLI(uint32_t period, uint32_t timeout, SampleMemsToString function);
-static Module_Status PollingSleepCLISafe(uint32_t period);
+static Module_Status ExportToTerminal(uint32_t Numofsamples, uint32_t timeout,uint8_t Port, SampleMemsToString function);
+static Module_Status PollingSleepCLISafe(uint32_t period, long Numofsamples);
 void FLASH_Page_Eras(uint32_t Addr );
 void ExecuteMonitor(void);
-
+void SensorHub(void *argument);
 /* Create CLI commands --------------------------------------------------------*/
 static portBASE_TYPE SampleSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
 static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
@@ -408,16 +419,80 @@ void Module_Peripheral_Init(void){
 	  			  else if(GetUart(i)==&huart6)
 	  					   { index_dma[i-1]=&(DMA1_Channel6->CNDTR); }
 	  			}
+	  		xTaskCreate(SensorHub,(const char* ) "SensorHub",configMINIMAL_STACK_SIZE,NULL,osPriorityNormal - osPriorityIdle,&SensorHubTaskHandle);
 
 }
+/*-----------------------------------------------------------*/
 
+void SensorHub(void *argument){
+
+	/* Infinite loop */
+	for(;;){
+		/*  */
+
+
+		switch(tofMode){
+			case STREAM_TO_PORT:
+
+				switch(mode2){
+					case Distance:
+						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SampleDistanceToPort);
+						break;
+					case Temperature:
+						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SampleTemperatureToPort);
+					 	break;
+					case Humidity:
+						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SampleHumidityToPort);
+						break;
+					case PIR:
+						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SamplePIRToPort);
+						break;
+					case Color:
+						StreamMemsToPort(port2,module2,Numofsamples2,timeout2,SampleColorToPort);
+						break;
+					default:
+						break;
+				}
+
+				case STREAM_TO_Terminal :
+
+					switch(mode1){
+						case Distance:
+							ExportToTerminal(Numofsamples3, timeout3, port3,SampleDistanceToString);
+							break;
+						case Temperature:
+							ExportToTerminal(Numofsamples3, timeout3, port3,SampleTemperatureToString);
+						 	break;
+						case Humidity:
+							ExportToTerminal(Numofsamples3, timeout3, port3,SampleHumidityToString);
+							break;
+						case PIR:
+							ExportToTerminal(Numofsamples3, timeout3, port3,SamplePIRToString);
+							break;
+						case Color:
+							ExportToTerminal(Numofsamples3, timeout3, port3,SampleColorToString);
+							break;
+						default:
+							break;
+					}
+
+			break;
+			default:
+				osDelay(10);
+				break;
+		}
+
+		taskYIELD();
+	}
+
+}
 /*-----------------------------------------------------------*/
 /* --- H0AR9 message processing task.
  */
 Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uint8_t dst, uint8_t shift)
 {
 	Module_Status result = H0AR9_OK;
-	uint32_t period = 0, timeout = 0;
+	uint32_t Numofsamples = 0, timeout = 0;
 
 	switch (code)
 	{
@@ -449,38 +524,38 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 
 		case CODE_H0AR9_STREAM_COLOR:
 		{
-			period = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] << 24);
+			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] << 24);
 			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift] << 24);
-			StreamColorToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout);
+			StreamToPort(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Color, Numofsamples, timeout);
 			break;
 		}
 
 		case CODE_H0AR9_STREAM_DISTANCE:
 		{
-			period = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] <<24);
+			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] <<24);
 			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift]<<24);
-			StreamDistanceToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout);
+			StreamToPort(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Distance, Numofsamples, timeout);
 			break;
 		}
 		case CODE_H0AR9_STREAM_TEMP:
 		{
-			period = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift]<<24);
+			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift]<<24);
 			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift]<<24);
-			StreamTemperatureToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout);
+			StreamToPort(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Temperature, Numofsamples, timeout);
 			break;
 		}
 		case CODE_H0AR9_STREAM_HUMIDITY:
 		{
-			period = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift]<<24);
+			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift]<<24);
 			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift]<<24);
-			StreamHumidityToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout);
+			StreamToPort(cMessage[port-1][shift] ,cMessage[port-1][1+shift],Humidity, Numofsamples, timeout);
 			break;
 		}
 		case CODE_H0AR9_STREAM_PIR:
 		{
-			period = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] <<24);
+			Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift] ) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t)cMessage[port - 1][5 + shift] <<24);
 			timeout = ((uint32_t) cMessage[port - 1][6 + shift] ) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t)cMessage[port - 1][9 + shift] <<24);
-			StreamPIRToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout);
+			StreamToPort(cMessage[port-1][shift] ,cMessage[port-1][1+shift],PIR, Numofsamples, timeout);
 			break;
 		}
 		case CODE_H0AR9_STREAM_STOP:
@@ -593,10 +668,10 @@ void RegisterModuleCLICommands(void){
 
 
 /*-----------------------------------------------------------*/
-static Module_Status StreamMemsToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout, SampleMemsToPort function)
+static Module_Status StreamMemsToPort(uint8_t port, uint8_t module, uint32_t Numofsamples, uint32_t timeout, SampleMemsToPort function)
 {
 	Module_Status status = H0AR9_OK;
-
+	uint32_t period = timeout / Numofsamples;
 
 	if (period < MIN_MEMS_PERIOD_MS)
 		return H0AR9_ERR_WrongParams;
@@ -620,74 +695,107 @@ static Module_Status StreamMemsToPort(uint8_t port, uint8_t module, uint32_t per
 			break;
 		}
 	}
+	tofMode=20;
 	return status;
 }
 /*-----------------------------------------------------------*/
 
-static Module_Status StreamMemsToBuf( float *buffer, uint32_t period, uint32_t timeout, SampleMemsToBuffer function)
+static Module_Status StreamMemsToBuf( float *buffer, uint32_t Numofsamples, uint32_t timeout, SampleMemsToBuffer function)
 
 {
-	Module_Status status = H0AR9_OK;
-
-	if (period < MIN_MEMS_PERIOD_MS)
+	Module_Status status =H0AR9_OK;
+	uint32_t period =timeout / Numofsamples;
+	if(period < MIN_MEMS_PERIOD_MS)
 		return H0AR9_ERR_WrongParams;
 
 	// TODO: Check if CLI is enable or not
 
-	if (period > timeout)
-		timeout = period;
+	if(period > timeout)
+		timeout =period;
 
-	long numTimes = timeout / period;
+	long numTimes =timeout / period;
 	stopStream = false;
 
-	while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
-		function(buffer);
+	while((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)){
+		if(function == SampleColorBuf){
+			float color[3];
+			function(color);
+			buffer[cont] =color[0];
+			buffer[cont+1] =color[1];
+			buffer[cont+2] =color[2];
+			cont+=3;
+		} else {
+			float sample;
+		function(&sample);
+		buffer[cont] =sample;
+		cont++;
+		}
 
 		vTaskDelay(pdMS_TO_TICKS(period));
-		if (stopStream) {
-			status = H0AR9_ERR_TERMINATED;
+		if(stopStream){
+			status =H0AR9_ERR_TERMINATED;
 			break;
 		}
 	}
 	return status;
 }
 /*-----------------------------------------------------------*/
-
-static Module_Status StreamMemsToCLI(uint32_t period, uint32_t timeout, SampleMemsToString function)
-{
+Module_Status StreamToTerminal(uint8_t port,All_Data function,uint32_t Numofsamples, uint32_t timeout)
+ {
 	Module_Status status = H0AR9_OK;
-	int8_t *pcOutputString = NULL;
+	tofMode = STREAM_TO_Terminal;
+	port3 = port;
+	Numofsamples3 = Numofsamples;
+	timeout3 = timeout;
+	mode1 = function;
+	return status;
 
-	if (period < MIN_MEMS_PERIOD_MS)
+}
+/*-----------------------------------------------------------*/
+static Module_Status StreamMemsToCLI(uint32_t Numofsamples, uint32_t timeout, SampleMemsToString function)
+{
+	Module_Status status =H0AR9_OK;
+	int8_t *pcOutputString = NULL;
+	uint32_t period =timeout / Numofsamples;
+	if(period < MIN_MEMS_PERIOD_MS)
 		return H0AR9_ERR_WrongParams;
 
 	// TODO: Check if CLI is enable or not
+	for(uint8_t chr =0; chr < MSG_RX_BUF_SIZE; chr++){
+		if(UARTRxBuf[PcPort - 1][chr] == '\r'){
+			UARTRxBuf[PcPort - 1][chr] =0;
+		}
+	}
+	if(1 == flag){
+		flag =0;
+		static char *pcOKMessage =(int8_t* )"Stop stream !\n\r";
+		writePxITMutex(PcPort,pcOKMessage,strlen(pcOKMessage),10);
+		return status;
+	}
+	if(period > timeout)
+		timeout =period;
 
-	if (period > timeout)
-		timeout = period;
-
-	long numTimes = timeout / period;
+	long numTimes =timeout / period;
 	stopStream = false;
 
-	while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
-		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
-		function((char *)pcOutputString, 100);
+	while((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)){
+		pcOutputString =FreeRTOS_CLIGetOutputBuffer();
+		function((char* )pcOutputString,100);
 
-
-		writePxMutex(PcPort, (char *)pcOutputString, strlen((char *)pcOutputString), cmd500ms, HAL_MAX_DELAY);
-		if (PollingSleepCLISafe(period) != H0AR9_OK)
+		writePxMutex(PcPort,(char* )pcOutputString,strlen((char* )pcOutputString),cmd500ms,HAL_MAX_DELAY);
+		if(PollingSleepCLISafe(period,Numofsamples) != H0AR9_OK)
 			break;
 	}
 
-	memset((char *) pcOutputString, 0, configCOMMAND_INT_MAX_OUTPUT_SIZE);
-  sprintf((char *)pcOutputString, "\r\n");
+	memset((char* )pcOutputString,0,configCOMMAND_INT_MAX_OUTPUT_SIZE);
+	sprintf((char* )pcOutputString,"\r\n");
 	return status;
 }
 /*-----------------------------------------------------------*/
 
 /* --- Save array topology and Command Snippets in Flash RO ---
 */
-static Module_Status PollingSleepCLISafe(uint32_t period)
+static Module_Status PollingSleepCLISafe(uint32_t period, long Numofsamples)
 {
 	const unsigned DELTA_SLEEP_MS = 100; // milliseconds
 	long numDeltaDelay =  period / DELTA_SLEEP_MS;
@@ -697,10 +805,11 @@ static Module_Status PollingSleepCLISafe(uint32_t period)
 		vTaskDelay(pdMS_TO_TICKS(DELTA_SLEEP_MS));
 
 		// Look for ENTER key to stop the stream
-		for (uint8_t chr=0 ; chr<MSG_RX_BUF_SIZE ; chr++)
+		for (uint8_t chr=1 ; chr<MSG_RX_BUF_SIZE ; chr++)
 		{
 			if (UARTRxBuf[PcPort-1][chr] == '\r') {
 				UARTRxBuf[PcPort-1][chr] = 0;
+				flag=1;
 				return H0AR9_ERR_TERMINATED;
 			}
 		}
@@ -712,6 +821,7 @@ static Module_Status PollingSleepCLISafe(uint32_t period)
 	vTaskDelay(pdMS_TO_TICKS(lastDelayMS));
 	return H0AR9_OK;
 }
+
 /* -----------------------------------------------------------------------
  |								  APIs							          | 																 	|
 /* -----------------------------------------------------------------------
@@ -724,41 +834,41 @@ void SampleColorToPort(uint8_t port,uint8_t module)
 	SampleColorBuf(buffer);
 
 	if(module == myID || module == 0){
-		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
-		temp[4] =*((__IO uint8_t* )(&buffer[1]) + 3);
-		temp[5] =*((__IO uint8_t* )(&buffer[1]) + 2);
-		temp[6] =*((__IO uint8_t* )(&buffer[1]) + 1);
-		temp[7] =*((__IO uint8_t* )(&buffer[1]) + 0);
+		temp[4] =*((__IO uint8_t* )(&buffer[1]) + 0);
+		temp[5] =*((__IO uint8_t* )(&buffer[1]) + 1);
+		temp[6] =*((__IO uint8_t* )(&buffer[1]) + 2);
+		temp[7] =*((__IO uint8_t* )(&buffer[1]) + 3);
 
-		temp[8] =*((__IO uint8_t* )(&buffer[2]) + 3);
-		temp[9] =*((__IO uint8_t* )(&buffer[2]) + 2);
-		temp[10] =*((__IO uint8_t* )(&buffer[2]) + 1);
-		temp[11] =*((__IO uint8_t* )(&buffer[2]) + 0);
+		temp[8] =*((__IO uint8_t* )(&buffer[2]) + 0);
+		temp[9] =*((__IO uint8_t* )(&buffer[2]) + 1);
+		temp[10] =*((__IO uint8_t* )(&buffer[2]) + 2);
+		temp[11] =*((__IO uint8_t* )(&buffer[2]) + 3);
 
 		writePxITMutex(port,(char* )&temp[0],12 * sizeof(uint8_t),10);
 	}
 	else{
-		messageParams[0] =port;
-		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[0] =FMT_FLOAT;
+		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
-		messageParams[5] =*((__IO uint8_t* )(&buffer[1]) + 3);
-		messageParams[6] =*((__IO uint8_t* )(&buffer[1]) + 2);
-		messageParams[7] =*((__IO uint8_t* )(&buffer[1]) + 1);
-		messageParams[8] =*((__IO uint8_t* )(&buffer[1]) + 0);
+		messageParams[5] =*((__IO uint8_t* )(&buffer[1]) + 0);
+		messageParams[6] =*((__IO uint8_t* )(&buffer[1]) + 1);
+		messageParams[7] =*((__IO uint8_t* )(&buffer[1]) + 2);
+		messageParams[8] =*((__IO uint8_t* )(&buffer[1]) + 3);
 
-		messageParams[9] =*((__IO uint8_t* )(&buffer[2]) + 3);
-		messageParams[10] =*((__IO uint8_t* )(&buffer[2]) + 2);
-		messageParams[11] =*((__IO uint8_t* )(&buffer[2]) + 1);
-		messageParams[12] =*((__IO uint8_t* )(&buffer[2]) + 0);
+		messageParams[9] =*((__IO uint8_t* )(&buffer[2]) + 0);
+		messageParams[10] =*((__IO uint8_t* )(&buffer[2]) + 1);
+		messageParams[11] =*((__IO uint8_t* )(&buffer[2]) + 2);
+		messageParams[12] =*((__IO uint8_t* )(&buffer[2]) + 3);
 
-		SendMessageToModule(module,CODE_PORT_FORWARD,(sizeof(float) * 3) + 1);
+		SendMessageToModule(module,CODE_READ_RESPONSE,(sizeof(float) * 3) + 1);
 
 	}
 
@@ -767,25 +877,26 @@ void SampleColorToPort(uint8_t port,uint8_t module)
 
 void SampleDistanceToPort(uint8_t port,uint8_t module)
 {
-	float buffer[1]; // Three Samples X, Y, Z
+	uint16_t buffer[1]; // Three Samples X, Y, Z
 	static uint8_t temp[4];
 
-	SampleDistanceBuff(buffer);
+	SampleDistance(buffer);
 	if(module == myID || module == 0){
-		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
 		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
 	}
 	else{
-		messageParams[0] =port;
-		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
-		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(float) + 1);
+		messageParams[0] =FMT_UINT16;
+		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 3);
+
+		SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 1);
 	}
 }
 /*-----------------------------------------------------------*/
@@ -797,21 +908,21 @@ void SampleTemperatureToPort(uint8_t port,uint8_t module)
 	SampleTemperatureBuf(buffer);
 
 	if(module == myID || module == 0){
-		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
 		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
 	}
 	else{
-		messageParams[0] =port;
-		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[0] =FMT_FLOAT;
+		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
-		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(float) + 1);
+		SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 1);
 	}
 
 }
@@ -823,39 +934,40 @@ void SampleHumidityToPort(uint8_t port,uint8_t module)
 
 	SampleHumidityBuf(buffer);
 	if(module == myID || module == 0){
-		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
 		writePxITMutex(port,(char* )&temp[0],4 * sizeof(uint8_t),10);
 	}
 	else{
-		messageParams[0] =port;
-		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[0] =FMT_FLOAT;
+		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
+		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
-		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(float) + 1);
+		SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 1);
 	}
 }
 /*-----------------------------------------------------------*/
 void SamplePIRToPort(uint8_t port,uint8_t module)
 {
-	float buffer;
+	bool buffer;
 	bool temp;
 
-	SamplePIRBuf(&buffer);
+	SamplePIR(&buffer);
 
 	if(module == myID || module == 0){
 		temp =buffer;
 		writePxITMutex(port,(char* )&temp,sizeof(bool),10);
 	}
 	else{
-		messageParams[0] =port;
+		messageParams[0] =FMT_BOOL;
 		messageParams[1] =buffer;
-		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(char) + 1);
+
+		SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 1);
 	}
 }
 /*-----------------------------------------------------------*/
@@ -942,25 +1054,30 @@ Number[4] = 0;
 
 void SampleHumidityToString(char *cstring, size_t maxLen)
 {
-	float humidity = 0;
+	float humidity =0;
 	SampleHumidity(&humidity);
-	hum=humidity;
-	char Number[5]={0};
+	hum =humidity;
+	char Number[5] ={0};
 	uint16_t x;
-	volatile uint32_t temp1=1;
-	uint16_t x0,x1,x2;
-	temp1=hum;
+	volatile uint32_t temp1 =1;
+	uint16_t x0, x1, x2;
+	temp1 =hum;
 
-x0 = (uint8_t) (hum*10 - temp1*10);
-x1 = (uint8_t) (temp1%10);
-x2 = (uint8_t) (temp1/10%10);
+	x0 =(uint8_t )(hum * 10 - temp1 * 10);
+	x1 =(uint8_t )(temp1 % 10);
+	x2 =(uint8_t )(temp1 / 10 % 10);
 
-if(x2 == 0)  {Number[0] = 0x20;} else {Number[0] = x2 +0x30;}
-Number[1] = x1 +0x30;
-Number[2] = '.';
-Number[3] = x0 +0x30;
-Number[4] = 0;
-	snprintf(cstring, maxLen, "Humidity: %.4s\r\n", Number);
+	if(x2 == 0){
+		Number[0] =0x20;
+	}
+	else{
+		Number[0] =x2 + 0x30;
+	}
+	Number[1] =x1 + 0x30;
+	Number[2] ='.';
+	Number[3] =x0 + 0x30;
+	Number[4] =0;
+	snprintf(cstring,maxLen,"Humidity: %.4s\r\n",Number);
 }
 /*-----------------------------------------------------------*/
 
@@ -1059,63 +1176,76 @@ void SamplePIR(bool *pir)
 	*pir=HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6);/* USER CODE END WHILE */
 	 Delay_ms(1000);
 }
+
 /*-----------------------------------------------------------*/
-Module_Status StreamColorToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout)
+Module_Status StreamToPort(uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples, uint32_t timeout)
 {
-	return StreamMemsToPort(port, module, period, timeout, SampleColorToPort);
+	Module_Status status =H0AR9_OK;
+	tofMode =STREAM_TO_PORT;
+	port2 =port;
+	module2 =module;
+	Numofsamples2 =Numofsamples;
+	timeout2 =timeout;
+	mode2 =function;
+	return status;
+
 }
 /*-----------------------------------------------------------*/
 
-Module_Status StreamDistanceToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout)
+Module_Status StreamToBuffer(float *buffer,All_Data function, uint32_t Numofsamples, uint32_t timeout)
 {
-	return StreamMemsToPort(port, module, period, timeout, SampleDistanceToPort);
-}
-/*-----------------------------------------------------------*/
+	switch (function) {
+		case Color:
+			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleColorBuf);
+			break;
+		case PIR:
+			return StreamMemsToBuf(buffer, Numofsamples, timeout, SamplePIRBuf);
+			break;
+		case Humidity:
+			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleHumidityBuf);
+			break;
+		case Temperature:
+			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleTemperatureBuf);
+			break;
+		case Distance:
+			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleDistanceBuff);
+			break;
+		default:
+			break;
+	}
 
-Module_Status StreamTemperatureToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout)
-{
-	return StreamMemsToPort(port, module, period, timeout, SampleTemperatureToPort);
 }
 /*-----------------------------------------------------------*/
+static Module_Status ExportToTerminal(uint32_t Numofsamples, uint32_t timeout,uint8_t Port, SampleMemsToString function)
+{
+	Module_Status status = H0AR9_OK;
+	int8_t *pcOutputString = NULL;
+	uint32_t period = timeout / Numofsamples;
+	if (period < MIN_MEMS_PERIOD_MS)
+		return H0AR9_ERR_WrongParams;
 
-Module_Status StreamHumidityToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout)
-{
-	return StreamMemsToPort(port, module, period, timeout, SampleHumidityToPort);
-}
-/*-----------------------------------------------------------*/
+	// TODO: Check if CLI is enable or not
 
-Module_Status StreamPIRToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout)
-{
-	return StreamMemsToPort(port, module, period, timeout, SamplePIRToPort);
-}
-/*-----------------------------------------------------------*/
+	if (period > timeout)
+		timeout = period;
 
-Module_Status StreamColorToBuffer(float *buffer, uint32_t period, uint32_t timeout)
-{
-	 return StreamMemsToBuf(buffer, period, timeout, SampleColorBuf);
-}
-/*-----------------------------------------------------------*/
+	long numTimes = timeout / period;
+	stopStream = false;
 
-Module_Status StreamDistanceToBuffer(float *buffer, uint32_t period, uint32_t timeout)
-{
-	return StreamMemsToBuf(buffer, period, timeout, SampleDistanceBuff);
-}
-/*-----------------------------------------------------------*/
+	while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+		function((char *)pcOutputString, 100);
 
-Module_Status StreamTemperatureToBuffer(float *buffer, uint32_t period, uint32_t timeout)
-{
-	return StreamMemsToBuf(buffer, period, timeout, SampleTemperatureBuf);
-}
-/*-----------------------------------------------------------*/
 
-Module_Status StreamHumidityToBuffer(float *buffer, uint32_t period, uint32_t timeout)
-{
-	return StreamMemsToBuf(buffer, period, timeout, SampleHumidityBuf);
-}
-/*-----------------------------------------------------------*/
-Module_Status StreamPIRToBuffer(float *buffer, uint32_t period, uint32_t timeout)
-{
-	return StreamMemsToBuf(buffer, period, timeout, SamplePIRBuf);
+		writePxMutex(Port, (char *)pcOutputString, strlen((char *)pcOutputString), cmd500ms, HAL_MAX_DELAY);
+		if (PollingSleepCLISafe(period,Numofsamples) != H0AR9_OK)
+			break;
+	}
+
+	memset((char *) pcOutputString, 0, configCOMMAND_INT_MAX_OUTPUT_SIZE);
+  sprintf((char *)pcOutputString, "\r\n");
+	tofMode=20;
+	return status;
 }
 /*-----------------------------------------------------------*/
 Module_Status StreamColorToCLI(uint32_t period, uint32_t timeout)
@@ -1261,7 +1391,7 @@ static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBuf
 	const char *const humidityCmdName = "humidity";
 	const char *const pirCmdName = "pir";
 
-	uint32_t period = 0;
+	uint32_t Numofsamples = 0;
 	uint32_t timeout = 0;
 	uint8_t port = 0;
 	uint8_t module = 0;
@@ -1274,7 +1404,7 @@ static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBuf
 	// Make sure we return something
 	*pcWriteBuffer = '\0';
 
-	if (!StreamCommandParser(pcCommandString, &pSensName, &sensNameLen, &portOrCLI, &period, &timeout, &port, &module)) {
+	if (!StreamCommandParser(pcCommandString, &pSensName, &sensNameLen, &portOrCLI, &Numofsamples, &timeout, &port, &module)) {
 		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Invalid Arguments\r\n");
 		return pdFALSE;
 	}
@@ -1282,47 +1412,47 @@ static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBuf
 	do {
 		if (!strncmp(pSensName, colorCmdName, strlen(colorCmdName))) {
 			if (portOrCLI) {
-				StreamColorToCLI(period, timeout);
+				StreamColorToCLI(Numofsamples, timeout);
 
 			} else {
-				StreamColorToPort(port, module, period, timeout);
+				StreamToPort(module, port,Color, Numofsamples, timeout );
 
 			}
 
 		} else if (!strncmp(pSensName, distanceCmdName, strlen(distanceCmdName))) {
 			if (portOrCLI) {
-				StreamDistanceToCLI(period, timeout);
+				StreamDistanceToCLI(Numofsamples, timeout);
 
 			} else {
-				StreamDistanceToPort(port, module, period, timeout);
+				StreamToPort(module, port,Distance, Numofsamples, timeout);
 
 			}
 
 		}
 		else if (!strncmp(pSensName, temperatureCmdName, strlen(temperatureCmdName))) {
 			if (portOrCLI) {
-				StreamTemperatureToCLI(period, timeout);
+				StreamTemperatureToCLI(Numofsamples, timeout);
 
 			} else {
-				StreamTemperatureToPort(port, module, period, timeout);
+				StreamToPort(module, port,Temperature, Numofsamples, timeout);
 
 			}
 
 		} else if (!strncmp(pSensName, humidityCmdName, strlen(humidityCmdName))) {
 			if (portOrCLI) {
-				StreamHumidityToCLI(period, timeout);
+				StreamHumidityToCLI(Numofsamples, timeout);
 
 			} else {
-				StreamHumidityToPort(port, module, period, timeout);
+				StreamToPort(module, port,Humidity, Numofsamples, timeout);
 
 			}
 
 		} else if (!strncmp(pSensName, pirCmdName, strlen(pirCmdName))) {
 			if (portOrCLI) {
-				StreamPIRToCLI(period, timeout);
+				StreamPIRToCLI(Numofsamples, timeout);
 
 			} else {
-				StreamPIRToPort(port, module, period, timeout);
+				StreamToPort(module, port,PIR, Numofsamples, timeout);
 
 			}
 
@@ -1353,3 +1483,6 @@ static portBASE_TYPE StopStreamCommand(int8_t *pcWriteBuffer, size_t xWriteBuffe
 /*-----------------------------------------------------------*/
 
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
+
+
+
