@@ -85,6 +85,7 @@ Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function);
 Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
 static Module_Status ExportToTerminal(uint32_t Numofsamples, uint32_t timeout,uint8_t Port, SampleMemsToString function);
 static Module_Status PollingSleepCLISafe(uint32_t period, long Numofsamples);
+Module_Status Exportstreamtoterminal(uint32_t Numofsamples, uint32_t timeout,uint8_t Port,All_Data function);
 
 /* Create CLI commands --------------------------------------------------------*/
 
@@ -455,14 +456,13 @@ uint8_t GetPort(UART_HandleTypeDef *huart) {
 /* --- ToF streaming task 
  */
 
-void SensorHub(void *argument){
+void SensorHub(void *argument) {
 
 	/* Infinite loop */
-	for(;;){
+	for (;;) {
 		/*  */
 
-
-		switch(tofMode){
+		switch (tofMode) {
 		case STREAM_TO_PORT:
 			Exportstreamtoport(module1, port1, mode1, Numofsamples1, timeout1);
 			break;
@@ -470,13 +470,15 @@ void SensorHub(void *argument){
 
 			SampletoPort(module2, port2, mode2);
 			break;
-
-
+		case STREAM_TO_Terminal:
+			Exportstreamtoterminal(Numofsamples3, timeout3, port3, mode3);
 
 			break;
-			default:
-				osDelay(10);
-				break;
+
+			break;
+		default:
+			osDelay(10);
+			break;
 		}
 
 		taskYIELD();
@@ -718,8 +720,19 @@ Module_Status SampleHumidity(float *humidity)
 	return status;
 
 }
+/*-----------------------------------------------------------*/
 
-
+Module_Status StreamToTerminal(uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout)
+{
+	Module_Status status = H0AR9_OK;
+	tofMode=STREAM_TO_Terminal;
+	port3 = port ;
+	Numofsamples3=Numofsamples;
+	timeout3=timeout;
+	mode3= function;
+	return status;
+}
+/*-----------------------------------------------------------*/
 Module_Status Exportstreamtoterminal(uint32_t Numofsamples, uint32_t timeout,uint8_t Port,All_Data function)
  {
 	Module_Status status = H0AR9_OK;
