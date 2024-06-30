@@ -967,7 +967,7 @@ Module_Status Exportstreamtoterminal(uint32_t Numofsamples, uint32_t timeout,uin
 		break;
 	}
 
-	tofMode = 20;
+	module1 = DEFAULT;
 	return status;
 }
 
@@ -988,7 +988,7 @@ Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,
 		vTaskDelay(pdMS_TO_TICKS(period));
 		samples++;
 	}
-	module1 = 20;
+	module1 = DEFAULT;
 	samples = 0;
 	return status;
 }
@@ -1152,6 +1152,7 @@ Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function)
 		status = H0AR9_ERR_WrongParams;
 		break;
 	}
+	module1 = DEFAULT;
 	memset(&temp[0], 0, sizeof(temp));
 	return status;
 }

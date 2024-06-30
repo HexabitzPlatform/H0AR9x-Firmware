@@ -112,6 +112,7 @@
 #define SAMPLE_TO_PORT          1
 #define STREAM_TO_PORT          2
 #define STREAM_TO_Terminal      3
+#define DEFAULT                 4
 
 #define NUM_MODULE_PARAMS			  7
 #define STOP_MEASUREMENT_RANGING      0
