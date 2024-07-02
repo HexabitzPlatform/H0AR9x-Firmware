@@ -84,7 +84,7 @@ void TIM_MSEC_Init(void){
 //	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
 //	sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
 //	HAL_TIMEx_MasterConfigSynchronization(&htim15,&sMasterConfig);
-	
+
 	  __TIM17_CLK_ENABLE();
 	  htim17.Instance = TIM17;
 	  htim17.Init.Prescaler = 47999;
