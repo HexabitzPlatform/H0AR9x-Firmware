@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.4 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.3.5 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
 
  File Name          : H0AR9_i2c.c
@@ -19,9 +19,6 @@
 
 
 I2C_HandleTypeDef hi2c2;
-static const uint8_t colorProximityAdd = (0x39)<<1;
-uint8_t receive[2];
-uint8_t send[2];
 
 
 
@@ -83,23 +80,3 @@ uint8_t send[2];
   /* USER CODE END I2C2_Init 2 */
 
 }
-
-void WriteRegData(uint8_t reg, uint8_t data)
-{
-	send[0]= 0x80 | reg;
-	send[1]= data;
-	HAL_I2C_Master_Transmit(&hi2c2, colorProximityAdd, send, 2, HAL_MAX_DELAY);
-
-}
-
-
-uint16_t Read_Word(uint8_t reg)
-{
-   send[0]= 0xA0 | reg;
-   HAL_I2C_Master_Transmit(&hi2c2, colorProximityAdd, send, 1, HAL_MAX_DELAY);
-   HAL_I2C_Master_Receive(&hi2c2, colorProximityAdd, receive, 2, HAL_MAX_DELAY);
-    return (uint16_t)(receive[0] + (256 * receive[1]));
-
-}
-/*-----------------------------------------------------------*/
-

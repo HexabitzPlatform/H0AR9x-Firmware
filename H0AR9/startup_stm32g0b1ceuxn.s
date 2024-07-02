@@ -93,8 +93,6 @@ FillZerobss:
 LoopFillZerobss:
   cmp r2, r4
   bcc FillZerobss
-
-
 //------------------------------------------------------------------------------
 // Modified Reset Handler for bootloader reboot (sourcer32@gmail.com)
 	LDR        R0, =0x20023FF0  	// Address for RAM signature (STM32G0Bx)
@@ -112,7 +110,6 @@ LoopFillZerobss:
   bl __libc_init_array
 /* Call the application s entry point.*/
   bl main
-
 
 // Vector into System Loader  4002 1040
 Reboot_Loader:

@@ -1,7 +1,7 @@
 /*
- BitzOS (BOS) V0.3.4 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.3.5 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
- 
+
  File Name     : H0AR9.h
  Description   : Header file for module H0AR9.
  	 	 	 	 (Description_of_module)
@@ -37,11 +37,11 @@
 #define P_PROG 				P2						/* ST factory bootloader UART */
 
 /* Define available ports */
-#define _P1 
-#define _P2 
-#define _P3 
-#define _P4 
-#define _P5 
+#define _P1
+#define _P2
+#define _P3
+#define _P4
+#define _P5
 #define _P6
 
 /* Define available USARTs */
@@ -101,11 +101,18 @@
 #define	USART6_AF			GPIO_AF8_USART6
 
 /* Module-specific Definitions */
+#define MIN_PERIOD_MS				100
+#define UNSNGD_HALF_WORD_MAX_VAL    0xFFFF
+#define UNSNGD_HALF_WORD_MIN_VAL	0x0000
+
+#define MIN_MEMS_PERIOD_MS				100
+#define MAX_MEMS_TIMEOUT_MS				0xFFFFFFFF
 
 #define SAMPLE_TEM              0
 #define SAMPLE_TO_PORT          1
 #define STREAM_TO_PORT          2
 #define STREAM_TO_Terminal      3
+#define DEFAULT                 4
 
 #define NUM_MODULE_PARAMS			  7
 #define STOP_MEASUREMENT_RANGING      0
@@ -114,7 +121,7 @@
 /* Module EEPROM Variables */
 
 // Module Addressing Space 500 - 599
-#define _EE_MODULE							500		
+#define _EE_MODULE							500
 
 /* Module_Status Type Definition */
 typedef enum
@@ -134,15 +141,16 @@ typedef enum
   H0AR9_ERROR = 25
 } Module_Status;
 
-typedef enum
-{
-  Color = 0,
-  PIR,
-  Humidity,
-  Temperature,
-  Distance,
+typedef enum {
+	Color=0,
+	PIR,
+	Distance,
+	Temperature,
+	Humidity,
 
-} All_Data;
+}All_Data;
+
+
 
 /* Indicator LED */
 #define _IND_LED_PORT			GPIOB
@@ -166,48 +174,25 @@ extern void MX_USART6_UART_Init(void);
 extern void SystemClock_Config(void);
 extern void ExecuteMonitor(void);
 
-
-/*-----------------------------------------------------------------------
- |								  APIs							          |  																 	|
 /* -----------------------------------------------------------------------
+ |                               APIs                                    |
+ -----------------------------------------------------------------------
  */
-uint16_t Read_Word(uint8_t reg);
-void Error_Handler(void);
-void initialValue(void);
-void APDS9950_init(void);
-void WriteRegData(uint8_t reg, uint8_t data);
-void stopStreamMems(void);
-void SamplePIR(bool *pir);
-void SampleColor(uint16_t *Red, uint16_t *Green, uint16_t *Blue);
-void SampleDistance(uint16_t *Proximity);
-void SampleTemperature(float *temperature);
-void SampleHumidity(float *humidity);
-void SampleColorBuf(float *buffer);
-void SampleDistanceBuff(float *buffer);
-void SampleTemperatureBuf(float *buffer);
-void SampleHumidityBuf(float *buffer);
-void SamplePIRBuf(float *buffer);
-void SampleColorToPort(uint8_t port,uint8_t module);
-void SampleDistanceToPort(uint8_t port,uint8_t module);
-void SampleTemperatureToPort(uint8_t port,uint8_t module);
-void SampleHumidityToPort(uint8_t port,uint8_t module);
-void SamplePIRToPort(uint8_t port,uint8_t module);
-void SampleColorToString(char *cstring, size_t maxLen);
-void SampleDistanceToString(char *cstring, size_t maxLen);
-void SampleTemperatureToString(char *cstring, size_t maxLen);
-void SampleHumidityToString(char *cstring, size_t maxLen);
-void SamplePIRToString(char *cstring, size_t maxLen);
-Module_Status StreamToTerminal(uint8_t port,All_Data function,uint32_t Numofsamples, uint32_t timeout);
-Module_Status StreamToBuffer(float *buffer,All_Data function, uint32_t Numofsamples, uint32_t timeout);
-Module_Status StreamToPort(uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples, uint32_t timeout);
+Module_Status SamplePIR(bool *pir);
+Module_Status SampleDistance(uint16_t *distance);
+Module_Status SampleColor(uint16_t *Red, uint16_t *Green, uint16_t *Blue);
+Module_Status SampleTemperature(float *temperature);
+Module_Status SampleHumidity(float *humidity);
+Module_Status StreamtoPort(uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
+Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function);
+Module_Status StreamToTerminal(uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
+
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
-
 /* -----------------------------------------------------------------------
- |								Commands							      |															 	|
-/* -----------------------------------------------------------------------
+ |                             Commands                                  |
+ -----------------------------------------------------------------------
  */
-
 
 #endif /* H0AR9_H */
 

@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.4 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.3.5 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
 
  File Name     : H0AR9_timers.c
@@ -84,7 +84,7 @@ void TIM_MSEC_Init(void){
 //	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
 //	sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
 //	HAL_TIMEx_MasterConfigSynchronization(&htim15,&sMasterConfig);
-	
+
 	  __TIM17_CLK_ENABLE();
 	  htim17.Instance = TIM17;
 	  htim17.Init.Prescaler = 47999;

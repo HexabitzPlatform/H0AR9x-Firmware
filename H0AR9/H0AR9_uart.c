@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.4 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.3.5 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
 
  File Name     : H0AR9_uart.c
@@ -230,7 +230,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 	}
 	else if(huart->Instance == USART2){
 	#ifdef _Usart2
-		
+
 		 PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2;
 		  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
 		  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
