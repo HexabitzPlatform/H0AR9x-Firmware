@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.5 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
 
  File Name     : BOS_inputs.h
@@ -9,8 +9,6 @@
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 
-//#ifndef BOS_INPUTS_H
-//#define BOS_INPUTS_H
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
 #include "stm32g0xx_hal_adc.h"
@@ -21,8 +19,8 @@
 /* Private function prototypes -----------------------------------------------*/
 
 /* -----------------------------------------------------------------------
- |												Exported  Functions	 														|
- -----------------------------------------------------------------------
+ |												Exported  Functions	 	  |
+ -------------------------------------------------------------------------
  */
 extern BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t *RX_Port,uint16_t *RX_Pin);
 extern void ReadTempAndVref(float *temp,float *Vref);

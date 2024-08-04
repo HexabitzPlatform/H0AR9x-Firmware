@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.5 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
 
  File Name     : H0AR9.c
@@ -967,7 +967,7 @@ Module_Status Exportstreamtoterminal(uint32_t Numofsamples, uint32_t timeout,uin
 		break;
 	}
 
-	module1 = DEFAULT;
+
 	return status;
 }
 
@@ -988,7 +988,7 @@ Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,
 		vTaskDelay(pdMS_TO_TICKS(period));
 		samples++;
 	}
-	module1 = DEFAULT;
+
 	samples = 0;
 	return status;
 }
@@ -1026,16 +1026,17 @@ Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function)
 			else
 				messageParams[1] = BOS_ERROR;
 			messageParams[0] = FMT_UINT16;
-			messageParams[2] = *((__IO uint8_t*) (&red) + 0);
-			messageParams[3] = *((__IO uint8_t*) (&red) + 1);
+			messageParams[2] = 3;
+			messageParams[3] = *((__IO uint8_t*) (&red) + 0);
+			messageParams[4] = *((__IO uint8_t*) (&red) + 1);
 
-			messageParams[4] = *((__IO uint8_t*) (&green) + 0);
-			messageParams[5] = *((__IO uint8_t*) (&green) + 1);
+			messageParams[5] = *((__IO uint8_t*) (&green) + 0);
+			messageParams[6] = *((__IO uint8_t*) (&green) + 1);
 
-			messageParams[6] = *((__IO uint8_t*) (&blue) + 0);
-			messageParams[7] = *((__IO uint8_t*) (&blue) + 1);
+			messageParams[7] = *((__IO uint8_t*) (&blue) + 0);
+			messageParams[8] = *((__IO uint8_t*) (&blue) + 1);
 
-			SendMessageToModule(module, CODE_READ_RESPONSE,(sizeof(uint16_t) * 3) + 2);
+			SendMessageToModule(module, CODE_READ_RESPONSE,(sizeof(uint16_t) * 3) + 3);
 
 		}
 
@@ -1058,9 +1059,10 @@ Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function)
 			else
 				messageParams[1] = BOS_ERROR;
 			messageParams[0] =FMT_BOOL;
-			messageParams[2] =PIR;
+			messageParams[2] = 1;
+			messageParams[3] =PIR;
 
-			SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 2);
+			SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 3);
 		}
 		break;
 
@@ -1083,11 +1085,12 @@ Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function)
 				messageParams[1] = BOS_ERROR;
 
 			messageParams[0] = FMT_UINT16;
-			messageParams[2] = *((__IO uint8_t*) (&Distance) + 0);
-			messageParams[3] = *((__IO uint8_t*) (&Distance) + 1);
+		    messageParams[2] = 1;
+			messageParams[3] = *((__IO uint8_t*) (&Distance) + 0);
+			messageParams[4] = *((__IO uint8_t*) (&Distance) + 1);
 
 
-			SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(uint16_t) + 2);
+			SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(uint16_t) + 3);
 		}
 		break;
 
@@ -1111,12 +1114,13 @@ Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function)
 				messageParams[1] = BOS_ERROR;
 
 			messageParams[0] = FMT_FLOAT;
-			messageParams[2] = *((__IO uint8_t*) (&temperature) + 0);
-			messageParams[3] = *((__IO uint8_t*) (&temperature) + 1);
-			messageParams[4] = *((__IO uint8_t*) (&temperature) + 2);
-			messageParams[5] = *((__IO uint8_t*) (&temperature) + 3);
+		    messageParams[2] = 1;
+			messageParams[3] = *((__IO uint8_t*) (&temperature) + 0);
+			messageParams[4] = *((__IO uint8_t*) (&temperature) + 1);
+			messageParams[5] = *((__IO uint8_t*) (&temperature) + 2);
+			messageParams[6] = *((__IO uint8_t*) (&temperature) + 3);
 
-			SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 2);
+			SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 3);
 		}
 		break;
 
@@ -1139,12 +1143,13 @@ Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function)
 			else
 				messageParams[1] = BOS_ERROR;
 			messageParams[0] = FMT_FLOAT;
-			messageParams[2] = *((__IO uint8_t*) (&humidity) + 0);
-			messageParams[3] = *((__IO uint8_t*) (&humidity) + 1);
-			messageParams[4] = *((__IO uint8_t*) (&humidity) + 2);
-			messageParams[5] = *((__IO uint8_t*) (&humidity) + 3);
+		    messageParams[2] = 1;
+			messageParams[3] = *((__IO uint8_t*) (&humidity) + 0);
+			messageParams[4] = *((__IO uint8_t*) (&humidity) + 1);
+			messageParams[5] = *((__IO uint8_t*) (&humidity) + 2);
+			messageParams[6] = *((__IO uint8_t*) (&humidity) + 3);
 
-			SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 2);
+			SendMessageToModule(module, CODE_READ_RESPONSE, sizeof(float) + 3);
 		}
 		break;
 
@@ -1152,7 +1157,7 @@ Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function)
 		status = H0AR9_ERR_WrongParams;
 		break;
 	}
-	module1 = DEFAULT;
+
 	memset(&temp[0], 0, sizeof(temp));
 	return status;
 }

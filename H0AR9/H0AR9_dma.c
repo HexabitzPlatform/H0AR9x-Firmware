@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.5 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
 
  File Name     : H0AR9_dma.c
@@ -28,7 +28,6 @@ DMAMUX_Channel_TypeDef DMAMUXTx[6]={0};
 CRC_HandleTypeDef hcrc;
 
 extern uint8_t UARTRxBuf[NumOfPorts][MSG_RX_BUF_SIZE];
-//extern uint8_t UARTTxBuf[3][MSG_TX_BUF_SIZE];
 
 /* Private function prototypes -----------------------------------------------*/
 void SetupDMAInterrupts(DMA_HandleTypeDef *hDMA,uint8_t priority);
@@ -49,30 +48,22 @@ void DMA_Init(void){
 	/* Initialize messaging RX DMAs x 6 - Update for non-standard MCUs */
 #ifdef _P1
 	DMA_MSG_RX_CH_Init(&msgRxDMA[0],DMA1_Channel4);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[0],DMA2_Channel1);
 #endif
 #ifdef _P2
 	DMA_MSG_RX_CH_Init(&msgRxDMA[1],DMA1_Channel2);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[1],DMA1_Channel4);
 #endif
 #ifdef _P3
 	DMA_MSG_RX_CH_Init(&msgRxDMA[2],DMA1_Channel3);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[2],DMA1_Channel6);
 #endif
 #ifdef _P4
 	DMA_MSG_RX_CH_Init(&msgRxDMA[3],DMA1_Channel1);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[3],DMA1_Channel2);
 #endif
 #ifdef _P5
 	DMA_MSG_RX_CH_Init(&msgRxDMA[4],DMA1_Channel5);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[4],DMA2_Channel3);
 #endif
 #ifdef _P6
 	DMA_MSG_RX_CH_Init(&msgRxDMA[5],DMA1_Channel6);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[5],DMA2_Channel5);
 #endif
-
-
 
 	/* Initialize streaming RX DMAs x 0 */
 	// No more channels. Dynamically reconfigure from messaging RX DMAs.
