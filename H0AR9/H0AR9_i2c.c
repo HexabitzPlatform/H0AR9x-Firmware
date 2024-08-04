@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.5 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
 
  File Name          : H0AR9_i2c.c
@@ -29,16 +29,11 @@ I2C_HandleTypeDef hi2c2;
 /** I2C Configuration
 */
  void MX_I2C_Init(void)
-{
-  /* GPIO Ports Clock Enable */
- // __GPIOC_CLK_ENABLE();
- // __GPIOA_CLK_ENABLE();
- // __GPIOD_CLK_ENABLE();
- // __GPIOB_CLK_ENABLE();
- // __GPIOF_CLK_ENABLE();   // for HSE and Boot0
-	  __HAL_RCC_GPIOF_CLK_ENABLE();
-	 	  __HAL_RCC_GPIOA_CLK_ENABLE();
-  MX_I2C2_Init();
+ {
+	/* GPIO Ports Clock Enable */
+	__HAL_RCC_GPIOF_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	MX_I2C2_Init();
 
 }
 
