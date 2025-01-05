@@ -9,7 +9,8 @@
 #include "BOS.h"
 
 /* Private variables ---------------------------------------------------------*/
-
+float TempBuffer[100];
+uint16_t Index11 = 0;
 /* Private function prototypes -----------------------------------------------*/
 
 /* Main function ------------------------------------------------------------*/
@@ -30,6 +31,11 @@ void UserTask(void *argument) {
 
 	// put your code here, to run repeatedly.
 	while (1) {
+		SampleTemperature(&TempBuffer[Index11]);
+		HAL_Delay(50);
+		Index11++;
+		if (Index11 > 100)
+			Index11 = 0;
 
 	}
 }
