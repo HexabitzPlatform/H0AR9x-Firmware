@@ -33,6 +33,6 @@
 }
 #endif
 
-#endif /* H01R0_MEMORYMAP_H */
+#endif /* H0AR9_MEMORYMAP_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
