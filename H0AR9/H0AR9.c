@@ -642,7 +642,10 @@ Module_Status Read_Word(uint8_t reg , uint16_t *Data )
 	HAL_StatusTypeDef HAL_status;
 	send[0] = 0xA0 | reg;
 
+	taskENTER_CRITICAL();
 	HAL_status =HAL_I2C_Master_Transmit(&hi2c2, colorProximityAdd, send, 1, HAL_MAX_DELAY);
+	taskEXIT_CRITICAL();
+
 	switch (HAL_status) {
 	case HAL_ERROR:
 		return	status = H0AR9_ERROR;
@@ -656,7 +659,9 @@ Module_Status Read_Word(uint8_t reg , uint16_t *Data )
 	default:
 		break;
 	}
+	taskENTER_CRITICAL();
 	HAL_status =HAL_I2C_Master_Receive(&hi2c2, colorProximityAdd, receive, 2,HAL_MAX_DELAY);
+	taskEXIT_CRITICAL();
 
 	switch (HAL_status) {
 	case HAL_ERROR:
@@ -766,13 +771,18 @@ Module_Status SampleTemperature(float *temperature)
 	uint8_t buf[2];
 	uint16_t val;
 	buf[0] = tempReg;
+
+	taskENTER_CRITICAL();
 	if (HAL_OK!= HAL_I2C_Master_Transmit(&hi2c2, tempHumAdd, buf, 1,HAL_MAX_DELAY))
 		return status = H0AR9_ERROR;
+	taskEXIT_CRITICAL();
 
 	HAL_Delay(20);
 
+	taskENTER_CRITICAL();
 	if (HAL_OK!= HAL_I2C_Master_Receive(&hi2c2, tempHumAdd, buf, 2,HAL_MAX_DELAY))
 		return status = H0AR9_ERROR;
+	taskEXIT_CRITICAL();
 
 	val = buf[0] << 8 | buf[1];
 	*temperature = ((float) val / 65536) * 165.0 - 40.0;
@@ -788,13 +798,18 @@ Module_Status SampleHumidity(float *humidity)
 	uint8_t buf[2];
 	uint16_t val;
 	buf[0] = humidityReg;
+
+	taskENTER_CRITICAL();
 	if (HAL_OK!= HAL_I2C_Master_Transmit(&hi2c2, tempHumAdd, buf, 1,HAL_MAX_DELAY))
 		return status = H0AR9_ERROR;
+	taskEXIT_CRITICAL();
 
 	HAL_Delay(20);
 
+	taskENTER_CRITICAL();
 	if (HAL_OK!= HAL_I2C_Master_Receive(&hi2c2, tempHumAdd, buf, 2,HAL_MAX_DELAY))
 		return status = H0AR9_ERROR;
+	taskEXIT_CRITICAL();
 
 	val = buf[0] << 8 | buf[1];
 	*humidity = (((float) val * 100) / 65536);
