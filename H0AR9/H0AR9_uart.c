@@ -226,7 +226,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 
 		__HAL_LINKDMA(huart, hdmarx, hdma_usart1_rx);
 
-		__HAL_DMA_DISABLE_IT(&hdma_usart1_rx , DMA_IT_HT);
+//		__HAL_DMA_DISABLE_IT(&hdma_usart1_rx , DMA_IT_HT);
 //		__HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
 
 		/* USER CODE BEGIN USART1_MspInit 1 */
@@ -276,7 +276,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 		HAL_NVIC_EnableIRQ(USART2_LPUART2_IRQn);
 		/* USER CODE BEGIN USART2_MspInit 1 */
 
-		__HAL_DMA_DISABLE_IT(&hdma_usart2_rx , DMA_IT_HT);
+//		__HAL_DMA_DISABLE_IT(&hdma_usart2_rx , DMA_IT_HT);
 //		__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
 
 		/* USER CODE END USART2_MspInit 1 */
@@ -322,7 +322,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn, 0, 0);
 		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
 		/* USER CODE BEGIN USART3_MspInit 1 */
-		__HAL_DMA_DISABLE_IT(&hdma_usart3_rx , DMA_IT_HT);
+//		__HAL_DMA_DISABLE_IT(&hdma_usart3_rx , DMA_IT_HT);
 //		__HAL_UART_ENABLE_IT(&huart3, UART_IT_IDLE);
 
 		/* USER CODE END USART3_MspInit 1 */
@@ -370,7 +370,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
 
 		/* USER CODE BEGIN USART4_MspInit 1 */
-		__HAL_DMA_DISABLE_IT(&hdma_usart4_rx , DMA_IT_HT);
+//		__HAL_DMA_DISABLE_IT(&hdma_usart4_rx , DMA_IT_HT);
 //		__HAL_UART_ENABLE_IT(&huart4, UART_IT_IDLE);
 
 		/* USER CODE END USART4_MspInit 1 */
@@ -417,7 +417,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn, 0, 0);
 		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
 		/* USER CODE BEGIN USART5_MspInit 1 */
-		__HAL_DMA_DISABLE_IT(&hdma_usart5_rx , DMA_IT_HT);
+//		__HAL_DMA_DISABLE_IT(&hdma_usart5_rx , DMA_IT_HT);
 //		__HAL_UART_ENABLE_IT(&huart5, UART_IT_IDLE);
 
 		/* USER CODE END USART5_MspInit 1 */
@@ -464,7 +464,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn, 0, 0);
 		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
 		/* USER CODE BEGIN USART6_MspInit 1 */
-		__HAL_DMA_DISABLE_IT(&hdma_usart6_rx , DMA_IT_HT);
+//		__HAL_DMA_DISABLE_IT(&hdma_usart6_rx , DMA_IT_HT);
 //		__HAL_UART_ENABLE_IT(&huart6, UART_IT_IDLE);
 
 		/* USER CODE END USART6_MspInit 1 */
