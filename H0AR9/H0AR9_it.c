@@ -2,7 +2,7 @@
  BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
 
- File Name     : H0AR9_it.c
+ File Name     : H01R0_it.c
  Description   :Interrupt Service Routines.
 
  */
@@ -18,9 +18,9 @@ uint8_t* error_restart_message = "Restarting...\r\n";
 /* External variables --------------------------------------------------------*/
 extern uint8_t UARTRxBuf[NumOfPorts][MSG_RX_BUF_SIZE];
 extern uint8_t UARTRxBufIndex[NumOfPorts];
+extern uint8_t WakeupFromStopFlag;
 
 /* External function prototypes ----------------------------------------------*/
-
 extern TaskHandle_t xCommandConsoleTaskHandle; // CLI Task handler.
 
 uint16_t PacketLength = 0;
@@ -93,7 +93,7 @@ void USART1_IRQHandler(void){
 #if defined (_Usart1)		
 	HAL_UART_IRQHandler(&huart1);
 #endif
-	
+
 	/* Fix problem stuck CPU in UART IRQhandler because of error on UART bus through use
 	 * HAL_UART_Transmit_IT() ,this prevented the TXFNFIE flag from being cleared which caused this problem
 	 */
@@ -106,7 +106,6 @@ void USART1_IRQHandler(void){
 	      /* Enable the UART Transmit Complete Interrupt */
 	      ATOMIC_SET_BIT(huart1.Instance->CR1, USART_CR1_TCIE);
 	}
-
 	/* If lHigherPriorityTaskWoken is now equal to pdTRUE, then a context
 	 switch should be performed before the interrupt exists.  That ensures the
 	 unblocked (higher priority) task is returned to immediately. */
@@ -134,7 +133,6 @@ void USART2_LPUART2_IRQHandler(void){
 	      /* Enable the UART Transmit Complete Interrupt */
 	      ATOMIC_SET_BIT(huart2.Instance->CR1, USART_CR1_TCIE);
 	}
-
 	/* If lHigherPriorityTaskWoken is now equal to pdTRUE, then a context
 	 switch should be performed before the interrupt exists.  That ensures the
 	 unblocked (higher priority) task is returned to immediately. */
@@ -162,7 +160,7 @@ void USART3_4_5_6_LPUART1_IRQHandler(void){
 #if defined (_Usart6)
 	HAL_UART_IRQHandler(&huart6);
 #endif
-	
+
 	if( (READ_BIT(huart3.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) &&
 			(huart3.gState == HAL_UART_STATE_READY))
 	{
@@ -216,8 +214,8 @@ void USART3_4_5_6_LPUART1_IRQHandler(void){
  */
 void DMA1_Ch1_IRQHandler(void){
 	/* Streaming or messaging DMA on P1 */
-	DMA_IRQHandler(P1);
-	
+//	DMA_IRQHandler(P1);
+
 }
 
 /*-----------------------------------------------------------*/
@@ -226,18 +224,18 @@ void DMA1_Ch1_IRQHandler(void){
  * @brief This function handles DMA1 channel 2 to 3 and DMA2 channel 1 to 2 interrupts.
  */
 void DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler(void){
-	/* Streaming or messaging DMA on P5 */
-	if(HAL_DMA_GET_IT_SOURCE(DMA2,DMA_ISR_GIF2) == SET){
-		DMA_IRQHandler(P5);
-		/* Streaming or messaging DMA on P2 */
-	}
-	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF3) == SET){
-		DMA_IRQHandler(P2);
-		/* TX messaging DMA 0 */
-	}
-	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF2) == SET){
-		HAL_DMA_IRQHandler(&msgTxDMA[0]);
-	}
+//	/* Streaming or messaging DMA on P5 */
+//	if(HAL_DMA_GET_IT_SOURCE(DMA2,DMA_ISR_GIF2) == SET){
+//		DMA_IRQHandler(P5);
+//		/* Streaming or messaging DMA on P2 */
+//	}
+//	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF3) == SET){
+//		DMA_IRQHandler(P2);
+//		/* TX messaging DMA 0 */
+//	}
+//	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF2) == SET){
+//		HAL_DMA_IRQHandler(&msgTxDMA[0]);
+//	}
 }
 
 /*-----------------------------------------------------------*/
@@ -246,26 +244,26 @@ void DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler(void){
  * @brief This function handles DMA1 channel 4 to 7 and DMA2 channel 3 to 5 interrupts.
  */
 void DMA1_Ch4_7_DMA2_Ch3_5_IRQHandler(void){
-	/* Streaming or messaging DMA on P3 */
-	if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF5) == SET){
-		DMA_IRQHandler(P3);
-		/* Streaming or messaging DMA on P4 */
-	}
-	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF6) == SET){
-		DMA_IRQHandler(P4);
-		/* Streaming or messaging DMA on P6 */
-	}
-	else if(HAL_DMA_GET_IT_SOURCE(DMA2,DMA_ISR_GIF3) == SET){
-		DMA_IRQHandler(P6);
-		/* TX messaging DMA 1 */
-	}
-	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF4) == SET){
-		HAL_DMA_IRQHandler(&msgTxDMA[1]);
-		/* TX messaging DMA 2 */
-	}
-	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF7) == SET){
-		HAL_DMA_IRQHandler(&msgTxDMA[2]);
-	}
+//	/* Streaming or messaging DMA on P3 */
+//	if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF5) == SET){
+//		DMA_IRQHandler(P3);
+//		/* Streaming or messaging DMA on P4 */
+//	}
+//	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF6) == SET){
+//		DMA_IRQHandler(P4);
+//		/* Streaming or messaging DMA on P6 */
+//	}
+//	else if(HAL_DMA_GET_IT_SOURCE(DMA2,DMA_ISR_GIF3) == SET){
+//		DMA_IRQHandler(P6);
+//		/* TX messaging DMA 1 */
+//	}
+//	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF4) == SET){
+//		HAL_DMA_IRQHandler(&msgTxDMA[1]);
+//		/* TX messaging DMA 2 */
+//	}
+//	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF7) == SET){
+//		HAL_DMA_IRQHandler(&msgTxDMA[2]);
+//	}
 }
 
 /*-----------------------------------------------------------*/
@@ -274,8 +272,8 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 	
 	/* TX DMAs are shared so unsetup them here to be reused */
-	if(huart->hdmatx != NULL)
-		DMA_MSG_TX_UnSetup(huart);
+//	if(huart->hdmatx != NULL)
+//		DMA_MSG_TX_UnSetup(huart);
 	
 	/* Give back the mutex. */
 	xSemaphoreGiveFromISR(PxTxSemaphoreHandle[GetPort(huart)],&(xHigherPriorityTaskWoken));
@@ -385,6 +383,26 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 }
 
 /*-----------------------------------------------------------*/
+
+/**
+  * @brief UART wakeup from Stop mode callback
+  * @param huart: uart handle
+  * @retval None
+  */
+void HAL_UARTEx_WakeupCallback(UART_HandleTypeDef *huart) {
+
+	WakeupFromStopFlag = 1;
+
+	if (huart->Instance == USART1)
+		HAL_UARTEx_DisableStopMode(huart);
+
+	if (huart->Instance == USART2)
+		HAL_UARTEx_DisableStopMode(huart);
+
+	if (huart->Instance == USART3)
+		HAL_UARTEx_DisableStopMode(huart);
+
+}
 
 /*-----------------------------------------------------------*/
 
