@@ -33,12 +33,6 @@ extern uint8_t UARTRxBuf[NumOfPorts][MSG_RX_BUF_SIZE];
 ///* Private function prototypes -----------------------------------------------*/
 //void SetupDMAInterrupts(DMA_HandleTypeDef *hDMA,uint8_t priority);
 //void UnSetupDMAInterrupts(DMA_HandleTypeDef *hDMA);
-extern DMA_HandleTypeDef hdma_usart1_rx;
-extern DMA_HandleTypeDef hdma_usart2_rx;
-extern DMA_HandleTypeDef hdma_usart3_rx;
-extern DMA_HandleTypeDef hdma_usart4_rx;
-extern DMA_HandleTypeDef hdma_usart5_rx;
-extern DMA_HandleTypeDef hdma_usart6_rx;
 
 
 /*-----------------------------------------------------------*/
@@ -244,7 +238,6 @@ void DMA_MSG_RX_Setup(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 
 /*-----------------------------------------------------------*/
 extern uint8_t Buffer[512];
-extern uint8_t streamType;
 /* Streaming DMA setup (port-to-port)
  */
 void DMA_STREAM_Setup(UART_HandleTypeDef *huartSrc,UART_HandleTypeDef *huartDst,uint16_t num){
