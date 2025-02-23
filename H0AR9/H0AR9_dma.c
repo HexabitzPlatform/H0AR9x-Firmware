@@ -243,7 +243,7 @@ void DMA_MSG_RX_Setup(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 }
 
 /*-----------------------------------------------------------*/
-extern uint8_t Buffer[512];
+//extern uint8_t Buffer[512];
 extern uint8_t streamType;
 /* Streaming DMA setup (port-to-port)
  */
@@ -254,6 +254,7 @@ void DMA_STREAM_Setup(UART_HandleTypeDef *huartSrc,UART_HandleTypeDef *huartDst,
 //
 //	/* Select DMA struct */
 	hDMA = msgRxDMA[port - 1];
+	uint8_t Buffer[512];
 //
 //	/* Remap and link to UART RX */
 //	RemapAndLinkDMAtoUARTRx(huartSrc,hDMA);
