@@ -92,7 +92,7 @@ uint8_t Sample __attribute__((section(".mySection")));
 /* Private function prototypes -----------------------------------------------*/
 //void SensorHub(void *argument);
 void StreamTimeCallback(TimerHandle_t xTimerStream);
-Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction,uint32_t numOfSamples, uint32_t streamTimeout);
+Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction);
 void SamplePIRToString(char *cstring, size_t maxLen);
 void SampleDistanceToString(char *cstring, size_t maxLen);
 void SampleTemperatureToString(char *cstring, size_t maxLen);
@@ -290,9 +290,6 @@ void Module_Peripheral_Init(void) {
 
 	/* create a event group for measurement ranging */
 	handleNewReadyData = xEventGroupCreate();
-
-//	/* Create a SensorHub task */
-//	xTaskCreate(SensorHub,(const char* ) "SensorHub",configMINIMAL_STACK_SIZE,NULL,osPriorityNormal - osPriorityIdle,&SensorHubTaskHandle);
 
 	/* Create a timeout software timer StreamSamplsToPort() API */
 		xTimerStream =xTimerCreate("StreamTimer",pdMS_TO_TICKS(1000),pdTRUE,(void* )1,StreamTimeCallback);
@@ -628,7 +625,7 @@ void StreamTimeCallback(TimerHandle_t xTimerStream){
 	/* Stream mode to terminal: Export to terminal */
 	else if(STREAM_MODE_TO_TERMINAL == StreamMode){
 		if((SampleCount <= TerminalNumOfSamples) || (0 == TerminalNumOfSamples)){
-			SampleToTerminal(TerminalPort,TerminalFunction,TerminalNumOfSamples,TerminalTimeout);
+			SampleToTerminal(TerminalPort,TerminalFunction);
 		}
 		else{
 			SampleCount =0;
@@ -885,18 +882,6 @@ Module_Status SampleHumidity(float *humidity)
 	return status;
 
 }
-/*-----------------------------------------------------------*/
-
-//Module_Status StreamToTerminal(uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout)
-//{
-//	Module_Status status = H0AR9_OK;
-//	tofMode=STREAM_TO_Terminal;
-//	port3 = port ;
-//	Numofsamples3=Numofsamples;
-//	timeout3=timeout;
-//	mode3= function;
-//	return status;
-//}
 
 /***************************************************************************/
 /*
@@ -907,24 +892,12 @@ Module_Status SampleHumidity(float *humidity)
  * @param  streamTimeout: Timeout period for the operation (in milliseconds).
  * @retval Module_Status indicating success or failure of the operation.
  */
-Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction,uint32_t numOfSamples, uint32_t streamTimeout) {
+Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction) {
 	Module_Status status = H0AR9_OK; /* Initialize operation status as success */
 	int8_t *pcOutputString = NULL; /* Pointer to CLI output buffer */
 	uint32_t period = 0u; /* Calculated period for the operation */
 	char cstring[100] = { 0 }; /* Buffer for formatted output string */
 
-	/* Check if the number of samples is valid to avoid division by zero */
-	if (numOfSamples == 0) {
-		return H0AR9_ERR_WrongParams; /* Return error for invalid sample count */
-	}
-
-	/* Calculate the period by dividing timeout by number of samples */
-	period = streamTimeout / numOfSamples;
-
-	/* Validate the calculated period against minimum allowed value */
-	if (period < MIN_MEMS_PERIOD_MS) {
-		return H0AR9_ERR_WrongParams; /* Return error if period is too short */
-	}
 
 	/* Process data based on the requested sensor function */
 	switch (dataFunction) {
@@ -1054,27 +1027,6 @@ Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction,uint32_t n
 	/* Return final status indicating success or prior error */
 	return status;
 }
-
-/*-----------------------------------------------------------*/
-//Module_Status ExportStreamToPort (uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout)
-// {
-//	Module_Status status = H0AR9_OK;
-//	uint32_t samples = 0;
-//	uint32_t period = 0;
-//	period = timeout / Numofsamples;
-//
-//	if (timeout < MIN_PERIOD_MS || period < MIN_PERIOD_MS)
-//		return H0AR9_ERR_WrongParams;
-//
-//	while (samples < Numofsamples) {
-//		status = SampleToPort(module, port, function);
-//		vTaskDelay(pdMS_TO_TICKS(period));
-//		samples++;
-//	}
-//
-//	samples = 0;
-//	return status;
-//}
 
 /***************************************************************************/
 /*

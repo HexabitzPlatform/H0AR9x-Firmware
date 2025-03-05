@@ -189,10 +189,6 @@ Module_Status SampleToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunc
 Module_Status StreamToPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFunction,uint32_t numOfSamples,uint32_t streamTimeout);
 Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t numOfSamples,uint32_t streamTimeout);
 
-//Module_Status StreamtoPort(uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
-//Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function);
-//Module_Status StreamToTerminal(uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
-
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 /* -----------------------------------------------------------------------
