@@ -79,6 +79,24 @@ uint8_t StopeCliStreamFlag = 0u;             /* Flag to stop CLI streaming */
 uint32_t SampleCount = 0u;                   /* Total sample counter */
 
 
+/* Global variables for sensor data */
+bool H0AR9_pir = false;
+uint16_t H0AR9_distance = 0;
+uint16_t H0AR9_red = 0, H0AR9_green = 0, H0AR9_blue = 0;
+float H0AR9_temperature = 0.0f;
+float H0AR9_humidity = 0.0f;
+
+
+/* Exported Typedef */
+module_param_t modParam[NUM_MODULE_PARAMS] = {
+    { .paramPtr = &H0AR9_pir, .paramFormat = FMT_BOOL, .paramName = "pir" },
+    { .paramPtr = &H0AR9_distance, .paramFormat = FMT_UINT16, .paramName = "distance" },
+    { .paramPtr = &H0AR9_red, .paramFormat = FMT_UINT16, .paramName = "red" },
+    { .paramPtr = &H0AR9_green, .paramFormat = FMT_UINT16, .paramName = "green" },
+    { .paramPtr = &H0AR9_blue, .paramFormat = FMT_UINT16, .paramName = "blue" },
+    { .paramPtr = &H0AR9_temperature, .paramFormat = FMT_FLOAT, .paramName = "temperature" },
+    { .paramPtr = &H0AR9_humidity, .paramFormat = FMT_FLOAT, .paramName = "humidity" }
+};
 
 uint8_t CONTROL, Enable, ATIME, WTIME, PPULSE;
 uint8_t redReg, greenReg, blueReg, distanceReg;
@@ -564,6 +582,81 @@ uint8_t GetPort(UART_HandleTypeDef *huart) {
 		return P6;
 
 	return 0;
+}
+
+/***************************************************************************/
+/*
+ * @brief: Samples a module parameter value based on parameter index.
+ * @param paramIndex: Index of the parameter (1-based index).
+ * @param value: Pointer to store the sampled float value.
+ * @retval: Module_Status indicating success or failure.
+ */
+Module_Status GetModuleParameter(uint8_t paramIndex, float *value) {
+    Module_Status status = H0AR9_OK;
+
+    switch (paramIndex) {
+        /* Sample PIR sensor (convert bool to float) */
+        case 1:
+        {
+            bool temp = false;
+            status = SamplePIR(&temp);
+            if (status == H0AR9_OK) *value = (float)temp;
+            break;
+        }
+
+        /* Sample Distance sensor */
+        case 2:
+        {
+            uint16_t temp = 0;
+            status = SampleDistance(&temp);
+            if (status == H0AR9_OK) *value = (float)temp;
+            break;
+        }
+
+        /* Sample Color - Red */
+        case 3:
+        {
+            uint16_t temp = 0;
+            status = SampleColor(&temp, NULL, NULL);
+            if (status == H0AR9_OK) *value = (float)temp;
+            break;
+        }
+
+        /* Sample Color - Green */
+        case 4:
+        {
+            uint16_t temp = 0;
+            status = SampleColor(NULL, &temp, NULL);
+            if (status == H0AR9_OK) *value = (float)temp;
+            break;
+        }
+
+        /* Sample Color - Blue */
+        case 5:
+        {
+            uint16_t temp = 0;
+            status = SampleColor(NULL, NULL, &temp);
+            if (status == H0AR9_OK) *value = (float)temp;
+            break;
+        }
+
+        /* Sample Temperature */
+        case 6:
+            status = SampleTemperature(value);
+            break;
+
+        /* Sample Humidity */
+        case 7:
+            status = SampleHumidity(value);
+            break;
+
+        /* Invalid parameter index */
+        default:
+            status = H0AR9_ERR_WrongParams;
+            break;
+    }
+
+    return status;
 }
 
 /*-----------------------------------------------------------*/
