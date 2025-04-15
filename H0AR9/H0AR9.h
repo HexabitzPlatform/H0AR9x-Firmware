@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
  File Name     : H0AR9.h
@@ -13,11 +13,11 @@
 
  */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion ***********************************/
 #ifndef H0AR9_H
 #define H0AR9_H
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes ****************************************************************/
 #include "BOS.h"
 #include "H0AR9_MemoryMap.h"
 #include "H0AR9_uart.h"
@@ -27,8 +27,7 @@
 #include "H0AR9_eeprom.h"
 #include "H0AR9_i2c.h"
 
-/* Exported definitions -------------------------------------------------------*/
-
+/* Exported Macros *********************************************************/
 #define	MODULE_PN		_H0AR9
 
 /* Port-related Definitions */
@@ -59,7 +58,7 @@
 #define UART_P5 &huart5
 #define UART_P6 &huart6
 
-
+/* Module-specific Hardware Definitions ************************************/
 /* Port Definitions */
 #define	USART1_TX_PIN		GPIO_PIN_9
 #define	USART1_RX_PIN		GPIO_PIN_10
@@ -97,32 +96,42 @@
 #define	USART6_RX_PORT		GPIOB
 #define	USART6_AF			GPIO_AF8_USART6
 
-/* Module-specific Definitions */
-#define MIN_PERIOD_MS				100
+/* Module-specific Hardware Definitions */
+#define I2C_HANDLER         &hi2c2
+
+/* Indicator LED */
+#define _IND_LED_PORT		GPIOB
+#define _IND_LED_PIN		GPIO_PIN_14
+
+/* Registers Addresses */
+#define CONTROL_REG          0x0F
+#define Enable_REG           0x00
+#define ATIME_REG            0x01
+#define WTIME_REG            0x03
+#define PPULSE_REG           0x0E
+#define RED_REG              0x16
+#define GREEN_REG            0x18
+#define BLUE_REG             0x1A
+#define DISTANCE_REG         0x1C
+#define TEMP_REG             0x00
+#define TEMP_HUM_REG        (0x40) << 1
+#define HUMIDITY_REG         0x01
+#define COLOR_PROXIMITY_REG (0x39) << 1
+
 #define UNSNGD_HALF_WORD_MAX_VAL    0xFFFF
 #define UNSNGD_HALF_WORD_MIN_VAL	0x0000
 
-#define MIN_MEMS_PERIOD_MS				100
-#define MAX_MEMS_TIMEOUT_MS				0xFFFFFFFF
+/* Module-specific Macro Definitions ***************************************/
+#define MIN_MEMS_PERIOD_MS			100
+#define MAX_MEMS_TIMEOUT_MS			0xFFFFFFFF
 
-#define SAMPLE_TEM              0
-#define SAMPLE_TO_PORT          1
-#define STREAM_TO_PORT          2
-#define STREAM_TO_Terminal      3
-#define DEFAULT                 4
+#define NUM_MODULE_PARAMS		    7
 
-#define NUM_MODULE_PARAMS			  7
-#define STOP_MEASUREMENT_RANGING      0
-#define START_MEASUREMENT_RANGING     1
-/* Macros definitions */
-#define STREAM_MODE_TO_PORT      1
-#define STREAM_MODE_TO_TERMINAL  2
-/* Module EEPROM Variables */
+#define STREAM_MODE_TO_PORT         1
+#define STREAM_MODE_TO_TERMINAL     2
 
-// Module Addressing Space 500 - 599
-#define _EE_MODULE							500
-
-/* Module_Status Type Definition */
+/* Module-specific Type Definition *****************************************/
+/* Module-status Type Definition */
 typedef enum
 {
   H0AR9_OK = 0,
@@ -136,24 +145,18 @@ typedef enum
   H0AR9_ERR_TIMEOUT,
   H0AR9_ERR_IO,
   H0AR9_ERR_TERMINATED,
-  H0AR9_ERR_WrongParams,
+  H0AR9_ERR_WRONGPARAMS,
   H0AR9_ERROR = 25
 } Module_Status;
 
+/* */
 typedef enum {
-	Color=0,
+	COLOR=0,
 	PIR,
-	Distance,
-	Temperature,
-	Humidity,
-
+	DISTANCE,
+	TEMPERATURE,
+	HUMIDITY,
 }All_Data;
-
-
-
-/* Indicator LED */
-#define _IND_LED_PORT			GPIOB
-#define _IND_LED_PIN			GPIO_PIN_14
 
 /* Export UART variables */
 extern UART_HandleTypeDef huart1;
@@ -171,12 +174,10 @@ extern void MX_USART4_UART_Init(void);
 extern void MX_USART5_UART_Init(void);
 extern void MX_USART6_UART_Init(void);
 extern void SystemClock_Config(void);
-extern void ExecuteMonitor(void);
 
-/* -----------------------------------------------------------------------
- |                               APIs                                    |
- -----------------------------------------------------------------------
- */
+/***************************************************************************/
+/***************************** General Functions ***************************/
+/***************************************************************************/
 Module_Status SamplePIR(bool *pir);
 Module_Status SampleDistance(uint16_t *distance);
 Module_Status SampleColor(uint16_t *Red, uint16_t *Green, uint16_t *Blue);
@@ -188,11 +189,7 @@ Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t nu
 
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
-/* -----------------------------------------------------------------------
- |                             Commands                                  |
- -----------------------------------------------------------------------
- */
 
 #endif /* H0AR9_H */
 
-/************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
+/***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/
