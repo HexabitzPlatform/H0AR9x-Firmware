@@ -10,10 +10,6 @@
 /* Includes ****************************************************************/
 #include "BOS.h"
 
-/* Local Variables *********************************************************/
-BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t *RX_Port,uint16_t *RX_Pin);
-uint8_t IsFactoryReset(void);
-
 /***************************************************************************/
 /* Configure GPIO **********************************************************/
 /***************************************************************************/
@@ -46,23 +42,11 @@ void IND_LED_Init(void){
 void SENSORS_GPIO_Init(void) {
 	GPIO_InitTypeDef GPIO_InitStruct;
 
-	/**I2C2 GPIO Configuration
-	 PA6     ------> I2C2_SDA
-	 PA7     ------> I2C2_SCL
-	 */
-	GPIO_InitStruct.Pin = GPIO_PIN_6 | GPIO_PIN_7;
-	GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	GPIO_InitStruct.Alternate = GPIO_AF8_I2C2;
-	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-	__HAL_RCC_I2C2_CLK_ENABLE();
-
 	/*Configure GPIO pin : PB6 as output*/
-	GPIO_InitStruct.Pin = GPIO_PIN_6;
+	GPIO_InitStruct.Pin = PIR_INPUT_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+	HAL_GPIO_Init(PIR_INPUT_PORT, &GPIO_InitStruct);
 }
 
 /***************************************************************************/

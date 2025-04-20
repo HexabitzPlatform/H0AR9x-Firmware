@@ -56,4 +56,34 @@ void MX_I2C2_Init(void) {
 }
 
 /***************************************************************************/
+void HAL_I2C_MspInit(I2C_HandleTypeDef *i2cHandle){
+
+	GPIO_InitTypeDef GPIO_InitStruct ={0};
+	RCC_PeriphCLKInitTypeDef PeriphClkInit ={0};
+
+	/**I2C2 GPIO Configuration
+	 PA6     ------> I2C2_SDA
+	 PA7     ------> I2C2_SCL
+	 */
+	GPIO_InitStruct.Pin = SENSOR_I2C_SCL_PIN | SENSOR_I2C_SDA_PIN;
+	GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	GPIO_InitStruct.Alternate = GPIO_AF8_I2C2;
+	HAL_GPIO_Init(SENSOR_I2C_PORT, &GPIO_InitStruct);
+	__HAL_RCC_I2C2_CLK_ENABLE();
+
+}
+
+/***************************************************************************/
+void HAL_I2C_MspDeInit(I2C_HandleTypeDef *i2cHandle) {
+
+	/* Peripheral clock disable */
+	__HAL_RCC_I2C2_CLK_DISABLE();
+
+	HAL_GPIO_DeInit(SENSOR_I2C_PORT, SENSOR_I2C_SCL_PIN);
+
+	HAL_GPIO_DeInit(SENSOR_I2C_PORT, SENSOR_I2C_SDA_PIN);
+}
+/***************************************************************************/
 /***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/

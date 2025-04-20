@@ -96,13 +96,21 @@
 #define	USART6_RX_PORT		GPIOB
 #define	USART6_AF			GPIO_AF8_USART6
 
-/* Module-specific Hardware Definitions */
+/* Module-specific Hardware Definitions ************************************/
+#define PIR_INPUT_PIN       GPIO_PIN_6
+#define PIR_INPUT_PORT      GPIOB
+
+#define SENSOR_I2C_SCL_PIN  GPIO_PIN_7
+#define SENSOR_I2C_SDA_PIN  GPIO_PIN_6
+#define SENSOR_I2C_PORT     GPIOA
+
 #define I2C_HANDLER         &hi2c2
 
 /* Indicator LED */
 #define _IND_LED_PORT		GPIOB
 #define _IND_LED_PIN		GPIO_PIN_14
 
+/* Module-specific Macro Definitions ***************************************/
 /* Registers Addresses */
 #define CONTROL_REG          0x0F
 #define Enable_REG           0x00
@@ -121,7 +129,6 @@
 #define UNSNGD_HALF_WORD_MAX_VAL    0xFFFF
 #define UNSNGD_HALF_WORD_MIN_VAL	0x0000
 
-/* Module-specific Macro Definitions ***************************************/
 #define MIN_MEMS_PERIOD_MS			100
 #define MAX_MEMS_TIMEOUT_MS			0xFFFFFFFF
 
