@@ -129,8 +129,8 @@
 #define UNSNGD_HALF_WORD_MAX_VAL    0xFFFF
 #define UNSNGD_HALF_WORD_MIN_VAL	0x0000
 
-#define MIN_MEMS_PERIOD_MS			100
-#define MAX_MEMS_TIMEOUT_MS			0xFFFFFFFF
+#define MIN_PERIOD_MS		    	100
+#define MAX_TIMEOUT_MS		    	0xFFFFFFFF
 
 #define NUM_MODULE_PARAMS		    7
 
@@ -191,8 +191,10 @@ Module_Status SampleColor(uint16_t *Red, uint16_t *Green, uint16_t *Blue);
 Module_Status SampleTemperature(float *temperature);
 Module_Status SampleHumidity(float *humidity);
 Module_Status SampleToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunction);
-Module_Status StreamToPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFunction,uint32_t numOfSamples,uint32_t streamTimeout);
+Module_Status StreamToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunction, uint32_t numOfSamples, uint32_t streamTimeout) ;
 Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t numOfSamples,uint32_t streamTimeout);
+Module_Status StreamToBuffer(float *buffer,All_Data function, uint32_t Numofsamples, uint32_t timeout);
+
 
 #endif /* H0AR9_H */
 

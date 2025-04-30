@@ -40,16 +40,16 @@ extern I2C_HandleTypeDef hi2c2;
 uint8_t TXBuffer[2];
 uint8_t RXBuffer[2];
 
-/* Stream variables */
-static bool stopStream = false;
-uint8_t PortModule = 0u;           /* Module ID for port streaming */
-uint8_t PortNumber = 0u;           /* Port number for streaming */
-uint8_t StreamMode = 0u;            /* Streaming mode selector (port or terminal) */
-uint8_t TerminalPort = 0u;          /* Port number for terminal streaming */
-uint8_t StreamCLIFlag =0u;
-uint32_t SampleCount = 0u;          /* Total sample counter */
-uint32_t PortNumOfSamples = 0u;    /* Number of samples for port streaming */
-uint32_t TerminalNumOfSamples = 0u; /* Number of samples for terminal streaming */
+/* Streaming variables */
+static bool stopStream = false;         /* Flag to indicate whether to stop streaming process */
+uint8_t PortModule = 0u;                /* Module ID for the destination port */
+uint8_t PortNumber = 0u;                /* Physical port number used for streaming */
+uint8_t StreamMode = 0u;                /* Current active streaming mode (to port, terminal, etc.) */
+uint8_t TerminalPort = 0u;              /* Port number used to output data to a terminal */
+uint8_t StopeCliStreamFlag = 0u;        /* Flag to request stopping a CLI stream operation */
+uint32_t SampleCount = 0u;              /* Counter to track the number of samples streamed */
+uint32_t PortNumOfSamples = 0u;         /* Total number of samples to be sent through the port */
+uint32_t TerminalNumOfSamples = 0u;     /* Total number of samples to be streamed to the terminal */
 
 /* Global variables for sensor data used in ModuleParam */
 bool H0AR9_pir = false;
@@ -96,8 +96,14 @@ void SampleTemperatureToString(char *cstring, size_t maxLen);
 void SampleHumidityToString(char *cstring, size_t maxLen);
 void SampleColorToString(char *cstring, size_t maxLen);
 
-Module_Status Exportstreamtoterminal(uint32_t Numofsamples, uint32_t timeout,uint8_t Port,All_Data function);
-Module_Status ExportStreamToPort (uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
+void SamplePIRBuf(float *buffer);
+void SampleDistanceBuf(float *buffer);
+void SampleColorBuf(float *buffer);
+void SampleTemperatureBuf(float *buffer);
+void SampleHumidityBuf(float *buffer);
+
+//Module_Status Exportstreamtoterminal(uint32_t Numofsamples, uint32_t timeout,uint8_t Port,All_Data function);
+//Module_Status ExportStreamToPort (uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
 Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction);
 
 static Module_Status ExportToTerminal(uint32_t Numofsamples, uint32_t timeout,uint8_t Port, SampleToString function);
@@ -596,67 +602,6 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src,
 		SampleToPort(cMessage[port - 1][shift], cMessage[port - 1][1 + shift], PIR);
 		break;
 
-	case CODE_H0AR9_STREAM_COLOR:
-		Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift])
-				+ ((uint32_t) cMessage[port - 1][3 + shift] << 8)
-				+ ((uint32_t) cMessage[port - 1][4 + shift] << 16)
-				+ ((uint32_t) cMessage[port - 1][5 + shift] << 24);
-		timeout = ((uint32_t) cMessage[port - 1][6 + shift])
-				+ ((uint32_t) cMessage[port - 1][7 + shift] << 8)
-				+ ((uint32_t) cMessage[port - 1][8 + shift] << 16)
-				+ ((uint32_t) cMessage[port - 1][9 + shift] << 24);
-		StreamToPort(cMessage[port - 1][shift], cMessage[port - 1][1 + shift], COLOR, Numofsamples, timeout);
-		break;
-
-	case CODE_H0AR9_STREAM_DISTANCE:
-		Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift])
-				+ ((uint32_t) cMessage[port - 1][3 + shift] << 8)
-				+ ((uint32_t) cMessage[port - 1][4 + shift] << 16)
-				+ ((uint32_t) cMessage[port - 1][5 + shift] << 24);
-		timeout = ((uint32_t) cMessage[port - 1][6 + shift])
-				+ ((uint32_t) cMessage[port - 1][7 + shift] << 8)
-				+ ((uint32_t) cMessage[port - 1][8 + shift] << 16)
-				+ ((uint32_t) cMessage[port - 1][9 + shift] << 24);
-		StreamToPort(cMessage[port - 1][shift], cMessage[port - 1][1 + shift], DISTANCE, Numofsamples, timeout);
-		break;
-
-	case CODE_H0AR9_STREAM_TEMP:
-		Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift])
-				+ ((uint32_t) cMessage[port - 1][3 + shift] << 8)
-				+ ((uint32_t) cMessage[port - 1][4 + shift] << 16)
-				+ ((uint32_t) cMessage[port - 1][5 + shift] << 24);
-		timeout = ((uint32_t) cMessage[port - 1][6 + shift])
-				+ ((uint32_t) cMessage[port - 1][7 + shift] << 8)
-				+ ((uint32_t) cMessage[port - 1][8 + shift] << 16)
-				+ ((uint32_t) cMessage[port - 1][9 + shift] << 24);
-		StreamToPort(cMessage[port - 1][shift], cMessage[port - 1][1 + shift], TEMPERATURE, Numofsamples, timeout);
-		break;
-
-	case CODE_H0AR9_STREAM_HUMIDITY:
-		Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift])
-				+ ((uint32_t) cMessage[port - 1][3 + shift] << 8)
-				+ ((uint32_t) cMessage[port - 1][4 + shift] << 16)
-				+ ((uint32_t) cMessage[port - 1][5 + shift] << 24);
-		timeout = ((uint32_t) cMessage[port - 1][6 + shift])
-				+ ((uint32_t) cMessage[port - 1][7 + shift] << 8)
-				+ ((uint32_t) cMessage[port - 1][8 + shift] << 16)
-				+ ((uint32_t) cMessage[port - 1][9 + shift] << 24);
-		StreamToPort(cMessage[port - 1][shift], cMessage[port - 1][1 + shift], HUMIDITY, Numofsamples, timeout);
-		break;
-
-	case CODE_H0AR9_STREAM_PIR:
-		Numofsamples = ((uint32_t) cMessage[port - 1][2 + shift])
-				+ ((uint32_t) cMessage[port - 1][3 + shift] << 8)
-				+ ((uint32_t) cMessage[port - 1][4 + shift] << 16)
-				+ ((uint32_t) cMessage[port - 1][5 + shift] << 24);
-		timeout = ((uint32_t) cMessage[port - 1][6 + shift])
-				+ ((uint32_t) cMessage[port - 1][7 + shift] << 8)
-				+ ((uint32_t) cMessage[port - 1][8 + shift] << 16)
-				+ ((uint32_t) cMessage[port - 1][9 + shift] << 24);
-		StreamToPort(cMessage[port - 1][shift], cMessage[port - 1][1 + shift], PIR, Numofsamples, timeout);
-		break;
-
-
 	default:
 		result = H0AR9_ERR_UnknownMessage;
 		break;
@@ -798,6 +743,196 @@ void StreamTimeCallback(TimerHandle_t xTimerStream) {
 }
 
 /***************************************************************************/
+/* Samples PIR sensor data into a buffer.
+ * buffer: Pointer to the buffer where PIR data will be stored.
+ */
+void SamplePIRBuf(float *buffer) {
+    bool pir;
+    SamplePIR(&pir);
+    *buffer = (float)pir;
+}
+
+/***************************************************************************/
+/* Samples distance sensor data into a buffer.
+ * buffer: Pointer to the buffer where distance data will be stored.
+ */
+void SampleDistanceBuf(float *buffer) {
+    uint16_t distance;
+    SampleDistance(&distance);
+    *buffer = (float)distance;
+}
+
+/***************************************************************************/
+/* Samples color sensor data into a buffer.
+ * buffer: Pointer to the buffer where color data will be stored.
+ */
+void SampleColorBuf(float *buffer) {
+    uint16_t color[3];
+    SampleColor(color, color + 1, color + 2);
+    buffer[0] = (float)color[0];
+    buffer[1] = (float)color[1];
+    buffer[2] = (float)color[2];
+}
+
+/***************************************************************************/
+/* Samples temperature sensor data into a buffer.
+ * buffer: Pointer to the buffer where temperature data will be stored.
+ */
+void SampleTemperatureBuf(float *buffer) {
+    float temperature;
+    SampleTemperature(&temperature);
+    *buffer = temperature;
+}
+
+/***************************************************************************/
+/* Samples humidity sensor data into a buffer.
+ * buffer: Pointer to the buffer where humidity data will be stored.
+ */
+void SampleHumidityBuf(float *buffer) {
+    float humidity;
+    SampleHumidity(&humidity);
+    *buffer = humidity;
+}
+
+/***************************************************************************/
+/* Streams a single sensor data sample to the terminal.
+ * dstPort: Port number to stream data to.
+ * dataFunction: Function to sample data (e.g., PIR, DISTANCE, COLOR, TEMPERATURE, HUMIDITY).
+ */
+Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction) {
+    Module_Status Status = H0AR9_OK; /* Initialize operation status as success */
+    int8_t *PcOutputString = NULL; /* Pointer to CLI output buffer */
+    uint32_t Period = 0u; /* Calculated period for the operation */
+    char CString[100] = {0}; /* Buffer for formatted output string */
+    bool pir = false; /* Variable for PIR data */
+    uint16_t distance = 0; /* Variable for distance data */
+    uint16_t red = 0, green = 0, blue = 0; /* Variables for color data */
+    float temperature = 0.0f; /* Variable for temperature data */
+    float humidity = 0.0f; /* Variable for humidity data */
+
+    /* Process data based on the requested sensor function */
+    switch (dataFunction) {
+        case PIR:
+            /* Get the CLI output buffer for writing */
+            PcOutputString = FreeRTOS_CLIGetOutputBuffer();
+            /* Sample PIR data */
+            if (SamplePIR(&pir) != H0AR9_OK) {
+                return H0AR9_ERROR; /* Return error if sampling fails */
+            }
+            /* Format PIR data into a string */
+            snprintf(CString, 50, "PIR | %s\r\n", pir ? "Detected" : "Not Detected");
+            /* Send the formatted string to the specified port */
+            writePxMutex(dstPort, (char*)CString, strlen((char*)CString), cmd500ms, HAL_MAX_DELAY);
+            break;
+
+        case DISTANCE:
+            /* Get the CLI output buffer for writing */
+            PcOutputString = FreeRTOS_CLIGetOutputBuffer();
+            /* Sample distance data in millimeters */
+            if (SampleDistance(&distance) != H0AR9_OK) {
+                return H0AR9_ERROR; /* Return error if sampling fails */
+            }
+            /* Format distance data into a string */
+            snprintf(CString, 50, "Distance(mm) | %u\r\n", distance);
+            /* Send the formatted string to the specified port */
+            writePxMutex(dstPort, (char*)CString, strlen((char*)CString), cmd500ms, HAL_MAX_DELAY);
+            break;
+
+        case COLOR:
+            /* Get the CLI output buffer for writing */
+            PcOutputString = FreeRTOS_CLIGetOutputBuffer();
+            /* Sample color data (Red, Green, Blue) */
+            if (SampleColor(&red, &green, &blue) != H0AR9_OK) {
+                return H0AR9_ERROR; /* Return error if sampling fails */
+            }
+            /* Format color data into a string */
+            snprintf(CString, 50, "Color | R: %u, G: %u, B: %u\r\n", red, green, blue);
+            /* Send the formatted string to the specified port */
+            writePxMutex(dstPort, (char*)CString, strlen((char*)CString), cmd500ms, HAL_MAX_DELAY);
+            break;
+
+        case TEMPERATURE:
+            /* Get the CLI output buffer for writing */
+            PcOutputString = FreeRTOS_CLIGetOutputBuffer();
+            /* Sample temperature data in Celsius */
+            if (SampleTemperature(&temperature) != H0AR9_OK) {
+                return H0AR9_ERROR; /* Return error if sampling fails */
+            }
+            /* Format temperature data into a string */
+            snprintf(CString, 50, "Temp(Celsius) | %.2f\r\n", temperature);
+            /* Send the formatted string to the specified port */
+            writePxMutex(dstPort, (char*)CString, strlen((char*)CString), cmd500ms, HAL_MAX_DELAY);
+            break;
+
+        case HUMIDITY:
+            /* Get the CLI output buffer for writing */
+            PcOutputString = FreeRTOS_CLIGetOutputBuffer();
+            /* Sample humidity data in percentage */
+            if (SampleHumidity(&humidity) != H0AR9_OK) {
+                return H0AR9_ERROR; /* Return error if sampling fails */
+            }
+            /* Format humidity data into a string */
+            snprintf(CString, 50, "Humidity(%%) | %.2f\r\n", humidity);
+            /* Send the formatted string to the specified port */
+            writePxMutex(dstPort, (char*)CString, strlen((char*)CString), cmd500ms, HAL_MAX_DELAY);
+            break;
+
+        default:
+            /* Return error for invalid sensor function */
+            return H0AR9_ERR_WRONGPARAMS;
+    }
+
+    /* Return final status indicating success or prior error */
+    return Status;
+}
+
+/***************************************************************************/
+/* Streams sensor data to a buffer.
+ * buffer: Pointer to the buffer where data will be stored.
+ * Numofsamples: Number of samples to take.
+ * timeout: Timeout period for the operation.
+ * function: Function pointer to the sampling function (e.g., SamplePIRBuf, SampleColorBuf).
+ */
+static Module_Status StreamToBuf(float *buffer, uint32_t Numofsamples, uint32_t timeout, SampleToBuffer function) {
+    Module_Status status = H0AR9_OK;
+    uint16_t StreamIndex = 0;
+    uint32_t period = timeout / Numofsamples;
+
+    /* Check if the calculated period is valid */
+    if (period < MIN_PERIOD_MS)
+        return H0AR9_ERR_WRONGPARAMS;
+
+    stopStream = false;
+
+    /* Stream data to buffer */
+    while ((Numofsamples-- > 0) || (timeout >= MAX_TIMEOUT_MS)) {
+        if (function == SamplePIRBuf || function == SampleDistanceBuf || function == SampleTemperatureBuf || function == SampleHumidityBuf) {
+            float sample;
+            function(&sample);
+            buffer[StreamIndex] = sample;
+            StreamIndex++;
+        } else {
+            float Axis[3];
+            function(Axis);
+            buffer[StreamIndex] = Axis[0];
+            buffer[StreamIndex + 1] = Axis[1];
+            buffer[StreamIndex + 2] = Axis[2];
+            StreamIndex += 3;
+        }
+
+        /* Delay for the specified period */
+        vTaskDelay(pdMS_TO_TICKS(period));
+
+        /* Check if streaming should be stopped */
+        if (stopStream) {
+            status = H0AR9_ERR_TERMINATED;
+            break;
+        }
+    }
+
+    return status;
+}
+/***************************************************************************/
 Module_Status WriteRegData(uint8_t reg, uint8_t data) {
 	Module_Status status = H0AR9_OK;
 	HAL_StatusTypeDef HAL_status;
@@ -926,7 +1061,7 @@ static Module_Status PollingSleepCLISafe(uint32_t period, long Numofsamples)
 		{
 			if (UARTRxBuf[pcPort-1][chr] == '\r') {
 				UARTRxBuf[pcPort-1][chr] = 0;
-				StreamCLIFlag=1;
+				StopeCliStreamFlag =1;
 				return H0AR9_ERR_TERMINATED;
 			}
 		}
@@ -1038,183 +1173,57 @@ void SamplePIRToString(char *cstring, size_t maxLen) {
 	snprintf(cstring, maxLen, "PIR: %d\r\n", sample);
 
 }
-/*-----------------------------------------------------------*/
-static Module_Status StreamToCLI(uint32_t Numofsamples, uint32_t timeout, SampleToString function) {
-	Module_Status status = H0AR9_OK;
+/***************************************************************************/
+/* Streams sensor data to the CLI (Command Line Interface).
+ * Numofsamples: Number of samples to take.
+ * timeout: Timeout period for the operation.
+ * function: Function pointer to the sampling function (e.g., SampleAccGToString, SampleGyroDPSToString).
+ */
+static Module_Status StreamToCLI(uint32_t Numofsamples,uint32_t timeout,SampleToString function){
+	Module_Status status =H0AR9_OK; /* Initialize status to OK */
+	int8_t *pcOutputString = NULL;  /* Pointer to output string */
+	uint32_t period =timeout / Numofsamples; /* Calculate the period for each sample */
 
-	int8_t *pcOutputString = NULL;
-	uint32_t period = timeout / Numofsamples;
-
-	if (period < MIN_MEMS_PERIOD_MS)
+	/* Check if the calculated period is valid */
+	if(period < MIN_PERIOD_MS)
 		return H0AR9_ERR_WRONGPARAMS;
 
-	for (uint8_t chr = 0; chr < MSG_RX_BUF_SIZE; chr++) {
-		if (UARTRxBuf[pcPort - 1][chr] == '\r') {
-			UARTRxBuf[pcPort - 1][chr] = 0;
+	/* Check if CLI is enabled */
+	for(uint8_t chr =0; chr < MSG_RX_BUF_SIZE; chr++){
+		if(UARTRxBuf[pcPort - 1][chr] == '\r'){
+			UARTRxBuf[pcPort - 1][chr] =0; /* Null-terminate the buffer */
 		}
 	}
 
-	if (1 == StreamCLIFlag) {
-		StreamCLIFlag = 0;
-		static char *pcOKMessage = (int8_t*) "Stop stream !\n\r";
-		writePxITMutex(pcPort, pcOKMessage, strlen(pcOKMessage), 10);
+	/* Check if streaming should be stopped */
+	if(1 == StopeCliStreamFlag){
+		StopeCliStreamFlag =0;
+		static char *pcOKMessage =(int8_t* )"Stop stream!\n\r";
+		writePxITMutex(pcPort,pcOKMessage,strlen(pcOKMessage),10);
 		return status;
 	}
 
-	if (period > timeout)
-		timeout = period;
+	/* Adjust timeout period if necessary */
+	if(period > timeout)
+		timeout =period;
 
-	long numTimes = timeout / period;
+	long numTimes =timeout / period;
 	stopStream = false;
 
-	while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
-		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
-		function((char*) pcOutputString, 100);
+	/* Stream data to CLI */
+	while((numTimes-- > 0) || (timeout >= MAX_TIMEOUT_MS)){
+		pcOutputString =FreeRTOS_CLIGetOutputBuffer(); /* Get output buffer for CLI */
+		function((char* )pcOutputString,100); /* Call the sampling function to get data */
+		writePxMutex(pcPort,(char* )pcOutputString,strlen((char* )pcOutputString),cmd500ms,HAL_MAX_DELAY);
 
-		writePxMutex(pcPort, (char*) pcOutputString, strlen((char*) pcOutputString), cmd500ms, HAL_MAX_DELAY);
-		if (PollingSleepCLISafe(period, Numofsamples) != H0AR9_OK)
+		if(PollingSleepCLISafe(period,Numofsamples) != H0AR9_OK)
 			break;
 	}
 
-	memset((char*) pcOutputString, 0, configCOMMAND_INT_MAX_OUTPUT_SIZE);
-	sprintf((char*) pcOutputString, "\r\n");
-	return status;
-}
+	memset((char* )pcOutputString,0,configCOMMAND_INT_MAX_OUTPUT_SIZE); /* Clear the output buffer */
+	sprintf((char* )pcOutputString,"\r\n"); /* Add newline to output buffer */
 
-/***************************************************************************/
-/* Streams a single sensor data sample to the terminal.
- *  dstPort: Port number to stream data to.
- * dataFunction: Function to sample data (e.g., Color, PIR, Humidity, Temperature, Distance).
- * numOfSamples: Number of samples (kept for compatibility, not used for repetition).
- * streamTimeout: Timeout period for the operation (in milliseconds).
- */
-Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction) {
-	Module_Status status = H0AR9_OK; /* Initialize operation status as success */
-	int8_t *pcOutputString = NULL; /* Pointer to CLI output buffer */
-	uint32_t period = 0u; /* Calculated period for the operation */
-	char cstring[100] = { 0 }; /* Buffer for formatted output string */
-
-	/* Process data based on the requested sensor function */
-	switch (dataFunction) {
-	case COLOR: {
-		uint16_t red = 0, green = 0, blue = 0;
-		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
-
-		/* Sample color sensor data */
-		if (SampleColor(&red, &green, &blue) != H0AR9_OK) {
-			return H0AR9_ERROR; /* Return error if sampling fails */
-		}
-
-		/* Format color sensor data into a string */
-		snprintf(cstring, sizeof(cstring), "Red: %d, Green: %d, Blue: %d\r\n", red, green, blue);
-
-		/* Send the formatted string to the specified port */
-		writePxMutex(dstPort, (char*) cstring, strlen((char*) cstring), cmd500ms, HAL_MAX_DELAY);
-		break;
-	}
-
-	case PIR: {
-		bool sample = false;
-		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
-
-		/* Sample PIR sensor data */
-		if (SamplePIR(&sample) != H0AR9_OK) {
-			return H0AR9_ERROR; /* Return error if sampling fails */
-		}
-
-		/* Format PIR sensor data into a string */
-		snprintf(cstring, sizeof(cstring), "PIR: %d\r\n", sample);
-
-		/* Send the formatted string to the specified port */
-		writePxMutex(dstPort, (char*) cstring, strlen((char*) cstring), cmd500ms, HAL_MAX_DELAY);
-		break;
-	}
-
-	case HUMIDITY: {
-		float humidity = 0.0f;
-		char Number[5] = { 0 };
-		uint16_t x0, x1, x2;
-		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
-
-		/* Sample humidity sensor data */
-		if (SampleHumidity(&humidity) != H0AR9_OK) {
-			return H0AR9_ERROR; /* Return error if sampling fails */
-		}
-
-		/* Convert float value to formatted string */
-		uint16_t temp1 = humidity;
-		x0 = (uint8_t) ((humidity * 10) - (temp1 * 10));
-		x1 = (uint8_t) (temp1 % 10);
-		x2 = (uint8_t) ((temp1 / 10) % 10);
-
-		Number[0] = (x2 == 0) ? ' ' : (x2 + '0');
-		Number[1] = x1 + '0';
-		Number[2] = '.';
-		Number[3] = x0 + '0';
-		Number[4] = '\0';
-
-		/* Format humidity data into a string */
-		snprintf(cstring, sizeof(cstring), "Humidity: %.4s\r\n", Number);
-
-		/* Send the formatted string to the specified port */
-		writePxMutex(dstPort, (char*) cstring, strlen((char*) cstring), cmd500ms, HAL_MAX_DELAY);
-		break;
-	}
-
-	case TEMPERATURE: {
-		float temperature = 0.0f;
-		char Number[5] = { 0 };
-		uint16_t x0, x1, x2;
-		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
-
-		/* Sample temperature sensor data */
-		if (SampleTemperature(&temperature) != H0AR9_OK) {
-			return H0AR9_ERROR; /* Return error if sampling fails */
-		}
-
-		/* Convert float value to formatted string */
-		uint16_t temp1 = temperature;
-		x0 = (uint8_t) ((temperature * 10) - (temp1 * 10));
-		x1 = (uint8_t) (temp1 % 10);
-		x2 = (uint8_t) ((temp1 / 10) % 10);
-
-		Number[0] = (x2 == 0) ? ' ' : (x2 + '0');
-		Number[1] = x1 + '0';
-		Number[2] = '.';
-		Number[3] = x0 + '0';
-		Number[4] = '\0';
-
-		/* Format temperature data into a string */
-		snprintf(cstring, sizeof(cstring), "Temperature: %.4s\r\n", Number);
-
-		/* Send the formatted string to the specified port */
-		writePxMutex(dstPort, (char*) cstring, strlen((char*) cstring), cmd500ms, HAL_MAX_DELAY);
-		break;
-	}
-
-	case DISTANCE: {
-		uint16_t distance = 0;
-		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
-
-		/* Sample distance sensor data */
-		if (SampleDistance(&distance) != H0AR9_OK) {
-			return H0AR9_ERROR; /* Return error if sampling fails */
-		}
-
-		/* Format distance data into a string */
-		snprintf(cstring, sizeof(cstring), "Distance: %d\r\n", distance);
-
-		/* Send the formatted string to the specified port */
-		writePxMutex(dstPort, (char*) cstring, strlen((char*) cstring), cmd500ms, HAL_MAX_DELAY);
-		break;
-	}
-
-	default:
-		return H0AR9_ERR_WRONGPARAMS;
-	}
-
-	/* Return final status indicating success or prior error */
-	return status;
+	return status; /* Return the status of the operation */
 }
 
 /***************************************************************************/
@@ -1351,249 +1360,278 @@ Module_Status SampleHumidity(float *humidity) {
 	return status;
 
 }
-
 /***************************************************************************/
-/* Samples data from a sensor and exports it to a specified port or module.
- * dstModule: The module number to export data to.
- * dstPort: The port number to export data to.
- * dataFunction: Function to sample data (e.g., Color, PIR, Humidity, Temperature, Distance).
+/*
+ * brief: Samples data and exports it to a specified port for the H0AR9 sensor module.
+ * param dstModule: The module number to export data from.
+ * param dstPort: The port number to export data to.
+ * param dataFunction: Function to sample data (e.g., PIR, DISTANCE, COLOR, TEMPERATURE, HUMIDITY).
+ * retval: of type Module_Status indicating the success or failure of the operation.
  */
 Module_Status SampleToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunction) {
-	Module_Status status = H0AR9_OK;
+    Module_Status Status = H0AR9_OK;
+    static uint8_t Temp[12] = {0}; /* Buffer for data transmission */
+    bool pir = false;
+    uint16_t distance = 0, red = 0, green = 0, blue = 0;
+    float temperature = 0.0f, humidity = 0.0f;
 
-	static uint8_t temp[6] = { 0 }; /* Buffer for data transmission */
+    /* Check if the port and module ID are valid */
+    if ((dstPort == 0) && (dstModule == myID)) {
+        return H0AR9_ERR_WRONGPARAMS;
+    }
 
-	/* Check if the port and module ID are valid */
-	if (dstPort == 0 && dstModule == myID) {
-		return H0AR9_ERR_WRONGPARAMS; /* Return error for invalid parameters */
-	}
+    /* Sample and export data based on function type */
+    switch (dataFunction) {
+        case PIR:
+            if (SamplePIR(&pir) != H0AR9_OK) {
+                return H0AR9_ERROR;
+            }
 
-	/* Process data based on the requested sensor function */
-	switch (dataFunction) {
-	case COLOR: {
-		uint16_t red = 0, green = 0, blue = 0;
-		status = SampleColor(&red, &green, &blue);
+            if (dstModule == myID || dstModule == 0) {
+                Temp[0] = (uint8_t)pir;
+                writePxITMutex(dstPort, (char*)&Temp[0], 1 * sizeof(uint8_t), 10);
+            } else {
+                MessageParams[1] = (H0AR9_OK == Status) ? BOS_OK : BOS_ERROR;
+                MessageParams[0] = FMT_BOOL;
+                MessageParams[2] = 1;
+                MessageParams[3] = (uint8_t)pir;
+                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(bool) * 1) + 3);
+            }
+            break;
 
-		/* If data is to be sent locally */
-		if (dstModule == myID || dstModule == 0) {
-			/* Pack data into temp buffer */
-			temp[0] = (uint8_t) (red);
-			temp[1] = (uint8_t) (red >> 8);
-			temp[2] = (uint8_t) (green);
-			temp[3] = (uint8_t) (green >> 8);
-			temp[4] = (uint8_t) (blue);
-			temp[5] = (uint8_t) (blue >> 8);
+        case DISTANCE:
+            if (SampleDistance(&distance) != H0AR9_OK) {
+                return H0AR9_ERROR;
+            }
 
-			writePxITMutex(dstPort, (char*) temp, 6 * sizeof(uint8_t), 10);
-		} else {
-			/* Send data to another module */
-			MessageParams[1] = (status == H0AR9_OK) ? BOS_OK : BOS_ERROR;
-			MessageParams[0] = FMT_UINT16;
-			MessageParams[2] = 3;
-			MessageParams[3] = temp[0];
-			MessageParams[4] = temp[1];
-			MessageParams[5] = temp[2];
-			MessageParams[6] = temp[3];
-			MessageParams[7] = temp[4];
-			MessageParams[8] = temp[5];
+            if (dstModule == myID || dstModule == 0) {
+                /* LSB first */
+                Temp[0] = (uint8_t)(distance >> 0);
+                Temp[1] = (uint8_t)(distance >> 8);
+                writePxITMutex(dstPort, (char*)&Temp[0], 2 * sizeof(uint8_t), 10);
+            } else {
+                /* LSB first */
+                MessageParams[1] = (H0AR9_OK == Status) ? BOS_OK : BOS_ERROR;
+                MessageParams[0] = FMT_UINT16;
+                MessageParams[2] = 1;
+                MessageParams[3] = (uint8_t)(distance >> 0);
+                MessageParams[4] = (uint8_t)(distance >> 8);
+                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(uint16_t) * 1) + 3);
+            }
+            break;
 
-			SendMessageToModule(dstModule, CODE_READ_RESPONSE,
-					(sizeof(uint16_t) * 3) + 3);
-		}
-		break;
-	}
+        case COLOR:
+            if (SampleColor(&red, &green, &blue) != H0AR9_OK) {
+                return H0AR9_ERROR;
+            }
 
-	case PIR: {
-		bool pirStatus = false;
-		status = SamplePIR(&pirStatus);
+            if (dstModule == myID || dstModule == 0) {
+                /* LSB first */
+                Temp[0] = (uint8_t)(red >> 0);
+                Temp[1] = (uint8_t)(red >> 8);
+                Temp[2] = (uint8_t)(green >> 0);
+                Temp[3] = (uint8_t)(green >> 8);
+                Temp[4] = (uint8_t)(blue >> 0);
+                Temp[5] = (uint8_t)(blue >> 8);
+                writePxITMutex(dstPort, (char*)&Temp[0], 6 * sizeof(uint8_t), 10);
+            } else {
+                /* LSB first */
+                MessageParams[1] = (H0AR9_OK == Status) ? BOS_OK : BOS_ERROR;
+                MessageParams[0] = FMT_UINT16;
+                MessageParams[2] = 3;
+                MessageParams[3] = (uint8_t)(red >> 0);
+                MessageParams[4] = (uint8_t)(red >> 8);
+                MessageParams[5] = (uint8_t)(green >> 0);
+                MessageParams[6] = (uint8_t)(green >> 8);
+                MessageParams[7] = (uint8_t)(blue >> 0);
+                MessageParams[8] = (uint8_t)(blue >> 8);
+                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(uint16_t) * 3) + 3);
+            }
+            break;
 
-		/* If data is to be sent locally */
-		if (dstModule == myID || dstModule == 0) {
-			temp[0] = pirStatus;
-			writePxITMutex(dstPort, (char*) temp, sizeof(bool), 10);
-		} else {
-			/* Send data to another module */
-			MessageParams[1] = (status == H0AR9_OK) ? BOS_OK : BOS_ERROR;
-			MessageParams[0] = FMT_BOOL;
-			MessageParams[2] = 1;
-			MessageParams[3] = pirStatus;
+        case TEMPERATURE:
+            if (SampleTemperature(&temperature) != H0AR9_OK) {
+                return H0AR9_ERROR;
+            }
 
-			SendMessageToModule(dstModule, CODE_READ_RESPONSE,
-					sizeof(bool) + 3);
-		}
-		break;
-	}
+            if (dstModule == myID || dstModule == 0) {
+                /* LSB first */
+                Temp[0] = (uint8_t)((*(uint32_t*)&temperature) >> 0);
+                Temp[1] = (uint8_t)((*(uint32_t*)&temperature) >> 8);
+                Temp[2] = (uint8_t)((*(uint32_t*)&temperature) >> 16);
+                Temp[3] = (uint8_t)((*(uint32_t*)&temperature) >> 24);
+                writePxITMutex(dstPort, (char*)&Temp[0], 4 * sizeof(uint8_t), 10);
+            } else {
+                /* LSB first */
+                MessageParams[1] = (H0AR9_OK == Status) ? BOS_OK : BOS_ERROR;
+                MessageParams[0] = FMT_FLOAT;
+                MessageParams[2] = 1;
+                MessageParams[3] = (uint8_t)((*(uint32_t*)&temperature) >> 0);
+                MessageParams[4] = (uint8_t)((*(uint32_t*)&temperature) >> 8);
+                MessageParams[5] = (uint8_t)((*(uint32_t*)&temperature) >> 16);
+                MessageParams[6] = (uint8_t)((*(uint32_t*)&temperature) >> 24);
+                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(float) * 1) + 3);
+            }
+            break;
 
-	case DISTANCE: {
-		uint16_t distance = 0;
-		status = SampleDistance(&distance);
+        case HUMIDITY:
+            if (SampleHumidity(&humidity) != H0AR9_OK) {
+                return H0AR9_ERROR;
+            }
 
-		/* If data is to be sent locally */
-		if (dstModule == myID || dstModule == 0) {
-			temp[0] = (uint8_t) (distance);
-			temp[1] = (uint8_t) (distance >> 8);
+            if (dstModule == myID || dstModule == 0) {
+                /* LSB first */
+                Temp[0] = (uint8_t)((*(uint32_t*)&humidity) >> 0);
+                Temp[1] = (uint8_t)((*(uint32_t*)&humidity) >> 8);
+                Temp[2] = (uint8_t)((*(uint32_t*)&humidity) >> 16);
+                Temp[3] = (uint8_t)((*(uint32_t*)&humidity) >> 24);
+                writePxITMutex(dstPort, (char*)&Temp[0], 4 * sizeof(uint8_t), 10);
+            } else {
+                /* LSB first */
+                MessageParams[1] = (H0AR9_OK == Status) ? BOS_OK : BOS_ERROR;
+                MessageParams[0] = FMT_FLOAT;
+                MessageParams[2] = 1;
+                MessageParams[3] = (uint8_t)((*(uint32_t*)&humidity) >> 0);
+                MessageParams[4] = (uint8_t)((*(uint32_t*)&humidity) >> 8);
+                MessageParams[5] = (uint8_t)((*(uint32_t*)&humidity) >> 16);
+                MessageParams[6] = (uint8_t)((*(uint32_t*)&humidity) >> 24);
+                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(float) * 1) + 3);
+            }
+            break;
 
-			writePxITMutex(dstPort, (char*) temp, sizeof(uint16_t), 10);
-		} else {
-			/* Send data to another module */
-			MessageParams[1] = (status == H0AR9_OK) ? BOS_OK : BOS_ERROR;
-			MessageParams[0] = FMT_UINT16;
-			MessageParams[2] = 1;
-			MessageParams[3] = temp[0];
-			MessageParams[4] = temp[1];
+        default:
+            return H0AR9_ERR_WRONGPARAMS;
+    }
 
-			SendMessageToModule(dstModule, CODE_READ_RESPONSE,
-					sizeof(uint16_t) + 3);
-		}
-		break;
-	}
+    /* Clear the temp buffer */
+    memset(&Temp[0], 0, sizeof(Temp));
 
-	case TEMPERATURE: {
-		float temperature = 0.0f;
-		status = SampleTemperature(&temperature);
-
-		/* If data is to be sent locally */
-		if (dstModule == myID || dstModule == 0) {
-			memcpy(temp, &temperature, sizeof(float));
-			writePxITMutex(dstPort, (char*) temp, sizeof(float), 10);
-		} else {
-			/* Send data to another module */
-			MessageParams[1] = (status == H0AR9_OK) ? BOS_OK : BOS_ERROR;
-			MessageParams[0] = FMT_FLOAT;
-			MessageParams[2] = 1;
-			memcpy(&MessageParams[3], &temperature, sizeof(float));
-
-			SendMessageToModule(dstModule, CODE_READ_RESPONSE,
-					sizeof(float) + 3);
-		}
-		break;
-	}
-
-	case HUMIDITY: {
-		float humidity = 0.0f;
-		status = SampleHumidity(&humidity);
-
-		/* If data is to be sent locally */
-		if (dstModule == myID || dstModule == 0) {
-			memcpy(temp, &humidity, sizeof(float));
-			writePxITMutex(dstPort, (char*) temp, sizeof(float), 10);
-		} else {
-			/* Send data to another module */
-			MessageParams[1] = (status == H0AR9_OK) ? BOS_OK : BOS_ERROR;
-			MessageParams[0] = FMT_FLOAT;
-			MessageParams[2] = 1;
-			memcpy(&MessageParams[3], &humidity, sizeof(float));
-
-			SendMessageToModule(dstModule, CODE_READ_RESPONSE, sizeof(float) + 3);
-		}
-		break;
-	}
-
-	default:
-		return H0AR9_ERR_WRONGPARAMS; /* Return error for invalid sensor function */
-	}
-
-	/* Clear the temp buffer */
-	memset(temp, 0, sizeof(temp));
-
-	/* Return final status indicating success or prior error */
-	return status;
+    return Status;
 }
-
 /***************************************************************************/
-/* Streams data to the specified port and module with a given number of samples.
- * targetModule: The target module to which data will be streamed.
- * portNumber: The port number on the module.
- * portFunction: Type of data that will be streamed (ACC, GYRO, MAG, or TEMP).
- * numOfSamples: The number of samples to stream.
- * streamTimeout: The interval (in milliseconds) between successive data transmissions.
+/*
+ * brief: Streams data to the specified port and module with a given number of samples.
+ * param targetModule: The target module to which data will be streamed.
+ * param portNumber: The port number on the module.
+ * param portFunction: Type of data that will be streamed (PIR, DISTANCE, COLOR, TEMPERATURE, HUMIDITY).
+ * param numOfSamples: The number of samples to stream.
+ * param streamTimeout: The interval (in milliseconds) between successive data transmissions.
+ * retval: of type Module_Status indicating the success or failure of the operation.
  */
 Module_Status StreamToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunction, uint32_t numOfSamples, uint32_t streamTimeout) {
-	Module_Status Status = H0AR9_OK;
-	uint32_t SamplePeriod = 0u;
+    Module_Status Status = H0AR9_OK;
+    uint32_t SamplePeriod = 0u;
 
-	/* Check timer handle and timeout validity */
-	if ((NULL == xTimerStream) || (0 == streamTimeout) || (0 == numOfSamples)) {
-		return H0AR9_ERROR; /* Assuming H0AR9_ERROR is defined in Module_Status */
-	}
+    /* Check timer handle and timeout validity */
+    if ((NULL == xTimerStream) || (0 == streamTimeout) || (0 == numOfSamples)) {
+        return H0AR9_ERROR; /* Assuming H0AR9_ERROR is defined in Module_Status */
+    }
 
-	/* Set streaming parameters */
-	StreamMode = STREAM_MODE_TO_PORT;
-	PortModule = dstModule;
-	PortNumber = dstPort;
-	PortFunction = dataFunction;
-	PortNumOfSamples = numOfSamples;
+    /* Set streaming parameters */
+    StreamMode = STREAM_MODE_TO_PORT;
+    PortModule = dstModule;
+    PortNumber = dstPort;
+    PortFunction = dataFunction;
+    PortNumOfSamples = numOfSamples;
 
-	/* Calculate the period from timeout and number of samples */
-	SamplePeriod = streamTimeout / numOfSamples;
+    /* Calculate the period from timeout and number of samples */
+    SamplePeriod = streamTimeout / numOfSamples;
 
-	/* Stop (Reset) the TimerStream if it's already running */
-	if (xTimerIsTimerActive(xTimerStream)) {
-		if (pdFAIL == xTimerStop(xTimerStream, 100)) {
-			return H0AR9_ERROR;
-		}
-	}
+    /* Stop (Reset) the TimerStream if it's already running */
+    if (xTimerIsTimerActive(xTimerStream)) {
+        if (pdFAIL == xTimerStop(xTimerStream, 100)) {
+            return H0AR9_ERROR;
+        }
+    }
 
-	/* Start the stream timer */
-	if (pdFAIL == xTimerStart(xTimerStream, 100)) {
-		return H0AR9_ERROR;
-	}
+    /* Start the stream timer */
+    if (pdFAIL == xTimerStart(xTimerStream, 100)) {
+        return H0AR9_ERROR;
+    }
 
-	/* Update timer timeout - This also restarts the timer */
-	if (pdFAIL == xTimerChangePeriod(xTimerStream, SamplePeriod, 100)) {
-		return H0AR9_ERROR;
-	}
+    /* Update timer timeout - This also restarts the timer */
+    if (pdFAIL == xTimerChangePeriod(xTimerStream, SamplePeriod, 100)) {
+        return H0AR9_ERROR;
+    }
 
-	return Status;
+    return Status;
 }
 
 /***************************************************************************/
 /*
- * Streams data to the specified terminal port with a given number of samples.
- * targetPort: The port number on the terminal.
- * dataFunction: Type of data that will be streamed (ACC, GYRO, MAG, or TEMP).
- * numOfSamples: The number of samples to stream.
- * streamTimeout: The interval (in milliseconds) between successive data transmissions.
+ * brief: Streams data to the specified terminal port with a given number of samples.
+ * param targetPort: The port number on the terminal.
+ * param dataFunction: Type of data that will be streamed (PIR, DISTANCE, COLOR, TEMPERATURE, HUMIDITY).
+ * param numOfSamples: The number of samples to stream.
+ * param streamTimeout: The interval (in milliseconds) between successive data transmissions.
+ * retval: of type Module_Status indicating the success or failure of the operation.
  */
-Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t numOfSamples,uint32_t streamTimeout){
-	Module_Status Status =H0AR9_OK;
-	uint32_t SamplePeriod =0u;
+Module_Status StreamToTerminal(uint8_t dstPort, All_Data dataFunction, uint32_t numOfSamples, uint32_t streamTimeout) {
+    Module_Status Status = H0AR9_OK;
+    uint32_t SamplePeriod = 0u;
 
-	uint32_t TerminalTimeout = 0u;               /* Timeout value for terminal streaming */
+    /* Check timer handle and timeout validity */
+    if ((NULL == xTimerStream) || (0 == streamTimeout) || (0 == numOfSamples)) {
+        return H0AR9_ERROR; /* Assuming H0AR9_ERROR is defined in Module_Status */
+    }
 
-	/* Check timer handle and timeout validity */
-	if((NULL == xTimerStream) || (0 == streamTimeout)){
-		return H0AR9_ERROR; /* Assuming H0AR9_ERROR is defined in Module_Status */
-	}
+    /* Set streaming parameters */
+    StreamMode = STREAM_MODE_TO_TERMINAL;
+    TerminalPort = dstPort;
+    TerminalFunction = dataFunction;
+    TerminalNumOfSamples = numOfSamples;
 
-	/* Set streaming parameters */
-	StreamMode = STREAM_MODE_TO_TERMINAL;
-	TerminalPort =dstPort;
-	TerminalFunction =dataFunction;
-	TerminalTimeout =streamTimeout;
-	TerminalNumOfSamples =numOfSamples;
+    /* Calculate the period from timeout and number of samples */
+    SamplePeriod = streamTimeout / numOfSamples;
 
-	/* Calculate the period from timeout and number of samples */
-	SamplePeriod =streamTimeout / numOfSamples;
+    /* Stop (Reset) the TimerStream if it's already running */
+    if (xTimerIsTimerActive(xTimerStream)) {
+        if (pdFAIL == xTimerStop(xTimerStream, 100)) {
+            return H0AR9_ERROR;
+        }
+    }
 
-	/* Stop (Reset) the TimerStream if it's already running */
-	if(xTimerIsTimerActive(xTimerStream)){
-		if(pdFAIL == xTimerStop(xTimerStream,100)){
-			return H0AR9_ERROR;
-		}
-	}
+    /* Start the stream timer */
+    if (pdFAIL == xTimerStart(xTimerStream, 100)) {
+        return H0AR9_ERROR;
+    }
 
-	/* Start the stream timer */
-	if(pdFAIL == xTimerStart(xTimerStream,100)){
-		return H0AR9_ERROR;
-	}
+    /* Update timer timeout - This also restarts the timer */
+    if (pdFAIL == xTimerChangePeriod(xTimerStream, SamplePeriod, 100)) {
+        return H0AR9_ERROR;
+    }
 
-	/* Update timer timeout - This also restarts the timer */
-	if(pdFAIL == xTimerChangePeriod(xTimerStream,SamplePeriod,100)){
-		return H0AR9_ERROR;
-	}
-
-	return Status;
+    return Status;
+}
+/***************************************************************************/
+/*
+ * @brief: Streams data to a buffer.
+ * @param buffer: Pointer to the buffer where data will be stored.
+ * @param function: Function to sample data (e.g., PIR, DISTANCE, COLOR, TEMPERATURE, HUMIDITY).
+ * @param Numofsamples: Number of samples to take.
+ * @param timeout: Timeout period for the operation.
+ * @retval: Module status indicating success or error.
+ */
+Module_Status StreamToBuffer(float *buffer, All_Data function, uint32_t Numofsamples, uint32_t timeout) {
+    switch (function) {
+        case PIR:
+            return StreamToBuf(buffer, Numofsamples, timeout, SamplePIRBuf);
+            break;
+        case DISTANCE:
+            return StreamToBuf(buffer, Numofsamples, timeout, SampleDistanceBuf);
+            break;
+        case COLOR:
+            return StreamToBuf(buffer, Numofsamples, timeout, SampleColorBuf);
+            break;
+        case TEMPERATURE:
+            return StreamToBuf(buffer, Numofsamples, timeout, SampleTemperatureBuf);
+            break;
+        case HUMIDITY:
+            return StreamToBuf(buffer, Numofsamples, timeout, SampleHumidityBuf);
+            break;
+        default:
+            break;
+    }
 }
 
 /***************************************************************************/
