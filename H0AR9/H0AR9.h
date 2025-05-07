@@ -190,6 +190,8 @@ Module_Status SampleDistance(uint16_t *distance);
 Module_Status SampleColor(uint16_t *Red, uint16_t *Green, uint16_t *Blue);
 Module_Status SampleTemperature(float *temperature);
 Module_Status SampleHumidity(float *humidity);
+
+
 Module_Status SampleToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunction);
 Module_Status StreamToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunction, uint32_t numOfSamples, uint32_t streamTimeout) ;
 Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t numOfSamples,uint32_t streamTimeout);
