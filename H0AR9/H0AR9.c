@@ -1362,11 +1362,11 @@ Module_Status SampleHumidity(float *humidity) {
 }
 /***************************************************************************/
 /*
- * brief: Samples data and exports it to a specified port for the H0AR9 sensor module.
- * param dstModule: The module number to export data from.
- * param dstPort: The port number to export data to.
- * param dataFunction: Function to sample data (e.g., PIR, DISTANCE, COLOR, TEMPERATURE, HUMIDITY).
- * retval: of type Module_Status indicating the success or failure of the operation.
+ * @brief: Samples data and exports it to a specified port for the H0AR9 sensor module.
+ * @param dstModule: The module number to export data from.
+ * @param dstPort: The port number to export data to.
+ * @param dataFunction: Function to sample data (e.g., PIR, DISTANCE, COLOR, TEMPERATURE, HUMIDITY).
+ * @retval: Module status indicating success or failure of the operation.
  */
 Module_Status SampleToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunction) {
     Module_Status Status = H0AR9_OK;
@@ -1387,15 +1387,18 @@ Module_Status SampleToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunc
                 return H0AR9_ERROR;
             }
 
-            if (dstModule == myID || dstModule == 0) {
+            if (dstModule == myID) {
                 Temp[0] = (uint8_t)pir;
                 writePxITMutex(dstPort, (char*)&Temp[0], 1 * sizeof(uint8_t), 10);
             } else {
-                MessageParams[1] = (H0AR9_OK == Status) ? BOS_OK : BOS_ERROR;
-                MessageParams[0] = FMT_BOOL;
-                MessageParams[2] = 1;
-                MessageParams[3] = (uint8_t)pir;
-                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(bool) * 1) + 3);
+                /* LSB first */
+                MessageParams[0] = FMT_BOOL;                                     /* Data format: bool */
+                MessageParams[1] = (H0AR9_OK == Status) ? BOS_OK : BOS_ERROR;   /* Operation status */
+                MessageParams[2] = 1;                                           /* Number of elements (pir) */
+                MessageParams[3] = (uint8_t)(CODE_H0AR9_SAMPLE_PIR >> 0);       /* Command code LSB */
+                MessageParams[4] = (uint8_t)(CODE_H0AR9_SAMPLE_PIR >> 8);       /* Command code MSB */
+                MessageParams[5] = (uint8_t)pir;                                /* PIR value */
+                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(bool) * 1) + 5);
             }
             break;
 
@@ -1404,19 +1407,21 @@ Module_Status SampleToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunc
                 return H0AR9_ERROR;
             }
 
-            if (dstModule == myID || dstModule == 0) {
+            if (dstModule == myID) {
                 /* LSB first */
-                Temp[0] = (uint8_t)(distance >> 0);
-                Temp[1] = (uint8_t)(distance >> 8);
+                Temp[0] = (uint8_t)(distance);         /* Distance byte 0 */
+                Temp[1] = (uint8_t)(distance >> 8);    /* Distance byte 1 */
                 writePxITMutex(dstPort, (char*)&Temp[0], 2 * sizeof(uint8_t), 10);
             } else {
                 /* LSB first */
-                MessageParams[1] = (H0AR9_OK == Status) ? BOS_OK : BOS_ERROR;
-                MessageParams[0] = FMT_UINT16;
-                MessageParams[2] = 1;
-                MessageParams[3] = (uint8_t)(distance >> 0);
-                MessageParams[4] = (uint8_t)(distance >> 8);
-                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(uint16_t) * 1) + 3);
+                MessageParams[0] = FMT_UINT16;                                   /* Data format: uint16 */
+                MessageParams[1] = (H0AR9_OK == Status) ? BOS_OK : BOS_ERROR;   /* Operation status */
+                MessageParams[2] = 1;                                           /* Number of elements (distance) */
+                MessageParams[3] = (uint8_t)(CODE_H0AR9_SAMPLE_DISTANCE >> 0);  /* Command code LSB */
+                MessageParams[4] = (uint8_t)(CODE_H0AR9_SAMPLE_DISTANCE >> 8);  /* Command code MSB */
+                MessageParams[5] = (uint8_t)(distance);                         /* Distance byte 0 */
+                MessageParams[6] = (uint8_t)(distance >> 8);                    /* Distance byte 1 */
+                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(uint16_t) * 1) + 5);
             }
             break;
 
@@ -1425,27 +1430,29 @@ Module_Status SampleToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunc
                 return H0AR9_ERROR;
             }
 
-            if (dstModule == myID || dstModule == 0) {
+            if (dstModule == myID) {
                 /* LSB first */
-                Temp[0] = (uint8_t)(red >> 0);
-                Temp[1] = (uint8_t)(red >> 8);
-                Temp[2] = (uint8_t)(green >> 0);
-                Temp[3] = (uint8_t)(green >> 8);
-                Temp[4] = (uint8_t)(blue >> 0);
-                Temp[5] = (uint8_t)(blue >> 8);
+                Temp[0] = (uint8_t)(red);         /* Red byte 0 */
+                Temp[1] = (uint8_t)(red >> 8);    /* Red byte 1 */
+                Temp[2] = (uint8_t)(green);       /* Green byte 0 */
+                Temp[3] = (uint8_t)(green >> 8);  /* Green byte 1 */
+                Temp[4] = (uint8_t)(blue);        /* Blue byte 0 */
+                Temp[5] = (uint8_t)(blue >> 8);   /* Blue byte 1 */
                 writePxITMutex(dstPort, (char*)&Temp[0], 6 * sizeof(uint8_t), 10);
             } else {
                 /* LSB first */
-                MessageParams[1] = (H0AR9_OK == Status) ? BOS_OK : BOS_ERROR;
-                MessageParams[0] = FMT_UINT16;
-                MessageParams[2] = 3;
-                MessageParams[3] = (uint8_t)(red >> 0);
-                MessageParams[4] = (uint8_t)(red >> 8);
-                MessageParams[5] = (uint8_t)(green >> 0);
-                MessageParams[6] = (uint8_t)(green >> 8);
-                MessageParams[7] = (uint8_t)(blue >> 0);
-                MessageParams[8] = (uint8_t)(blue >> 8);
-                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(uint16_t) * 3) + 3);
+                MessageParams[0] = FMT_UINT16;                                   /* Data format: uint16 */
+                MessageParams[1] = (H0AR9_OK == Status) ? BOS_OK : BOS_ERROR;   /* Operation status */
+                MessageParams[2] = 3;                                           /* Number of elements (red, green, blue) */
+                MessageParams[3] = (uint8_t)(CODE_H0AR9_SAMPLE_COLOR >> 0);     /* Command code LSB */
+                MessageParams[4] = (uint8_t)(CODE_H0AR9_SAMPLE_COLOR >> 8);     /* Command code MSB */
+                MessageParams[5] = (uint8_t)(red);                              /* Red byte 0 */
+                MessageParams[6] = (uint8_t)(red >> 8);                         /* Red byte 1 */
+                MessageParams[7] = (uint8_t)(green);                            /* Green byte 0 */
+                MessageParams[8] = (uint8_t)(green >> 8);                       /* Green byte 1 */
+                MessageParams[9] = (uint8_t)(blue);                             /* Blue byte 0 */
+                MessageParams[10] = (uint8_t)(blue >> 8);                       /* Blue byte 1 */
+                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(uint16_t) * 3) + 5);
             }
             break;
 
@@ -1454,23 +1461,25 @@ Module_Status SampleToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunc
                 return H0AR9_ERROR;
             }
 
-            if (dstModule == myID || dstModule == 0) {
+            if (dstModule == myID) {
                 /* LSB first */
-                Temp[0] = (uint8_t)((*(uint32_t*)&temperature) >> 0);
-                Temp[1] = (uint8_t)((*(uint32_t*)&temperature) >> 8);
-                Temp[2] = (uint8_t)((*(uint32_t*)&temperature) >> 16);
-                Temp[3] = (uint8_t)((*(uint32_t*)&temperature) >> 24);
+                Temp[0] = (uint8_t)(*(uint32_t*)&temperature);         /* Temperature byte 0 */
+                Temp[1] = (uint8_t)((*(uint32_t*)&temperature) >> 8);  /* Temperature byte 1 */
+                Temp[2] = (uint8_t)((*(uint32_t*)&temperature) >> 16); /* Temperature byte 2 */
+                Temp[3] = (uint8_t)((*(uint32_t*)&temperature) >> 24); /* Temperature byte 3 */
                 writePxITMutex(dstPort, (char*)&Temp[0], 4 * sizeof(uint8_t), 10);
             } else {
                 /* LSB first */
-                MessageParams[1] = (H0AR9_OK == Status) ? BOS_OK : BOS_ERROR;
-                MessageParams[0] = FMT_FLOAT;
-                MessageParams[2] = 1;
-                MessageParams[3] = (uint8_t)((*(uint32_t*)&temperature) >> 0);
-                MessageParams[4] = (uint8_t)((*(uint32_t*)&temperature) >> 8);
-                MessageParams[5] = (uint8_t)((*(uint32_t*)&temperature) >> 16);
-                MessageParams[6] = (uint8_t)((*(uint32_t*)&temperature) >> 24);
-                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(float) * 1) + 3);
+                MessageParams[0] = FMT_FLOAT;                                    /* Data format: float */
+                MessageParams[1] = (H0AR9_OK == Status) ? BOS_OK : BOS_ERROR;   /* Operation status */
+                MessageParams[2] = 1;                                           /* Number of elements (temperature) */
+                MessageParams[3] = (uint8_t)(CODE_H0AR9_SAMPLE_TEMP >> 0);      /* Command code LSB */
+                MessageParams[4] = (uint8_t)(CODE_H0AR9_SAMPLE_TEMP >> 8);      /* Command code MSB */
+                MessageParams[5] = (uint8_t)(*(uint32_t*)&temperature);         /* Temperature byte 0 */
+                MessageParams[6] = (uint8_t)((*(uint32_t*)&temperature) >> 8);  /* Temperature byte 1 */
+                MessageParams[7] = (uint8_t)((*(uint32_t*)&temperature) >> 16); /* Temperature byte 2 */
+                MessageParams[8] = (uint8_t)((*(uint32_t*)&temperature) >> 24); /* Temperature byte 3 */
+                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(float) * 1) + 5);
             }
             break;
 
@@ -1479,23 +1488,25 @@ Module_Status SampleToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunc
                 return H0AR9_ERROR;
             }
 
-            if (dstModule == myID || dstModule == 0) {
+            if (dstModule == myID) {
                 /* LSB first */
-                Temp[0] = (uint8_t)((*(uint32_t*)&humidity) >> 0);
-                Temp[1] = (uint8_t)((*(uint32_t*)&humidity) >> 8);
-                Temp[2] = (uint8_t)((*(uint32_t*)&humidity) >> 16);
-                Temp[3] = (uint8_t)((*(uint32_t*)&humidity) >> 24);
+                Temp[0] = (uint8_t)(*(uint32_t*)&humidity);         /* Humidity byte 0 */
+                Temp[1] = (uint8_t)((*(uint32_t*)&humidity) >> 8);  /* Humidity byte 1 */
+                Temp[2] = (uint8_t)((*(uint32_t*)&humidity) >> 16); /* Humidity byte 2 */
+                Temp[3] = (uint8_t)((*(uint32_t*)&humidity) >> 24); /* Humidity byte 3 */
                 writePxITMutex(dstPort, (char*)&Temp[0], 4 * sizeof(uint8_t), 10);
             } else {
                 /* LSB first */
-                MessageParams[1] = (H0AR9_OK == Status) ? BOS_OK : BOS_ERROR;
-                MessageParams[0] = FMT_FLOAT;
-                MessageParams[2] = 1;
-                MessageParams[3] = (uint8_t)((*(uint32_t*)&humidity) >> 0);
-                MessageParams[4] = (uint8_t)((*(uint32_t*)&humidity) >> 8);
-                MessageParams[5] = (uint8_t)((*(uint32_t*)&humidity) >> 16);
-                MessageParams[6] = (uint8_t)((*(uint32_t*)&humidity) >> 24);
-                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(float) * 1) + 3);
+                MessageParams[0] = FMT_FLOAT;                                    /* Data format: float */
+                MessageParams[1] = (H0AR9_OK == Status) ? BOS_OK : BOS_ERROR;   /* Operation status */
+                MessageParams[2] = 1;                                           /* Number of elements (humidity) */
+                MessageParams[3] = (uint8_t)(CODE_H0AR9_SAMPLE_HUMIDITY >> 0);  /* Command code LSB */
+                MessageParams[4] = (uint8_t)(CODE_H0AR9_SAMPLE_HUMIDITY >> 8);  /* Command code MSB */
+                MessageParams[5] = (uint8_t)(*(uint32_t*)&humidity);            /* Humidity byte 0 */
+                MessageParams[6] = (uint8_t)((*(uint32_t*)&humidity) >> 8);     /* Humidity byte 1 */
+                MessageParams[7] = (uint8_t)((*(uint32_t*)&humidity) >> 16);    /* Humidity byte 2 */
+                MessageParams[8] = (uint8_t)((*(uint32_t*)&humidity) >> 24);    /* Humidity byte 3 */
+                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(float) * 1) + 5);
             }
             break;
 
