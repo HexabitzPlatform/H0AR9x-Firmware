@@ -2,9 +2,11 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0AR9_uart.h
- Description   : Header file provides configuration for USART instances.
- */
+ File Name  : H0AR9_uart.h
+ Description: Header file for USART instances configuration.
+ Exports: Function prototypes for semaphore-protected UART read/write and port direction reading.
+ Includes: STM32G0 HAL library and BOS configuration file.
+*/
 
 /* Define to prevent recursive inclusion ***********************************/
 #ifndef __usart_H

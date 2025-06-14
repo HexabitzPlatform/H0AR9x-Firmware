@@ -2,10 +2,12 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0AR9_uart.c
- Description   : Source Code provides configuration for USART instances.
-
- */
+ File Name  : H0AR9_uart.c
+ Description: Source file for USART instances configuration.
+ Features: Initializes USART1-6 for ports P1-P6 with default baud rate, supports DMA for reception, and port direction swapping (normal/reversed).
+ Functions: UART initialization, semaphore-protected read/write (blocking/non-blocking), baud rate update, UART pin swapping, and port direction reading.
+ DMA: Uses DMA1 channels for circular data reception.
+*/
 
 /* Includes ****************************************************************/
 #include "BOS.h"

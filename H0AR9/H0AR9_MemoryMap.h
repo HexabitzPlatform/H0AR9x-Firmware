@@ -1,10 +1,15 @@
 /*
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
- 
- File Name     : H0AR9_MemoryMap.h
- Description   : Module MCU memory map header file.
 
+ File Name  : H0AR9_MemoryMap.h
+ Description: Memory map definitions for H0AR9 module (STM32G0B0).
+ Memory Layout: 512 KB flash divided into:
+   - Application: 0x08000000 - 0x0807A7FF (500 KB)
+   - Topology: 0x0807A800 - 0x0807AFFF (2 KB, RO)
+   - Snippets: 0x0807B000 - 0x0807B7FF (2 KB, RO)
+   - EEPROM: 0x0807B800 - 0x0807F7FF (8 KB, 1000 16-bit variables)
+ Defines: Start addresses and page numbers for topology and snippets.
  */
 
 /* Define to prevent recursive inclusion************************************/

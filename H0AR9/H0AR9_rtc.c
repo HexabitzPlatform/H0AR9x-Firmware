@@ -2,9 +2,12 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0AR9_rtc.c
- Description   : Peripheral RTC setup source file.
-
+ File Name  : H0AR9_rtc.c
+ Description: Configures the Real-Time Clock (RTC) for H0AR9 module.
+ Features: Initializes RTC with LSI clock, supports 12/24-hour formats, and configures calendar using compile-time or user settings.
+ Functions: RTC initialization, calendar configuration, time/date retrieval, and MSP init/de-init.
+ Storage: Uses RTC backup registers for format and configuration flags, EEPROM for persistent settings.
+ Boot Status: Detects power-on or pin reset conditions.
  */
 
 /* Includes ****************************************************************/

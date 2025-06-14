@@ -2,15 +2,14 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0AR9_timers.c
- Description   : Peripheral timers setup source file.
-
- Required MCU resources :
-
- >> Timer 14 for micro-sec delay.
- >> Timer 15 for milli-sec delay.
-
- */
+ File Name  : H0AR9_timers.c
+ Description: Source file for peripheral timers setup.
+ Required MCU Resources:
+   - Timer 14 for microsecond delay.
+   - Timer 15 for millisecond delay.
+ Features: Configures TIM16 and TIM17 for microsecond and millisecond delays, and IWDG for 500ms watchdog timeout.
+ Functions: IWDG initialization, timer initialization, and delay start functions.
+*/
 
 /* Includes ****************************************************************/
 #include "BOS.h"

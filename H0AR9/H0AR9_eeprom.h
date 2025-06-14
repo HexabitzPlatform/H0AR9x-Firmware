@@ -1,9 +1,14 @@
- /*
+/*
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0AR9_eeprom.h
- Description   : EEPROM emulator library (Header file).
+ File Name  : H0AR9_eeprom.h
+ Description: Header for EEPROM emulator library for STM32G0.
+ Features: Emulates 1000 16-bit variables using 8 flash pages (4 primary + 4 backup).
+ Structure: 64-bit elements (32-bit data, 16-bit CRC, 16-bit virtual address).
+ Mechanism: Alternates between primary and backup page groups for reliable storage.
+ Macros: Defines virtual address spaces for BOS, module, and user data.
+ Functions: Initialize, format, read/write variables, erase sectors.
 
  * EEPROM Emulation Description:
  * -----------------------------

@@ -2,9 +2,12 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0AR9_gpio.c
- Description   : Source code provides code for the configuration of all used GPIO pins .
-
+ File Name  : H0AR9_gpio.c
+ Description: Configures GPIO pins for H0AR9 module.
+ Features: Initializes GPIO clocks, indicator LED, sensor input (PIR), and checks factory reset condition.
+ GPIO: Sets up ports A, B, C, D, F for UART and LED functionality.
+ Factory Reset: Detects if P1 TXD is connected to last port RXD.
+ Functions: GPIO initialization, LED setup, sensor GPIO config, port GPIO retrieval.
  */
 
 /* Includes ****************************************************************/

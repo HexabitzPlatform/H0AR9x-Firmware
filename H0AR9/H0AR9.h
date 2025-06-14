@@ -2,16 +2,14 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0AR9.h
- Description   : Header file for module H0AR9.
- 	 	 	 	 (Description_of_module)
-
-(Description of Special module peripheral configuration):
->>
->>
->>
-
- */
+ File Name  : H0BR4.h
+ Description: Header file for H0BR4 module hardware configuration and sensor interfaces.
+ Features: Defines configurations for UART, I2C, GPIO, and sensor interfaces (LSM6DS3TR_C IMU, LSM303AGR magnetometer).
+ UART: Six ports (P1-P6) mapped to USART1-6 with specific GPIO pin assignments.
+ I2C2: Configured on GPIOA6 (SCL) and GPIOA7 (SDA) for IMU and magnetometer communication.
+ GPIO: Indicator LED on GPIOB12, detailed port pin configurations.
+ Sensors: Supports sampling and streaming for accelerometer, gyroscope, magnetometer, and temperature sensors.
+*/
 
 /* Define to prevent recursive inclusion ***********************************/
 #ifndef H0AR9_H

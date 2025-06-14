@@ -2,10 +2,10 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name          : H0AR9_i2c.h
- Description        : This file contains all the functions prototypes for
- the i2c
-
+ File Name  : H0AR9_i2c.h
+ Description: Header for I2C configuration in H0AR9 module.
+ Exports: I2C2 handle and function prototypes for I2C initialization.
+ Includes: STM32G0 HAL for I2C operations.
  */
 
 /* Define to prevent recursive inclusion ***********************************/

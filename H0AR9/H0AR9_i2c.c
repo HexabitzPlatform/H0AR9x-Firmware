@@ -2,10 +2,12 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name          : H0AR9_i2c.c
- Description        : This file provides code for the configuration
- of the I2C instances.
-
+ File Name  : H0AR9_i2c.c
+ Description: Configures I2C2 peripheral for H0AR9 module.
+ Features: Initializes I2C2 for 100 kHz communication in master mode with 7-bit addressing.
+ GPIO: Sets up PA6 (SDA) and PA7 (SCL) as alternate function open-drain.
+ Filters: Enables analog filter, disables digital filter and clock stretching.
+ Functions: I2C initialization, MSP init/de-init for GPIO and clock management.
  */
 
 /* Includes ****************************************************************/

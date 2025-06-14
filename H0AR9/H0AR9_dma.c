@@ -2,9 +2,11 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0AR9_dma.c
- Description   : source file Contains Peripheral DMA setup .
-
+ File Name  : H0AR9_dma.c
+ Description: Configures DMA for UART messaging and streaming, and CRC for data integrity.
+ DMA: Initializes DMA1/2 for UART1-6 RX, supports messaging/streaming modes.
+ CRC: Sets up CRC8 for message validation using 8-bit polynomial.
+ Functions: Setup/stop DMA, switch between messaging/streaming, calculate CRC8.
  */
 
 /* Includes ****************************************************************/

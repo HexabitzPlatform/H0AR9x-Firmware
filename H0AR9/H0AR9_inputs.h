@@ -2,10 +2,13 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0AR9_inputs.h
- Description   : header file for Bitz digital and analog inputs.
- 
-*/
+ File Name  : H0AR9_inputs.h
+ Description: Header for digital and analog input management in H0AR9 module.
+ ADC: Defines macros for ADC channels on ports P1 (ADC34) and P2 (ADC12), including GPIO pins, USART mapping, and channel numbers.
+ Constants: Includes reference voltage calibration, temperature sensor slope, and V25 for internal measurements.
+ Exports: Function prototypes for reading ADC channels, temperature, voltage reference, percentage conversion, and ADC port management.
+ Includes: BOS and STM32G0 HAL for ADC operations.
+ */
 
 /* Includes ****************************************************************/
 #include "BOS.h"

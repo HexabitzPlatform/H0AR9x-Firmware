@@ -2,9 +2,13 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0AR9_it.c
- Description   :Interrupt Service Routines.
-
+ File Name  : H0AR9_it.c
+ Description: Interrupt Service Routines for H0AR9 module.
+ Features: Handles system tick, hard fault, UART (USART1-6) interrupts, DMA (channels 1-7) interrupts, and FreeRTOS-related hooks.
+ UART: Manages RX events (half/full transfer, idle line) and TX completion, notifying backend tasks.
+ DMA: Processes UART DMA interrupts for each port.
+ Error Handling: Resets system on hard fault, stack overflow, or heap allocation failure.
+ Callbacks: Supports UART wake-up from stop mode and error recovery.
  */
 
 /* Includes ****************************************************************/

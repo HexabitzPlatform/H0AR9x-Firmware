@@ -2,10 +2,10 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0AR9_gpio.h
- Description   : Header file contains all the functions prototypes for
- the GPIO .
-
+ File Name  : H0AR9_gpio.h
+ Description: Header for GPIO configuration in H0AR9 module.
+ Exports: Function prototypes for GPIO initialization, indicator LED setup, sensor GPIO config, port GPIO retrieval, and factory reset detection.
+ Includes: STM32G0 HAL for GPIO operations.
  */
 
 

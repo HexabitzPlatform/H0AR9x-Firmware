@@ -1,10 +1,12 @@
 /*
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
- 
- File Name     : H0AR9_dma.h
- Description   : Header file contains Peripheral DMA setup.
 
+ File Name  : H0AR9_dma.h
+ Description: Header for DMA and CRC setup for H0AR9 module.
+ DMA: Declares functions for UART1-6 RX DMA initialization, messaging/streaming modes.
+ CRC: Defines CRC8 calculation for message validation.
+ Exports: DMA and CRC initialization, setup, and control functions.
  */
 
 /* Define to prevent recursive inclusion ***********************************/

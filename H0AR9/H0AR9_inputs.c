@@ -2,9 +2,12 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0AR9_inputs.c
- Description   : Source code for Bitz digital and analog inputs.
-
+ File Name  : H0AR9_inputs.c
+ Description: Manages digital and analog inputs for H0AR9 module.
+ Buttons: Supports momentary and on/off buttons on ports P1-Px, with debouncing and event detection (press, release, click, double-click).
+ ADC: Configures ADC1 for reading analog inputs on ports 2/3, internal temperature, and voltage reference.
+ Features: GPIO reconfiguration for buttons, EEPROM storage for button settings, callback functions for button events.
+ Functions: Button management, ADC channel selection/reading, percentage calculation, and deinitialization.
  */
 
 /* Includes ****************************************************************/

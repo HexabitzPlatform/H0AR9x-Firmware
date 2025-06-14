@@ -2,9 +2,10 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0AR9_eeprom.c
- Description   : EEPROM emulator library (Source file).
-
+ File Name  : H0AR9_eeprom.c
+ Description: EEPROM emulator library for STM32G0, managing flash-based storage.
+ Functions: Initialize, read/write 16-bit variables, format EEPROM, erase sectors.
+ Features: Handles power loss recovery, cleanup, and factory reset formatting.
  */
 
 /* Includes ****************************************************************/
