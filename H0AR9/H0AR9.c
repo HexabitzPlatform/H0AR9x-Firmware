@@ -2,18 +2,16 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0AR9.c
- Description   : Source code for module H0AR9.
- IR Time-if-Flight (ToF) Sensor (ST VL53L1CX)
-
- Required MCU resources :
-
- >> USARTs 1,2,3,4,5,6 for module ports (H0AR9).
- >> I2C2 for the ToF sensor.
- >> GPIOB 1 for ToF interrupt (INT).
- >> GPIOA 5 for ToF shutdown (XSHUT).
-
+ File Name: H0AR9.c
+ Description: Source code for H0AR9 module with ST VL53L1CX ToF IR sensor.
+ MCU Resources:
+ - UARTs: USART1-6 for six ports (P1-P6).
+ - I2C2: For APDS9950 sensor (color, proximity, temperature, humidity).
+ - GPIO: PB5 (PIR input), Timer8 (stream timer).
+ CLI: "sample" and "stream" commands for color, distance, humidity, temperature, and PIR data.
+ Functions: Initializes peripherals, samples sensor data, and supports sampling and streaming to ports/terminal/buffer.
  */
+
 
 /* Includes ****************************************************************/
 #include "BOS.h"
