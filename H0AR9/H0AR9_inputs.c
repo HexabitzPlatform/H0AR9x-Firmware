@@ -2,16 +2,14 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name  : H0AR9_inputs.c
- Description: Manages digital and analog inputs for H0AR9 module.
- Buttons: Supports momentary and on/off buttons on ports P1-Px, with debouncing and event detection (press, release, click, double-click).
- ADC: Configures ADC1 for reading analog inputs on ports 2/3, internal temperature, and voltage reference.
- Features: GPIO reconfiguration for buttons, EEPROM storage for button settings, callback functions for button events.
- Functions: Button management, ADC channel selection/reading, percentage calculation, and deinitialization.
+ File Name  : H16R6_inputs.c
+ Description: Manages digital and analog inputs.
+ Buttons: Add, remove, detect events (press, release, click, double-click).
+ ADC: Reads analog inputs, temperature, voltage on ports P1, P2.
  */
 
 /* Includes ****************************************************************/
-#include "H0AR9_inputs.h"
+#include "H16R6_inputs.h"
 
 /* Exported Variables ******************************************************/
 bool DelayButtonStateReset = false;
@@ -35,6 +33,7 @@ uint16_t adcValueTemp =0;
 uint16_t adcValueVref =0;
 float Percentage =0.0f;
 float Current =0.0f;
+uint8_t adcDeInitFlag;
 
 ADC_HandleTypeDef hadc;
 ADC_ChannelConfTypeDef sConfig ={0};
@@ -139,15 +138,15 @@ uint32_t GetChannel(UART_HandleTypeDef *huart,ModuleLayer_t side){
 }
 
 /***************************************************************************/
-uint8_t GetRank(uint8_t adcPort,ModuleLayer_t side){
+uint8_t GetRank(uint8_t Port,ModuleLayer_t side){
 
-	if(adcPort == ADC34_PORT && side == TOP)
+	if(Port == ADC34_PORT && side == TOP)
 		adcChannelRank =0;
-	else if(adcPort == ADC34_PORT && side == BOTTOM)
+	else if(Port == ADC34_PORT && side == BOTTOM)
 		adcChannelRank =1;
-	else if(adcPort == ADC12_PORT && side == TOP)
+	else if(Port == ADC12_PORT && side == TOP)
 		adcChannelRank =2;
-	else if(adcPort == ADC12_PORT && side == BOTTOM)
+	else if(Port == ADC12_PORT && side == BOTTOM)
 		adcChannelRank =3;
 	return adcChannelRank;
 }
@@ -531,7 +530,11 @@ BOS_Status ADCSelectPort(uint8_t adcPort){
 		HAL_UART_DeInit(GetUart(adcPort));
 		PortStatus[adcPort] =CUSTOM;
 		if(adcEnableFlag == 0)
+		{
 			MX_ADC_Init();
+			adcDeInitFlag = 0;
+		}
+
 	}
 	else
 		return Status =BOS_ERR_ADC_WRONG_PORT;
@@ -568,7 +571,6 @@ BOS_Status ReadADCChannel(uint8_t adcPort, ModuleLayer_t side,float *adcVoltage)
 
 			/* calculate the average of measured samples */
 			adcChannelValue[adcChannelRank] = adcAverValue / count;
-
 			/* Disable chosen channel */
 			sConfig.Channel =Channel;
 			sConfig.Rank = ADC_RANK_NONE;
@@ -589,7 +591,11 @@ BOS_Status ReadADCChannel(uint8_t adcPort, ModuleLayer_t side,float *adcVoltage)
 void ReadTempAndVref(float *temp,float *Vref){
 
 	if(0 == adcEnableFlag)
+	{
 		MX_ADC_Init();
+		adcDeInitFlag = 0;
+	}
+
 
 	/* Enable internal temperature channel */
 	sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
@@ -641,6 +647,7 @@ BOS_Status GetReadPercentage(uint8_t adcPort,ModuleLayer_t side,float *precentag
 
 	return Status;
 }
+
 /***************************************************************************/
 BOS_Status ADCDeinitChannel(uint8_t adcPort){
 	BOS_Status Status =BOS_OK;
