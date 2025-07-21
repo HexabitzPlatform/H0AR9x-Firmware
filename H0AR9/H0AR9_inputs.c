@@ -2,14 +2,14 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name  : H16R6_inputs.c
+ File Name  : H0AR9_inputs.c
  Description: Manages digital and analog inputs.
  Buttons: Add, remove, detect events (press, release, click, double-click).
  ADC: Reads analog inputs, temperature, voltage on ports P1, P2.
  */
 
 /* Includes ****************************************************************/
-#include "H16R6_inputs.h"
+#include "H0AR9_inputs.h"
 
 /* Exported Variables ******************************************************/
 bool DelayButtonStateReset = false;
